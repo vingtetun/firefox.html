@@ -52,6 +52,14 @@ define(['js/tabiframe', 'js/eventemitter', 'js/keybindings'],
       TabIframeDeck.add({url: event.detail.url});
     },
 
+    onMozBrowserTitleChange: function(type, event) {
+      let tabIframe = event.target.parentNode;
+      let index = _tabIframeArray.indexOf(tabIframe);
+      if (index === _selectIndex) {
+        document.title = tabIframe.title;
+      }
+    },
+
     add: function(options={}) {
       let tabIframe = document.createElement('tab-iframe');
       tabIframe.setAttribute('flex', '1');
@@ -62,6 +70,7 @@ define(['js/tabiframe', 'js/eventemitter', 'js/keybindings'],
 
       tabIframe.on('mozbrowseropenwindow', this.onMozBrowserOpenWindow);
       tabIframe.on('mozbrowserlocationchange', this.saveSession);
+      tabIframe.on('mozbrowsertitlechange', this.onMozBrowserTitleChange);
 
       this.emit('add', {tabIframe: tabIframe});
 
@@ -142,6 +151,8 @@ define(['js/tabiframe', 'js/eventemitter', 'js/keybindings'],
         }
         tabIframe.show();
       });
+
+      document.title = tabIframe.title;
     },
 
     selectNext: function() {
