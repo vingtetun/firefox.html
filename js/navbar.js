@@ -31,7 +31,6 @@ function(UrlHelper, TabIframeDeck, RegisterKeyBindings) {
         <div class='identity'></div>
         <input placeholder='Search or enter address' class='urlinput' flex='1'>
       </hbox>
-      <button class='menu-button'></button>
     </hbox>
   `;
   let outervbox = document.querySelector('#outervbox');
