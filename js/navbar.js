@@ -6,8 +6,7 @@
  * navbar.js
  *
  * Code handling the navigation bar. The navigation bar includes
- * the back/forward/stop/reload buttons, the url bar and the search
- * bar.
+ * the back/forward/stop/reload buttons and the url bar.
  *
  */
 
@@ -32,10 +31,6 @@ function(UrlHelper, TabIframeDeck, RegisterKeyBindings) {
         <div class='identity'></div>
         <input placeholder='Search or enter address' class='urlinput' flex='1'>
       </hbox>
-      <hbox class='searchbar' flex='1' align='center'>
-        <div class='searchselector'></div>
-        <input placeholder='Yahoo' class='searchinput' flex='1'>
-      </hbox>
       <button class='menu-button'></button>
     </hbox>
   `;
@@ -51,8 +46,6 @@ function(UrlHelper, TabIframeDeck, RegisterKeyBindings) {
 
   let urlbar = navbar.querySelector('.urlbar');
   let urlinput = navbar.querySelector('.urlinput');
-  let searchbar = navbar.querySelector('.searchbar');
-  let searchinput = navbar.querySelector('.searchinput');
   let backButton = navbar.querySelector('.back-button')
   let forwardButton = navbar.querySelector('.forward-button')
   let reloadButton = navbar.querySelector('.reload-button');
@@ -82,17 +75,6 @@ function(UrlHelper, TabIframeDeck, RegisterKeyBindings) {
     TabIframeDeck.getSelected().userInput = urlinput.value;
   });
 
-  searchinput.addEventListener('focus', () => {
-    searchinput.select();
-    searchbar.classList.add('focus');
-  })
-  searchinput.addEventListener('blur', () => searchbar.classList.remove('focus'))
-  searchinput.addEventListener('keypress', (e) => {
-    if (e.keyCode == 13) {
-      SearchInputChanged()
-    }
-  });
-
   let mod = window.OS == 'osx' ? 'Cmd' : 'Ctrl';
 
   RegisterKeyBindings(
@@ -101,22 +83,14 @@ function(UrlHelper, TabIframeDeck, RegisterKeyBindings) {
       urlinput.select();
     }],
     [mod,    'k',   () => {
-      searchinput.focus();
-      searchinput.select();
+      urlinput.focus();
+      urlinput.select();
     }]
   );
 
   function UrlInputChanged() {
     let text = urlinput.value;
     let url = PreprocessUrlInput(text);
-    let tabIframe = TabIframeDeck.getSelected();
-    tabIframe.setLocation(url);
-    tabIframe.focus();
-  }
-
-  function SearchInputChanged() {
-    let text = searchinput.value;
-    let url = urlTemplate.replace('{searchTerms}', encodeURIComponent(text));
     let tabIframe = TabIframeDeck.getSelected();
     tabIframe.setLocation(url);
     tabIframe.focus();
