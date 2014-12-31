@@ -160,6 +160,44 @@ define(['js/tabiframe', 'js/eventemitter', 'js/keybindings'],
       this.select(_tabIframeArray[newSelectIndex]);
     },
 
+    moveNext: function() {
+      let newSelectIndex = _selectIndex + 1;
+      if (newSelectIndex >= _tabIframeArray.length) {
+        return;
+      }
+
+      _tabIframeArray.splice(_selectIndex, 2,
+                             _tabIframeArray[newSelectIndex],
+                             _tabIframeArray[_selectIndex]);
+
+      _selectIndex = newSelectIndex;
+
+      let tabIframe = _tabIframeArray[_selectIndex];
+      let direction = 1;
+      this.emit('move', {tabIframe, direction});
+
+      this.saveSession();
+    },
+
+    movePrevious: function() {
+      let newSelectIndex = _selectIndex - 1;
+      if (newSelectIndex < 0) {
+        return;
+      }
+
+      _tabIframeArray.splice(newSelectIndex, 2,
+                             _tabIframeArray[_selectIndex],
+                             _tabIframeArray[newSelectIndex]);
+
+      _selectIndex = newSelectIndex;
+
+      let tabIframe = _tabIframeArray[_selectIndex];
+      let direction = -1;
+      this.emit('move', {tabIframe, direction});
+
+      this.saveSession();
+    },
+
     getSelected: function() {
       return _tabIframeArray[_selectIndex];
     },
@@ -196,7 +234,11 @@ define(['js/tabiframe', 'js/eventemitter', 'js/keybindings'],
       ['Ctrl Shift',    '+',          () => TabIframeDeck.getSelected().zoomIn()],
       ['Ctrl',          '=',          () => TabIframeDeck.getSelected().zoomIn()],
       ['Ctrl',          '-',          () => TabIframeDeck.getSelected().zoomOut()],
-      ['Ctrl',          '0',          () => TabIframeDeck.getSelected().resetZoom()]
+      ['Ctrl',          '0',          () => TabIframeDeck.getSelected().resetZoom()],
+      ['Ctrl',          'PageUp',     () => TabIframeDeck.selectPrevious()],
+      ['Ctrl',          'PageDown',   () => TabIframeDeck.selectNext()],
+      ['Ctrl Shift',    'PageUp',     () => TabIframeDeck.movePrevious()],
+      ['Ctrl Shift',    'PageDown',   () => TabIframeDeck.moveNext()]
     );
   }
 

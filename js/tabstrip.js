@@ -110,6 +110,16 @@ require(['js/tabiframedeck'], function(TabIframeDeck) {
       this.dom.classList.add('selected');
     },
 
+    move: function(direction) {
+      let dom = this.dom;
+
+      if (direction === -1 && dom.previousSibling) {
+        dom.parentNode.insertBefore(dom, dom.previousSibling);
+      } else if (direction === 1 && dom.nextSibling) {
+        dom.parentNode.insertBefore(dom, dom.nextSibling.nextSibling);
+      }
+    },
+
     unselect: function() {
       this.dom.classList.remove('selected');
     },
@@ -162,6 +172,13 @@ require(['js/tabiframedeck'], function(TabIframeDeck) {
       }
     },
   };
+
+  TabIframeDeck.on('move', (event, detail) => {
+    let tab = allTabs.get(detail.tabIframe);
+    if (tab) {
+      tab.move(detail.direction);
+    }
+  });
 
   TabIframeDeck.on('add', (event, detail) => {
     let tabIframe = detail.tabIframe;
