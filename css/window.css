@@ -1,0 +1,13 @@
+
+.window {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  width: 400px;
+  height: 600px;
+  z-index: 999;
+}
+
+.window[name="places"] {
+  box-shadow: 0 1px 3px black;
+}

@@ -61,17 +61,20 @@ function(UrlHelper, TabIframeDeck, RegisterKeyBindings) {
   })
 
   urlinput.addEventListener('blur', () => {
+    closeWindow(resultWindow);
+    resultWindow = null;
     urlbar.classList.remove('focus');
   })
 
   urlinput.addEventListener('keypress', (e) => {
     if (e.keyCode == 13) {
-      UrlInputChanged()
+      UrlInputValidated()
     }
   });
 
   urlinput.addEventListener('input', () => {
     TabIframeDeck.getSelected().userInput = urlinput.value;
+    UrlInputChanged();
   });
 
   let mod = window.OS == 'osx' ? 'Cmd' : 'Ctrl';
@@ -87,7 +90,26 @@ function(UrlHelper, TabIframeDeck, RegisterKeyBindings) {
     }]
   );
 
+  var resultWindow = null;
   function UrlInputChanged() {
+    let text = urlinput.value;
+    if (text === '') {
+      closeWindow(resultWindow);
+      resultWindow = null;
+      return;
+    }
+
+    if (resultWindow === null) {
+      resultWindow = openWindow('panels/places/main.html',
+                                'places',
+                                'left=0,top=66, height=100');
+    }
+  }
+
+  function UrlInputValidated() {
+    closeWindow(resultWindow);
+    resultWindow = null;
+
     let text = urlinput.value;
     let url = PreprocessUrlInput(text);
     let tabIframe = TabIframeDeck.getSelected();
