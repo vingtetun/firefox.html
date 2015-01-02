@@ -8,6 +8,18 @@
   z-index: 999;
 }
 
+.button {
+  width: 16px;
+  height: 16px;
+  background-color: transparent;
+  background-size: 64px 16px;;
+  margin: 0 -6px 0 3px;
+}
+
+.button.close {
+  background-image: url(images/shared/close.png);
+}
+
 [os="osx"] .tabstrip:first-of-type {
   padding-top: 9px;
 }

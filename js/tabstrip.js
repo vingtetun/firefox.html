@@ -28,6 +28,25 @@ require(['js/tabiframedeck'], function(TabIframeDeck) {
   // Tabs will be appended in there.
   let tabstrip = document.createElement('hbox');
   tabstrip.className = 'tabstrip toolbar';
+
+  let tabscontainer = document.createElement('hbox');
+  tabscontainer.setAttribute('flex', 1);
+  tabscontainer.className = 'tabscontainer';
+  tabstrip.appendChild(tabscontainer);
+
+  let windowcontrols = document.createElement('hbox');
+  windowcontrols.className = 'windowcontrols';
+  windowcontrols.setAttribute('align', 'center');
+  windowcontrols.setAttribute('valign', 'center');
+  tabstrip.appendChild(windowcontrols);
+
+  let close = document.createElement('button');
+  close.className = 'button close';
+  windowcontrols.appendChild(close);
+  close.addEventListener('click', function() {
+    window.close();
+  });
+
   let outervbox = document.querySelector('#outervbox');
   outervbox.insertBefore(tabstrip, outervbox.firstChild);
 
@@ -85,7 +104,7 @@ require(['js/tabiframedeck'], function(TabIframeDeck) {
     this._tabIframe = tabIframe;
     this._trackTabIframe();
 
-    tabstrip.appendChild(this._dom);
+    tabscontainer.appendChild(this._dom);
 
     this.updateDom();
   }
