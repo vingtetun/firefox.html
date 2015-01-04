@@ -14,7 +14,7 @@ html, body {
   /*
     Results are positioned just above the tab bar.
    */
-  top: var(--tab-bar-height);
+  top: 0;
   left: 0;
 
   /* 
