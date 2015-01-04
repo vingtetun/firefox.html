@@ -108,9 +108,5 @@ function createElement(value, title, type) {
   var results = document.getElementById('results');
   results.appendChild(element);
 
-  source.postMessage({
-    'height': results.childNodes.length * 24
-  }, '*');
-
   return element;
 }

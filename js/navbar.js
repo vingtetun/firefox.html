@@ -85,8 +85,6 @@ function(UrlHelper, TabIframeDeck, RegisterKeyBindings) {
   window.addEventListener('message', function(e) {
     if ('selected_value' in e.data) {
       urlinput.value = e.data.selected_value;
-    } else if ('height' in e.data) {
-      resultWindow.style.height = e.data.height + 'px';
     }
   });
 
@@ -119,8 +117,7 @@ function(UrlHelper, TabIframeDeck, RegisterKeyBindings) {
 
     if (resultWindow === null) {
       resultWindow = openWindow('panels/places/main.html',
-                                'places',
-                                'left=0,top=66,height=24');
+                                'places');
     }
 
     resultWindow.contentWindow.postMessage({

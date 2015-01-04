@@ -4,29 +4,58 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  font-size: 10px;
+  pointer-events: none;
 }
 
 .results {
-  padding: 0;
+  position: absolute;
+
+  /*
+    Results are positioned just above the tab bar.
+   */
+  top: var(--tab-bar-height);
+  left: 0;
+
+  /* 
+   The width of the results are all the screen, but the height
+   depends on the inner content.
+   */
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  /*
+   Ensure that results get pointer events. This is here because
+   the frame is contained into an iframe with mozpasspointerevents,
+   and the html, body of this iframe ignore pointer-events.
+   */
+  pointer-events: auto;
+
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0.1rem 0.3rem black;
+
+  padding: 0 10px 0 93px;
   margin: 0;
   list-style: none;
 }
 
 .result {
-  margin: 0;
-  margin-left: 93px;
-  margin-right: 10px;
-  height: 24px;
-  width: calc(100% - 93px - 10px);
+  width: 100%;
+  height: 2.4rem;
+  line-height: 2.4rem;
   overflow: hidden;
-  line-height: 24px;
-  font-size: 14px;
-  vertical-align: middle;
   box-sizing: border-box;
+
+  font-size: 1.4rem;
+  vertical-align: middle;
 
   background-repeat: no-repeat;
   background-size: 19px 19px;
   background-position: 6px center;
+
+  margin: 0;
   padding-left: 32px;
 }
 
@@ -51,6 +80,3 @@ html, body {
   color: grey;
 }
 
-.result > .bold {
-  font-weight: bold;
-}
