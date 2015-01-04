@@ -40,8 +40,39 @@ require(['js/tabiframedeck'], function(TabIframeDeck) {
   windowcontrols.setAttribute('valign', 'center');
   tabstrip.appendChild(windowcontrols);
 
+  let minimize = document.createElement('button');
+  minimize.className = 'controls minimize';
+  windowcontrols.appendChild(minimize);
+  minimize.addEventListener('click', function() {
+    window.minimize();
+  });
+
+  function isMaximized() {
+    return window.outerHeight === screen.availHeight &&
+           window.outerWidth === screen.availWidth;
+  }
+
+  let maximize = document.createElement('button');
+  if (isMaximized()) {
+    maximize.className = 'controls restore';
+  } else {
+    maximize.className = 'controls maximize';
+  }
+
+  maximize.addEventListener('click', function() {
+    if (isMaximized()) {
+      window.restore();
+      maximize.className = 'controls maximize';
+    } else {
+      window.maximize();
+      maximize.className = 'controls restore';
+    }
+  });
+
+  windowcontrols.appendChild(maximize);
+
   let close = document.createElement('button');
-  close.className = 'button close';
+  close.className = 'controls close';
   windowcontrols.appendChild(close);
   close.addEventListener('click', function() {
     window.close();

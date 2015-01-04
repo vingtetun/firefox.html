@@ -1,0 +1,56 @@
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.results {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.result {
+  margin: 0;
+  margin-left: 93px;
+  margin-right: 10px;
+  height: 24px;
+  width: calc(100% - 93px - 10px);
+  overflow: hidden;
+  line-height: 24px;
+  font-size: 14px;
+  vertical-align: middle;
+  box-sizing: border-box;
+
+  background-repeat: no-repeat;
+  background-size: 19px 19px;
+  background-position: 6px center;
+  padding-left: 32px;
+}
+
+.result[selected] {
+  background-color: lightblue;
+}
+
+.result.suggestion {
+  background-image: url(resources/search.png);;
+}
+
+.result.history {
+  color: green;
+  background-image: url(resources/http.png);;
+}
+
+.result.bookmark {
+  background-image: none;
+}
+
+.result > .title {
+  color: grey;
+}
+
+.result > .bold {
+  font-weight: bold;
+}

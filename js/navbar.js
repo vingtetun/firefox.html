@@ -70,6 +70,24 @@ function(UrlHelper, TabIframeDeck, RegisterKeyBindings) {
     if (e.keyCode == 13) {
       UrlInputValidated()
     }
+
+    if (resultWindow && (
+        e.keyCode === 9 ||
+        e.keyCode === 38 ||
+        e.keyCode === 40)) {
+      resultWindow.contentWindow.postMessage({
+        'keycode': e.keyCode
+      }, '*');
+      e.preventDefault();
+    }
+  });
+
+  window.addEventListener('message', function(e) {
+    if ('selected_value' in e.data) {
+      urlinput.value = e.data.selected_value;
+    } else if ('height' in e.data) {
+      resultWindow.style.height = e.data.height + 'px';
+    }
   });
 
   urlinput.addEventListener('input', () => {
@@ -102,8 +120,12 @@ function(UrlHelper, TabIframeDeck, RegisterKeyBindings) {
     if (resultWindow === null) {
       resultWindow = openWindow('panels/places/main.html',
                                 'places',
-                                'left=0,top=66, height=100');
+                                'left=0,top=66,height=24');
     }
+
+    resultWindow.contentWindow.postMessage({
+      'value': text
+    }, '*')
   }
 
   function UrlInputValidated() {

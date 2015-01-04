@@ -126,6 +126,11 @@ define(['js/eventemitter'], function(EventEmitter) {
     if (this._innerIframe) this._innerIframe.goBack();
   };
 
+  tabIframeProto.find = function(str, caseSensitive, backward) {
+    if (this._innerIframe) this._innerIframe.find(str, caseSensitive, backward);
+  };
+
+
   tabIframeProto.goForward = function() {
     if (this._innerIframe) this._innerIframe.goForward();
   };
@@ -218,6 +223,7 @@ define(['js/eventemitter'], function(EventEmitter) {
         break;
       case 'mozbrowsertitlechange':
         this._title = e.detail;
+        PlacesDatabase.updateTitle(this._location, this._title);
         break;
       case 'mozbrowserlocationchange':
         this.userInput = '';
