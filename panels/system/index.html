@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <link rel='stylesheet' href='/shared/style/layout.css'>
+    <link rel='stylesheet' href='style/navbar.css'>
+    <link rel='stylesheet' href='style/findbar.css'>
+    <link rel='stylesheet' href='style/window.css'>
+
+    <!-- Themes -->
+    <link rel='stylesheet' title='default' href='/shared/style/theme.css'>
+    <link rel='stylesheet alternate' title='dark' href='/shared/style/dark/dark.css'>
+
+    <script src='/shared/js/os.js' defer></script>
+    <script src='js/openWindow.js' defer></script>
+    <script src='js/contextmenu.js' defer></script>
+
+    <!-- Module handling -->
+    <!-- All further JS code is loaded from javascript -->
+    <script data-main='js/startup' src='/lib/require.js/require.js' defer></script>
+  </head>
+
+  <body>
+    <vbox id='outervbox' flex='1'> <!-- This is not XUL. It's html. -->
+      <hbox class='navbar toolbar' align='center'>
+        <button class='back-button' title='Go back one page'></button>
+        <button class='forward-button' title='Go forward one page'></button>
+        <button class='reload-button' title='Reload current page'></button>
+        <button class='stop-button' title='Stop loading this page'></button>
+        <hbox class='urlbar' flex='1' align='center'>
+          <div class='identity'></div>
+          <input placeholder='Search or enter address' class='urlinput' flex='1'>
+        </hbox>
+      </hbox>
+
+      <hbox id='outerhbox' flex='1'>
+        <box class='iframes' flex='1' align='stretch'></box>
+      </hbox>
+    </vbox>
+
+    <div class='findbar'>
+      <div class='search-input'>
+        <input class='search'></input>
+        <button class='button next'></button>
+        <button class='button previous'></button>
+      </div>
+      <button class='button close'></button>
+    </div>
+  </body>
+</html>
