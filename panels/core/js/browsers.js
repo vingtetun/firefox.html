@@ -20,9 +20,6 @@ function(EventEmitter, RegisterKeyBindings, Browser) {
 
   'use strict';
 
-  let _browserArray = [];
-  let _selectIndex = -1;
-  
   var _eventsToTrack = [
     'mozbrowseropenwindow',
     'mozbrowserloadstart',
@@ -71,6 +68,9 @@ function(EventEmitter, RegisterKeyBindings, Browser) {
     }
   });
 
+  let _browserMap = new Map();
+  let _selectedBrowser = null;
+
   const Browsers = {
     add: function(config={}) {
       let browser = document.createElement('browser-element');
@@ -79,7 +79,7 @@ function(EventEmitter, RegisterKeyBindings, Browser) {
 
       let parent = document.querySelector('.iframes');
       parent.appendChild(browser);
-      _browserArray.push(browser);
+      _browserMap.set(config.uuid, browser);
 
       this.emit('add', {browser: browser});
 
@@ -87,7 +87,7 @@ function(EventEmitter, RegisterKeyBindings, Browser) {
         browser.setLocation(config.url);
       }
 
-      if (config.select || _selectIndex < 0) {
+      if (config.select || !_selectedBrowser) {
         this.select(browser);
       } else {
         browser.hide();
@@ -96,55 +96,37 @@ function(EventEmitter, RegisterKeyBindings, Browser) {
       return browser;
     },
 
-    remove: function(browser) {
-      let index = _browserArray.indexOf(browser);
-      if (index < 0) {
+    remove: function(config) {
+      let browser = _browserMap.get(config.uuid);
+      if (!browser) {
         throw new Error('Unknown browser');
       }
 
-      if (_browserArray.length == 1) {
-        throw new Error('Deck has only one browser');
-      }
-
-      if (index == _selectIndex) {
-        let newSelectIndex;
-        if (index == _browserArray.length - 1) {
-          newSelectIndex = index - 1;
-        } else {
-          newSelectIndex = index + 1;
-        }
-        this.select(_browserArray[newSelectIndex]);
-      }
-
-      if (_selectIndex > index) {
-        _selectIndex--;
-      }
-
-      _browserArray.splice(index, 1);
+      _browserMap.delete(config.uuid);
       browser.remove();
 
       this.emit('remove', {browser});
     },
 
-    select: function(browser) {
-      let index = _browserArray.indexOf(browser);
-      if (index < 0) {
+    select: function(config) {
+      let browser = _browserMap.get(config.uuid);
+      if (!browser) {
         throw new Error('Unknown browser');
       }
 
-      if (index == _selectIndex) {
+      if (browser === _selectedBrowser) {
         // already selected
         return;
       }
 
       browser.willBeVisibleSoon();
 
-      let previouslySelectedBrowser = _browserArray[_selectIndex];
+      let previouslySelectedBrowser = _selectedBrowser;
       if (previouslySelectedBrowser) {
         this.emit('unselect', {browser: previouslySelectedBrowser});
       }
 
-      _selectIndex = index;
+      _selectedBrowser = browser;
 
       this.emit('select', {browser});
 
@@ -157,18 +139,12 @@ function(EventEmitter, RegisterKeyBindings, Browser) {
     },
 
     getSelected: function() {
-      return _browserArray[_selectIndex];
-    },
-
-    getCount: function() {
-      return _browserArray.length;
-    },
+      return _selectedBrowser;
+    }
   }
 
   Browsers[Symbol.iterator] = function*() {
-    for (let browser of _browserArray) {
-      yield browser;
-    }
+    return  _browserMap[Symbol.iterator]();
   }
 
   EventEmitter.decorate(Browsers);
