@@ -4,5 +4,6 @@ require.config({
 
 require([
   'navbar',
-  'findbar'
+  'findbar',
+  'shortcuts'
 ]);

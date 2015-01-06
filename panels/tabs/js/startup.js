@@ -3,5 +3,6 @@ require.config({
 });
 
 require([
-  'tabstrip'
+  'tabstrip',
+  'shortcuts'
 ]);
