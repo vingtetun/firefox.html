@@ -32,7 +32,6 @@ PlacesDatabase.stop = function() {
 
 PlacesDatabase.restore = function() {
   asyncStorage.getItem('places_history', (function(data) {
-    dump(JSON.stringify(data));
     this.db = data || {};
   }).bind(this));
 };
@@ -99,3 +98,5 @@ PlacesDatabase.getMatches = function(value) {
 
 
 PlacesDatabase.start();
+
+
