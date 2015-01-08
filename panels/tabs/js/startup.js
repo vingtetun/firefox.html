@@ -4,5 +4,7 @@ require.config({
 
 require([
   'tabstrip',
-  'shortcuts'
+  'shortcuts',
+  'nofocus'
 ]);
+
