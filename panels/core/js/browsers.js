@@ -129,7 +129,7 @@ function(EventEmitter, Browser) {
 
       this.emit('select', {browser});
 
-      window.mozRequestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
         if (previouslySelectedBrowser) {
           previouslySelectedBrowser.hide();
         }
