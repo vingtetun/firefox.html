@@ -16,7 +16,7 @@ function(EventEmitter, UUID) {
 
   'use strict';
 
-  const HOMEPAGE = 'https://github.com/paulrouget/firefox.html/commits/master';
+  const HOMEPAGE = 'about:home';
 
   let _tabsArray = [];
   let _selectIndex = -1;
@@ -26,10 +26,14 @@ function(EventEmitter, UUID) {
     // This is a poor man session storage. Just a temporary
     // thing (localStorage is bad).
     saveSession: function() {
+      /*
       window.localStorage.session = JSON.stringify(_tabsArray);
+      */
     },
 
     restoreSession: function() {
+      Tabs.add({url: HOMEPAGE});
+      /*
       let session = [];
       try {
         session = JSON.parse(window.localStorage.session);
@@ -42,6 +46,7 @@ function(EventEmitter, UUID) {
       } else {
         Tabs.add({url: HOMEPAGE});
       }
+      */
     },
 
     add: function(options={}) {
