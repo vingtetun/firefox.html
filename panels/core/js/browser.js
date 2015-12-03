@@ -63,6 +63,8 @@ define(['/shared/js/eventemitter.js'], function(EventEmitter) {
     let iframe = document.createElement('iframe');
     iframe.setAttribute('mozbrowser', 'true');
     iframe.setAttribute('flex', '1');
+    // XXX Remote the remote attribute for about:addons for example.
+    // vn: I need to fix that so it happens dynamically...
     iframe.setAttribute('remote', 'true');
     iframe.setAttribute('mozallowfullscreen', 'true');
     this.appendChild(iframe);
