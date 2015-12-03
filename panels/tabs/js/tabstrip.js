@@ -9,8 +9,12 @@
 
 
 require(['tabs'], function(Tabs) {
-
   'use strict';
+
+  function isMaximized() {
+    return window.outerHeight === screen.availHeight &&
+           window.outerWidth === screen.availWidth;
+  }
 
   let link = document.createElement('link');
   link.rel = 'stylesheet';
@@ -35,43 +39,45 @@ require(['tabs'], function(Tabs) {
   windowcontrols.setAttribute('valign', 'center');
   tabstrip.appendChild(windowcontrols);
 
-  let minimize = document.createElement('button');
-  minimize.className = 'controls minimize';
-  windowcontrols.appendChild(minimize);
-  minimize.addEventListener('click', function() {
-    window.minimize();
-  });
-
-  function isMaximized() {
-    return window.outerHeight === screen.availHeight &&
-           window.outerWidth === screen.availWidth;
+  {
+    let element = document.createElement('button');
+    element.className = 'controls minimize';
+    windowcontrols.appendChild(element);
+    element.addEventListener('click', function() {
+      window.minimize();
+    });
   }
 
-  let maximize = document.createElement('button');
-  if (isMaximized()) {
-    maximize.className = 'controls restore';
-  } else {
-    maximize.className = 'controls maximize';
-  }
 
-  maximize.addEventListener('click', function() {
+  {
+    let element = document.createElement('button');
     if (isMaximized()) {
-      window.restore();
-      maximize.className = 'controls maximize';
+      element.className = 'controls restore';
     } else {
-      window.maximize();
-      maximize.className = 'controls restore';
+      element.className = 'controls maximize';
     }
-  });
 
-  windowcontrols.appendChild(maximize);
+    element.addEventListener('click', function() {
+      if (isMaximized()) {
+        window.restore();
+        element.className = 'controls maximize';
+      } else {
+        window.maximize();
+        element.className = 'controls restore';
+      }
+    });
 
-  let close = document.createElement('button');
-  close.className = 'controls close';
-  windowcontrols.appendChild(close);
-  close.addEventListener('click', function() {
-    window.close();
-  });
+    windowcontrols.appendChild(element);
+  }
+
+  {
+    let element = document.createElement('button');
+    element.className = 'controls close';
+    windowcontrols.appendChild(element);
+    element.addEventListener('click', function() {
+      window.close();
+    });
+  }
 
   let outervbox = document.querySelector('#outervbox');
   outervbox.insertBefore(tabstrip, outervbox.firstChild);
