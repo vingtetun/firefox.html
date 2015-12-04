@@ -231,13 +231,15 @@ function(EventEmitter, UUID) {
     });
 
     var config = _tabsArray[index];
-    config.title = e.data.title;
-    config.url = e.data.url;
-    config.favicon = e.data.favicon;
-    Tabs.saveSession();
+    if (config) {
+      config.title = e.data.title;
+      config.url = e.data.url;
+      config.favicon = e.data.favicon;
+      Tabs.saveSession();
 
-    config.loading = e.data.loading;
-    Tabs.emit('update', config);
+      config.loading = e.data.loading;
+      Tabs.emit('update', config);
+    }
   });
   
   Tabs.restoreSession();

@@ -21,11 +21,17 @@ define(['/shared/js/eventemitter.js'], function(EventEmitter) {
     'mozbrowserusernameandpasswordrequired'
   ];
 
+  // Non-Remote iframes may steal the focus :/
+  const INPROCESS_URLS = [
+    'about:preferences',
+    'about:addons'
+  ];
+
   let browserProto = Object.create(HTMLElement.prototype);
 
   browserProto.setLocation = function(url) {
     if (!this._innerIframe) {
-      this._createInnerIframe();
+      this._createInnerIframe(INPROCESS_URLS.indexOf(url) == -1);
     }
 
     this._innerIframe.src = url;
@@ -59,13 +65,11 @@ define(['/shared/js/eventemitter.js'], function(EventEmitter) {
     EventEmitter.decorate(this);
   };
 
-  browserProto._createInnerIframe = function() {
+  browserProto._createInnerIframe = function(remote) {
     let iframe = document.createElement('iframe');
     iframe.setAttribute('mozbrowser', 'true');
     iframe.setAttribute('flex', '1');
-    // XXX Remote the remote attribute for about:addons for example.
-    // vn: I need to fix that so it happens dynamically...
-    iframe.setAttribute('remote', 'true');
+    iframe.setAttribute('remote', remote);
     iframe.setAttribute('mozallowfullscreen', 'true');
     this.appendChild(iframe);
     for (let eventName of IFRAME_EVENTS) {
