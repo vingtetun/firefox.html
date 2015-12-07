@@ -23,10 +23,21 @@ define(['/shared/js/eventemitter.js'], function(EventEmitter) {
 
   // Non-Remote iframes may steal the focus :/
   const INPROCESS_URLS = [
-    'about:preferences',
-    'about:addons',
-    'about:debugging',
-    'about:config'
+      'about:addons',
+    , 'about:config'
+    , 'about:cache'
+    , 'about:crashes',
+    , 'about:debugging'
+    , 'about:downloads'
+    , 'about:networking'
+    , 'about:newtab'
+    , 'about:performance'
+    , 'about:plugins'
+    , 'about:preferences'
+    , 'about:sharing'
+    , 'about:support'
+    , 'about:telemetry'
+    , 'about:webrtc'
   ];
 
   let browserProto = Object.create(HTMLElement.prototype);
