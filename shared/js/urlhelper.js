@@ -43,13 +43,15 @@ define(function() {
       var case3Reg = /^(data\:)/;
       // for cases, about:uri
       var case4Reg = /^(about\:)/;
+      // for cases, view-source:uri
+      var case5Reg = /^(view-source\:)/;
       // for cases, only scheme but no domain provided
-      var case5Reg = /^\w+\:\/*$/;
+      var case6Reg = /^\w+\:\/*$/;
       var str = input.trim();
-      if (case1Reg.test(str) || !case2Reg.test(str) || case5Reg.test(str)) {
+      if (case1Reg.test(str) || !case2Reg.test(str) || case6Reg.test(str)) {
         return true;
       }
-      if (case3Reg.test(str) || case4Reg.test(str)) {
+      if (case3Reg.test(str) || case4Reg.test(str) || case5Reg.test(str)) {
         return false;
       }
       // require basic scheme before form validation
