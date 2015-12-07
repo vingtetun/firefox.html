@@ -29,6 +29,7 @@ define(['/shared/js/eventemitter.js'], function(EventEmitter) {
     , 'about:crashes',
     , 'about:debugging'
     , 'about:downloads'
+    , 'about:healthreport'
     , 'about:networking'
     , 'about:newtab'
     , 'about:performance'
