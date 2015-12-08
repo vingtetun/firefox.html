@@ -10,7 +10,8 @@ require([
 
   RegisterKeyBindings(
     ['',              'Esc',        () => Browsers.getSelected().stop()],
-    ['',              'F5',         () => Browsers.getSelected().reload()]
+    ['',              'F5',         () => Browsers.getSelected().reload()],
+    ['Ctrl',          'i',          () => Browsers.getSelected().toggleDevtools()]
   );
 
   if (window.OS == 'linux' || window.OS == 'windows') {

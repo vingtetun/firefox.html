@@ -39,6 +39,7 @@ define(['/shared/js/eventemitter.js'], function(EventEmitter) {
     , 'about:support'
     , 'about:telemetry'
     , 'about:webrtc'
+    , 'about:devtools-panel'
   ];
 
   let browserProto = Object.create(HTMLElement.prototype);
@@ -146,6 +147,21 @@ define(['/shared/js/eventemitter.js'], function(EventEmitter) {
 
   browserProto.goForward = function() {
     if (this._innerIframe) this._innerIframe.goForward();
+  };
+
+  browserProto.toggleDevtools = function() {
+    if (this.tools) {
+      this.tools.remove();
+      this.tools = null;
+      return;
+    }
+    let tools = this.tools = document.createElement('iframe');
+    tools.setAttribute('mozbrowser', 'true');
+    tools.setAttribute('flex', '1');
+    tools.setAttribute('src', 'about:devtools-panel');
+    tools.setAttribute('style', 'visibility:hidden');
+    tools.target = this._innerIframe;
+    this.appendChild(tools);
   };
 
   browserProto._clearBrowserData = function() {

@@ -50,7 +50,7 @@ hbox {
   flex-flow: row;
 }
 
-vbox {
+browser-element, vbox {
   flex-flow: column;
 }
 
