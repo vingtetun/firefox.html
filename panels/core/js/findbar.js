@@ -19,12 +19,12 @@ function(RegisterKeyBindings, Browsers) {
 
   let next = placeholder.querySelector('button.next');
   next.addEventListener('click', (e) => {
-    Browsers.getSelected().find(urlinput.value, false, false);
+    Browsers.getSelected().findNext('forward');
   });
 
   let previous = placeholder.querySelector('button.previous');
   previous.addEventListener('click', (e) => {
-    Browsers.getSelected().find(urlinput.value, false, true);
+    Browsers.getSelected().findNext('backward');
   });
 
   let close = placeholder.querySelector('button.close');
@@ -39,7 +39,7 @@ function(RegisterKeyBindings, Browsers) {
   }
 
   function SearchInputValidated() {
-    Browsers.getSelected().find(urlinput.value, false, false);
+    Browsers.getSelected().findAll(urlinput.value, 'case-insensitive');
   }
 
   let mod = window.OS == 'osx' ? 'Cmd' : 'Ctrl';

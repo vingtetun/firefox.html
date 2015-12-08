@@ -140,8 +140,16 @@ define(['/shared/js/eventemitter.js'], function(EventEmitter) {
     if (this._innerIframe) this._innerIframe.goBack();
   };
 
-  browserProto.find = function(str, caseSensitive, backward) {
-    if (this._innerIframe) this._innerIframe.find(str, caseSensitive, backward);
+  browserProto.findAll = function(str, caseSensitive) {
+    if (this._innerIframe) {
+      this._innerIframe.findAll(str, caseSensitive);
+    }
+  };
+
+  browserProto.findNext = function(str, direction) {
+    if (this._innerIframe) {
+      this._innerIframe.findNext(str, direction);
+    }
   };
 
 
