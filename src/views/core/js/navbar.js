@@ -90,7 +90,7 @@ function(UrlHelper, RegisterKeyBindings, Browsers) {
     }
 
     if (resultWindow === null) {
-      resultWindow = openWindow('/src/places/index.html',
+      resultWindow = openWindow('/src/views/places/index.html',
                                 'places');
     }
 
