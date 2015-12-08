@@ -8,7 +8,7 @@ require([
 ) {
   RegisterKeyBindings(
     // Debug Mode
-    ['Ctrl',          'z',          () => document.location.reload()],
+    ['Ctrl',          'z',          () => document.location.reload(true)],
 
     ['Ctrl',          'Tab',        () => Tabs.selectNext()],
     ['Ctrl Shift',    'code:9',     () => Tabs.selectPrevious()]
