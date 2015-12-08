@@ -14,8 +14,7 @@ require(['tabs'], function(Tabs) {
   let link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = 'style/tabstrip.css';
-  let defaultStyleSheet = document.querySelector('link[title=default]');
-  document.head.insertBefore(link, defaultStyleSheet.nextSibling);
+  document.head.appendChild(link);
 
   // Build the container. A hbox on top of the deck.
   // <hbox class='tabstrip'></hbox>
