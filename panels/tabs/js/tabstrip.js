@@ -11,11 +11,6 @@
 require(['tabs'], function(Tabs) {
   'use strict';
 
-  function isMaximized() {
-    return window.outerHeight === screen.availHeight &&
-           window.outerWidth === screen.availWidth;
-  }
-
   let link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = 'style/tabstrip.css';
@@ -32,52 +27,6 @@ require(['tabs'], function(Tabs) {
   tabscontainer.setAttribute('flex', 1);
   tabscontainer.className = 'tabscontainer';
   tabstrip.appendChild(tabscontainer);
-
-  let windowcontrols = document.createElement('hbox');
-  windowcontrols.className = 'windowcontrols';
-  windowcontrols.setAttribute('align', 'center');
-  windowcontrols.setAttribute('valign', 'center');
-  tabstrip.appendChild(windowcontrols);
-
-  {
-    let element = document.createElement('button');
-    element.className = 'controls minimize';
-    windowcontrols.appendChild(element);
-    element.addEventListener('click', function() {
-      window.minimize();
-    });
-  }
-
-
-  {
-    let element = document.createElement('button');
-    if (isMaximized()) {
-      element.className = 'controls restore';
-    } else {
-      element.className = 'controls maximize';
-    }
-
-    element.addEventListener('click', function() {
-      if (isMaximized()) {
-        window.restore();
-        element.className = 'controls maximize';
-      } else {
-        window.maximize();
-        element.className = 'controls restore';
-      }
-    });
-
-    windowcontrols.appendChild(element);
-  }
-
-  {
-    let element = document.createElement('button');
-    element.className = 'controls close';
-    windowcontrols.appendChild(element);
-    element.addEventListener('click', function() {
-      window.close();
-    });
-  }
 
   let outervbox = document.querySelector('#outervbox');
   outervbox.insertBefore(tabstrip, outervbox.firstChild);

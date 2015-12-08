@@ -4,6 +4,7 @@
   margin-bottom: calc(-1 * var(--hwd-pixel));
   z-index: 999;
   overflow: hidden;
+  background-color: lightgray;
 }
 
 .button {
@@ -11,69 +12,6 @@
   height: 16px;
   background-color: transparent;
   background-size: 64px 16px;
-}
-
-.windowcontrols {
-  margin-top: -4px;
-  margin-right: 2px;
-}
-
-.controls {
-  width: 24px;
-  height: 18px;
-  margin-right: 2px;
-}
-
-.controls.close {
-  background-image: url(resources/linux/close.png);
-}
-
-.controls.close:hover {
-  background-image: url(resources/linux/close_hover.png);
-}
-
-.controls.close:hover:active {
-  background-image: url(resources/linux/close_pressed.png);
-}
-
-.controls.maximize {
-  background-image: url(resources/linux/maximize.png);
-}
-
-.controls.maximize:hover {
-  background-image: url(resources/linux/maximize_hover.png);
-}
-
-.controls.maximize:hover:active {
-  background-image: url(resources/linux/maximize_pressed.png);
-}
-
-.controls.restore {
-  background-image: url(resources/linux/restore.png);
-}
-
-.controls.restore:hover {
-  background-image: url(resources/linux/restore_hover.png);
-}
-
-.controls.restore:hover:active {
-  background-image: url(resources/linux/restore_pressed.png);
-}
-
-.controls.minimize {
-  background-image: url(resources/linux/minimize.png);
-}
-
-.controls.minimize:hover {
-  background-image: url(resources/linux/minimize_hover.png);
-}
-
-.controls.minimize:hover:active {
-  background-image: url(resources/linux/minimize_pressed.png);
-}
-
-[os="osx"] .tabstrip:first-of-type {
-  padding-top: 9px;
 }
 
 .tab {
@@ -91,7 +29,7 @@
   background-clip: border-box;
 }
 
-[os="linux"] .dummy-tab-curve {
+.dummy-tab-curve {
   /* These values are used in curvedTabs.js */
   --curve-border: transparent;
   --curve-gradient-start: #FBFBFB;
@@ -101,28 +39,8 @@
   --curve-hover-gradient-end: rgba(255,255,255,0.4);
 }
 
-[os="windows"] .dummy-tab-curve {
-  /* These values are used in curvedTabs.js */
-  --curve-border: transparent;
-  --curve-gradient-start: #FBFBFB;
-  --curve-gradient-end: #EDEDED;
-  --curve-hover-border: #AAA;
-  --curve-hover-gradient-start: rgba(255, 255, 255, 0.4);
-  --curve-hover-gradient-end: rgba(255, 255, 255, 0.4);
-}
-
-[os="osx"] .dummy-tab-curve {
-  /* These values are used in curvedTabs.js */
-  --curve-border: #AAA;
-  --curve-gradient-start: #FBFBFB;
-  --curve-gradient-end: #F1F1F1;
-  --curve-hover-border: #AAA;
-  --curve-hover-gradient-start: transparent;
-  --curve-hover-gradient-end: transparent;
-}
-
-[os="linux"] .tab {
-  color: -moz-menubartext;
+.tab {
+  color: black;
 }
 
 @media (min-resolution: 2dppx) {
