@@ -6,7 +6,7 @@ window.addEventListener('mozbrowsercontextmenu', function(e) {
     dump(p + ': ' + e.detail.rect[p] + '\n');
   }
 
-  var win = openWindow('/panels/contextmenu/index.html',
+  var win = openWindow('/src/contextmenu/index.html',
                        'contextmenu');
 
   var data = e.detail;

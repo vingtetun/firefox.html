@@ -9,7 +9,7 @@
 
 define(
   [
-    '/shared/js/eventemitter.js',
+    '/src/shared/js/eventemitter.js',
     'uuid'
   ],
 function(EventEmitter, UUID) {

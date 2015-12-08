@@ -12,7 +12,7 @@
 
 define(
   [
-    '/shared/js/eventemitter.js',
+    '/src/shared/js/eventemitter.js',
     'browser',
   ],
 function(EventEmitter, Browser) {

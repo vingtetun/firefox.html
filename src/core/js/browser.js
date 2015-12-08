@@ -6,7 +6,7 @@
  *
  */
 
-define(['/shared/js/eventemitter.js'], function(EventEmitter) {
+define(['/src/shared/js/eventemitter.js'], function(EventEmitter) {
 
   'use strict';
 

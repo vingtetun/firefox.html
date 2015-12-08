@@ -1,7 +1,7 @@
 
 
 require([
-  '/shared/js/keybindings.js',
+  '/src/shared/js/keybindings.js',
   'browsers'
 ], function(
   RegisterKeyBindings,

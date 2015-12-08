@@ -8,8 +8,8 @@
 
 require(
   [
-    '/shared/js/urlhelper.js',
-    '/shared/js/keybindings.js',
+    '/src/shared/js/urlhelper.js',
+    '/src/shared/js/keybindings.js',
     'browsers'
 ],
 function(UrlHelper, RegisterKeyBindings, Browsers) {
@@ -90,7 +90,7 @@ function(UrlHelper, RegisterKeyBindings, Browsers) {
     }
 
     if (resultWindow === null) {
-      resultWindow = openWindow('/panels/places/index.html',
+      resultWindow = openWindow('/src/places/index.html',
                                 'places');
     }
 

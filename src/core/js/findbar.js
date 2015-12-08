@@ -1,5 +1,5 @@
 
-require(['/shared/js/keybindings.js', 'browsers'],
+require(['/src/shared/js/keybindings.js', 'browsers'],
 function(RegisterKeyBindings, Browsers) {
   
   'use strict';
