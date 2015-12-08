@@ -152,6 +152,12 @@ define(['/shared/js/eventemitter.js'], function(EventEmitter) {
     }
   };
 
+  browserProto.clearMatch = function() {
+    if (this._innerIframe) {
+      this._innerIframe.clearMatch();
+    }
+  };
+
 
   browserProto.goForward = function() {
     if (this._innerIframe) this._innerIframe.goForward();

@@ -36,6 +36,7 @@ function(RegisterKeyBindings, Browsers) {
     placeholder.classList.remove('visible');
     urlinput.value = '';
     urlinput.blur();
+    Browsers.getSelected().clearMatch();
   }
 
   function SearchInputValidated() {
