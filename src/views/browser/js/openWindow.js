@@ -1,7 +1,12 @@
 
 function calculateAnchorRect(target) {
-  var rect = target.getBoundingClientRect();
-  return rect;
+  var viewport = {
+    width: window.innerWidth,
+    height: window.innerHeight
+  };
+
+  var rootRect = target.getBoundingClientRect();
+  return rootRect;
 }
 
 function openPopup(url, name, features) {
@@ -12,8 +17,8 @@ function openPopup(url, name, features) {
     }
 
     var anchorRect = calculateAnchorRect(features.anchor);
-    features.rect.left = anchorRect.left;
-    features.rect.top = (anchorRect.top + anchorRect.height);
+    features.rect.left = anchorRect.x;
+    features.rect.top = (anchorRect.y + anchorRect.height);
   }
 
   var popup = openWindow(url, name, features);
@@ -51,7 +56,7 @@ function openWindow(url, name, features) {
     win.setAttribute('ignoreuserfocus', 'true');
     win.setAttribute('transparent', 'true');
 
-    if (features.rect) {
+    if (features && features.rect) {
       const DEFAULT_RECT = {
         left: 0,
         top: 0,
@@ -71,6 +76,7 @@ function openWindow(url, name, features) {
   }
 
   win.src = url;
+  container.contentWindow = win.contentWindow;
   return container;
 }
 
