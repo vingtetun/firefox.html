@@ -26,14 +26,10 @@ function(EventEmitter, UUID) {
     // This is a poor man session storage. Just a temporary
     // thing (localStorage is bad).
     saveSession: function() {
-      /*
       window.localStorage.session = JSON.stringify(_tabsArray);
-      */
     },
 
     restoreSession: function() {
-      Tabs.add({url: HOMEPAGE});
-      /*
       let session = [];
       try {
         session = JSON.parse(window.localStorage.session);
@@ -46,7 +42,6 @@ function(EventEmitter, UUID) {
       } else {
         Tabs.add({url: HOMEPAGE});
       }
-      */
     },
 
     add: function(options={}) {
@@ -212,7 +207,7 @@ function(EventEmitter, UUID) {
         uuid: data.uuid,
         url: data.url
       }, '*');
-    }, 100);
+    }, 200);
   }
 
   window.addEventListener('message', function(e) {

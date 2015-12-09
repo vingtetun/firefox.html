@@ -11,24 +11,8 @@
 require(['tabs'], function(Tabs) {
   'use strict';
 
-  let link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = 'style/tabstrip.css';
-  document.head.appendChild(link);
-
-  // Build the container. A hbox on top of the deck.
-  // <hbox class='tabstrip'></hbox>
   // Tabs will be appended in there.
-  let tabstrip = document.createElement('hbox');
-  tabstrip.className = 'tabstrip toolbar';
-
-  let tabscontainer = document.createElement('hbox');
-  tabscontainer.setAttribute('flex', 1);
-  tabscontainer.className = 'tabscontainer';
-  tabstrip.appendChild(tabscontainer);
-
-  let outervbox = document.querySelector('#outervbox');
-  outervbox.insertBefore(tabstrip, outervbox.firstChild);
+  let tabscontainer = document.getElementById('tabs');
 
   // Where will store the tab objects, with their linked
   // <tab-iframe>
@@ -195,10 +179,10 @@ require(['tabs'], function(Tabs) {
 
   /* Build curved tabs */
 
-  link.addEventListener('load', onDocumentLoaded);
+  addEventListener('load', onDocumentLoaded);
 
   function onDocumentLoaded() {
-    link.removeEventListener('load', onDocumentLoaded);
+    removeEventListener('load', onDocumentLoaded);
     BuildCurvedTabs();
   }
 

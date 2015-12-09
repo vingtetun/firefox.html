@@ -4,21 +4,28 @@
     <meta charset='utf-8'>
 
     <link rel='stylesheet' href='/src/shared/style/layout.css'>
+    <link rel='stylesheet' href='style/tabstrip.css'>
     <link rel='stylesheet' href='style/window.css'>
 
     <script src='/src/shared/js/os.js' defer></script>
 
     <!-- Module handling -->
     <!-- All further JS code is loaded from javascript -->
-    <script data-main='js/startup' src='/src/shared/js/lib/require.js' defer></script>
+    <script defer data-main='js/startup' src='/src/shared/js/lib/require.js'></script>
   </head>
 
   <body>
     <vbox id='outervbox' flex='1'> <!-- This is not XUL. It's html. -->
+      <hbox class='tabstrip toolbar'>
+        <hbox flex='1' id="tabs" class='tabscontainer'>
+        </hbox>
+        <div hidden='true' class='dummy-tab-curve'></div>
+      </hbox>
+
       <hbox id='outerhbox' flex='1'>
         <iframe id='system' class='system' src='/src/views/browser/index.html' flex='1'></iframe>
       </hbox>
+
     </vbox>
-    <div hidden='true' class='dummy-tab-curve'></div>
   </body>
 </html>
