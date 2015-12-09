@@ -305,5 +305,17 @@ define(['/src/shared/js/eventemitter.js'], function(EventEmitter) {
   };
 
   let Browser = document.registerElement('browser-element', {prototype: browserProto});
+
+  /*
+  openPopup('http://google.fr', 'foo', {
+    anchor: document.querySelector('.reload-button'),
+    rect: {
+      top: 100,
+      left: 40,
+      width: 400,
+      height: 200
+    }
+  });
+  */
   return Browser;
 });

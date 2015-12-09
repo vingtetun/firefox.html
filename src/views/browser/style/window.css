@@ -7,4 +7,42 @@
   height: calc(100% - 39px);
   z-index: 1002;
   pointer-events: none;
+
+  display: block !important;
 }
+
+.window > iframe {
+  position: absolute;
+  top: 0;
+  height: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+
+  border-top: 2px solid -moz-Dialog;
+  border-right: 2px solid -moz-Dialog;
+  border-left: 1px solid -moz-Dialog;
+  border-bottom: 1px solid -moz-Dialog;
+}
+
+
+.window.popup {
+  background-color: transparent;
+}
+
+.window.popup > iframe {
+  top: 10px;
+}
+
+.window.popup > .arrow {
+  background-image: url(images/panelarrow-vertical.svg);
+  background-repeat: no-repeat;
+
+  position: absolute;
+  top: 0;
+  left: 3px;
+  width: 21px;
+  height: 10px;
+  z-index: 1;
+}
+
