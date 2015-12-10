@@ -5,5 +5,6 @@ require.config({
 require([
   'navbar',
   'findbar',
-  'shortcuts'
+  'shortcuts',
+  'webextensions/browserAction'
 ]);

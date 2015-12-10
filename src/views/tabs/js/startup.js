@@ -4,6 +4,7 @@ require.config({
 
 require([
   'tabstrip',
-  'shortcuts'
+  'shortcuts',
+  'webextensions/tabs'
 ]);
 
