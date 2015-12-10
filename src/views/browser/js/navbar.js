@@ -11,7 +11,7 @@ require(
     '/src/shared/js/urlhelper.js',
     '/src/shared/js/keybindings.js',
     'browsers',
-    'popup'
+    'popuphelper'
 ],
 function(UrlHelper, RegisterKeyBindings, Browsers, PopupHelper) {
 

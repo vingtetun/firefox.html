@@ -9,7 +9,7 @@
 define(
   [
     '/src/shared/js/eventemitter.js',
-    'popup'
+    'popuphelper'
   ], function(EventEmitter, PopupHelper) {
 
   'use strict';
