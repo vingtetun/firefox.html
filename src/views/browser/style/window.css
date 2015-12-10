@@ -1,14 +1,12 @@
 
 .window {
   position: absolute;
-  top: 39px;
+  top: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - 39px);
+  height: 100%;
   z-index: 1002;
   pointer-events: none;
-
-  display: block !important;
 }
 
 .window > iframe {
@@ -18,11 +16,6 @@
   width: 100%;
   height: 100%;
   z-index: 0;
-
-  border-top: 2px solid -moz-Dialog;
-  border-right: 2px solid -moz-Dialog;
-  border-left: 1px solid -moz-Dialog;
-  border-bottom: 1px solid -moz-Dialog;
 }
 
 
@@ -32,6 +25,11 @@
 
 .window.popup > iframe {
   top: 10px;
+
+  border-top: 2px solid -moz-Dialog;
+  border-right: 2px solid -moz-Dialog;
+  border-left: 1px solid -moz-Dialog;
+  border-bottom: 1px solid -moz-Dialog;
 }
 
 .window.popup > .arrow {

@@ -6,7 +6,11 @@
  *
  */
 
-define(['/src/shared/js/eventemitter.js'], function(EventEmitter) {
+define(
+  [
+    '/src/shared/js/eventemitter.js',
+    'popup'
+  ], function(EventEmitter, PopupHelper) {
 
   'use strict';
 
@@ -18,7 +22,7 @@ define(['/src/shared/js/eventemitter.js'], function(EventEmitter) {
     'mozbrowsererror', 'mozbrowsericonchange', 'mozbrowserloadend',
     'mozbrowserloadstart', 'mozbrowserlocationchange', 'mozbrowseropenwindow',
     'mozbrowsersecuritychange', 'mozbrowsershowmodalprompt', 'mozbrowsertitlechange',
-    'mozbrowserusernameandpasswordrequired'
+    'mozbrowserusernameandpasswordrequired', 'mozbrowsercontextmenu'
   ];
 
   // Non-Remote iframes may steal the focus :/
@@ -296,6 +300,18 @@ define(['/src/shared/js/eventemitter.js'], function(EventEmitter) {
         this._securityState = e.detail.state;
         this._securityExtendedValidation = e.detail.extendedValidation;
         break;
+      case 'mozbrowsercontextmenu':
+        PopupHelper.open({
+          url: '/src/views/contextmenu/index.html',
+          name: 'contextmenu' + Math.random(),
+          type: PopupHelper.contextMenu,
+          rect: {
+            x: e.detail.clientX,
+            y: e.detail.clientY + 39
+          },
+          data: e.detail.data
+        });
+        break;
       default:
         somethingChanged = false;
     }
@@ -307,15 +323,12 @@ define(['/src/shared/js/eventemitter.js'], function(EventEmitter) {
   let Browser = document.registerElement('browser-element', {prototype: browserProto});
 
   /*
-  openPopup('http://google.fr', 'foo', {
-    anchor: document.querySelector('.reload-button'),
-    rect: {
-      top: 100,
-      left: 40,
-      width: 400,
-      height: 200
-    }
+  PopupHelper.open({
+    url: 'http://google.fr',
+    type: PopupHelper.Popup,
+    anchor: document.querySelector('.reload-button')
   });
   */
+
   return Browser;
 });

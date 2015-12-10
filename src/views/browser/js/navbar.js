@@ -10,9 +10,10 @@ require(
   [
     '/src/shared/js/urlhelper.js',
     '/src/shared/js/keybindings.js',
-    'browsers'
+    'browsers',
+    'popup'
 ],
-function(UrlHelper, RegisterKeyBindings, Browsers) {
+function(UrlHelper, RegisterKeyBindings, Browsers, PopupHelper) {
 
   'use strict';
 
@@ -35,8 +36,11 @@ function(UrlHelper, RegisterKeyBindings, Browsers) {
   })
 
   urlinput.addEventListener('blur', () => {
-    closeWindow(resultWindow);
-    resultWindow = null;
+    if (resultWindow) {
+      PopupHelper.close(resultWindow);
+      resultWindow = null;
+    }
+
     urlbar.classList.remove('focus');
   })
 
@@ -84,14 +88,21 @@ function(UrlHelper, RegisterKeyBindings, Browsers) {
   function UrlInputChanged() {
     let text = urlinput.value;
     if (text === '') {
-      closeWindow(resultWindow);
-      resultWindow = null;
+      if (resultWindow) {
+        PopupHelper.close(resultWindow);
+        resultWindow = null;
+      }
       return;
     }
 
     if (resultWindow === null) {
-      resultWindow = openWindow('/src/views/places/index.html',
-                                'places');
+      resultWindow = PopupHelper.open({
+        url: '/src/views/places/index.html',
+        name: 'places',
+        rect: {
+          y: 39
+        }
+      });
     }
 
     resultWindow.contentWindow.postMessage({
@@ -100,8 +111,10 @@ function(UrlHelper, RegisterKeyBindings, Browsers) {
   }
 
   function UrlInputValidated() {
-    closeWindow(resultWindow);
-    resultWindow = null;
+    if (resultWindow) {
+      PopupHelper.close(resultWindow);
+      resultWindow = null;
+    }
 
     let text = urlinput.value;
     let url = PreprocessUrlInput(text);
