@@ -100,7 +100,7 @@ function(UrlHelper, RegisterKeyBindings, Browsers, PopupHelper) {
         url: '/src/views/places/index.html',
         name: 'places',
       });
-      resultWindow.setPosition({x: 39, y: 0});
+      resultWindow.move({x: 39, y: 0});
     }
 
     resultWindow.contentWindow.postMessage({

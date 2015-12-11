@@ -10,7 +10,7 @@ define(['rect'], function(Rect) {
   let popupProto = Object.create(HTMLElement.prototype);
 
   popupProto.createdCallback = function() {
-    var arrow = document.createElement('div');
+    var arrow = this.arrow = document.createElement('div');
     arrow.className = 'arrow';
 
     // First, look for a window with the same name. Iff none, create a
@@ -31,11 +31,6 @@ define(['rect'], function(Rect) {
 
     this.appendChild(arrow);
     this.rect = new Rect(0, 0, innerWidth, innerHeight);
-    this.setAttribute('hidden', 'true');
-  };
-
-  popupProto.setPosition = function(point) {
-    this._updatePosition(point);
   };
 
   popupProto.attachTo = function(anchor) {
@@ -45,10 +40,10 @@ define(['rect'], function(Rect) {
 
     this.anchor = anchor;
     let anchorRect = anchor.getBoundingClientRect();
-    this._updatePosition({x: anchorRect.x, y: anchorRect.y + anchorRect.height});
+    this.move({x: anchorRect.x, y: anchorRect.y + anchorRect.height});
   };
 
-  popupProto._updatePosition = function(point = null) {
+  popupProto.move = function(point = null) {
     if (!point) {
       point = {};
 
@@ -80,6 +75,21 @@ define(['rect'], function(Rect) {
     this.style.height = this.rect.height + 'px';
     this.style.maxWidth = (this.maxWidth || this.rect.width) + 'px';
     this.style.maxHeight = (this.maxHeight || this.rect.height) + 'px';
+
+    if (this.anchor && this.arrow) {
+      let anchorRect = this.anchor.getBoundingClientRect();
+      let rect = new Rect(
+        anchorRect.x + anchorRect.width / 2,
+        anchorRect.y + anchorRect.height,
+        0,
+        0
+      );
+
+      let arrowRect = this.arrow.getBoundingClientRect();
+
+      let offsetX = (rect.x - this.rect.x) - arrowRect.width / 2;
+      this.arrow.style.left = Math.max(3, offsetX) + 'px';
+    }
   };
 
   popupProto.handleEvent = function(e) {
@@ -88,20 +98,20 @@ define(['rect'], function(Rect) {
       case 'mozbrowserscrollareachanged':
           this.rect.width = this.maxWidth = e.detail.width;
           this.rect.height = this.maxHeight = e.detail.height;
-          this._updatePosition();
+          this.move();
         break;
 
       case 'mozbrowserloadend':
         this.browser.getContentDimensions().onsuccess = (e) => {
           this.rect.width = this.maxWidth = e.target.result.width;
           this.rect.height = this.maxHeight = e.target.result.height;
-          this._updatePosition();
+          this.move();
           this.removeAttribute('hidden');
         };
         break;
 
       case 'resize':
-        this._updatePosition();
+        this.move();
         break;
 
       case 'click':
@@ -116,6 +126,7 @@ define(['rect'], function(Rect) {
     var target = new URL(url, document.location);
     if (target.host !== document.location.host) {
       this.browser.setAttribute('mozbrowser', true);
+      this.setAttribute('hidden', 'true');
       // XXX Should be remote for http i guess
       //this.browser.setAttribute('remote', true);
     }
