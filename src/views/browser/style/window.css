@@ -9,6 +9,11 @@
   pointer-events: none;
 }
 
+.window[hidden] {
+  display: block;
+  visibility: hidden;
+}
+
 .window > iframe {
   position: absolute;
   top: 0;

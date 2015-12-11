@@ -31,6 +31,7 @@ define(['rect'], function(Rect) {
 
     this.appendChild(arrow);
     this.rect = new Rect(0, 0, innerWidth, innerHeight);
+    this.setAttribute('hidden', 'true');
   };
 
   popupProto.setPosition = function(point) {
@@ -63,12 +64,14 @@ define(['rect'], function(Rect) {
 
     this.rect.x = point.x;
     this.rect.y = point.y;
-    this.rect.width = innerWidth - point.x;
-    this.rect.height = innerHeight - point.y;
+    this.rect.width = this.rect.width || (innerWidth - point.x);
+    this.rect.height = this.rect.height || (innerHeight - point.y);
 
     var navbar = require('navbar');
-    var viewportWithMargin =
-      new Rect(20, navbar.height, innerWidth - 40, innerHeight - 50);
+    var viewportWithMargin = new Rect(
+      10, navbar.height,
+      innerWidth - 20, innerHeight - navbar.height - 10
+    );
     this.rect = this.rect.translateInside(viewportWithMargin);
 
     this.style.top = this.rect.y + 'px'
@@ -83,14 +86,17 @@ define(['rect'], function(Rect) {
 
     switch (e.type) {
       case 'mozbrowserscrollareachanged':
+          this.rect.width = this.maxWidth = e.detail.width;
+          this.rect.height = this.maxHeight = e.detail.height;
+          this._updatePosition();
         break;
 
       case 'mozbrowserloadend':
         this.browser.getContentDimensions().onsuccess = (e) => {
-          // Why +3 ??? Should be some css thingy.
-          this.maxWidth = e.target.result.width + 3;
-          this.maxHeight = e.target.result.width + 3;
+          this.rect.width = this.maxWidth = e.target.result.width;
+          this.rect.height = this.maxHeight = e.target.result.height;
           this._updatePosition();
+          this.removeAttribute('hidden');
         };
         break;
 
