@@ -23,13 +23,18 @@
 }
 
 .window.popup > iframe {
-  top: 10px;
+  top: 9px;
   background-color: white;
 
-  border-top: 2px solid -moz-Dialog;
-  border-right: 2px solid -moz-Dialog;
-  border-left: 1px solid -moz-Dialog;
-  border-bottom: 1px solid -moz-Dialog;
+  border-top: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-left: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+
+  -moz-border-top-colors: ThreeDShadow -moz-Dialog;
+  -moz-border-right-colors: ThreeDShadow -moz-Dialog;
+  -moz-border-left-colors: ThreeDShadow -moz-Dialog;
+  -moz-border-bottom-colors: ThreeDShadow -moz-Dialog;
 }
 
 .window.popup > .arrow {

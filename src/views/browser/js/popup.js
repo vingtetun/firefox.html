@@ -4,7 +4,7 @@
  * Implements a web component for popups
  *
  */
-define(['/src/shared/js/eventemitter.js'], function(EventEmitter) {
+define([], function() {
   'use strict';
 
   let popupProto = Object.create(HTMLElement.prototype);
@@ -23,11 +23,13 @@ define(['/src/shared/js/eventemitter.js'], function(EventEmitter) {
     browser.addEventListener('mozbrowserscrollareachanged', this);
     browser.addEventListener('mozbrowserloadend', this);
 
+    let PopupHelper = require('popuphelper');
+    browser.addEventListener('click', PopupHelper.close.bind(PopupHelper, this));
+
     this.appendChild(arrow);
   };
 
   popupProto.handleEvent = function(e) {
-    dump(e.type + '\n');
 
     switch (e.type) {
       case 'mozbrowserscrollareachanged':
