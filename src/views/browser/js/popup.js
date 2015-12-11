@@ -21,11 +21,13 @@ define(['rect'], function(Rect) {
     browser.setAttribute('transparent', 'true');
 
     window.addEventListener('resize', this);
+    let PopupHelper = require('popuphelper');
+    this.addEventListener('click', PopupHelper.close.bind(PopupHelper, this));
+    window.addEventListener('click', this);
+
     browser.addEventListener('mozbrowserscrollareachanged', this);
     browser.addEventListener('mozbrowserloadend', this);
 
-    let PopupHelper = require('popuphelper');
-    browser.addEventListener('click', PopupHelper.close.bind(PopupHelper, this));
 
     this.appendChild(arrow);
     this.rect = new Rect(0, 0, innerWidth, innerHeight);
@@ -95,12 +97,17 @@ define(['rect'], function(Rect) {
       case 'resize':
         this._updatePosition();
         break;
+
+      case 'click':
+        if (e.button === 0) {
+          require('popuphelper').close(this);
+        }
+        break;
     }
   };
 
   popupProto.setLocation = function(url) {
     var target = new URL(url, document.location);
-    dump(target.host + ': ' + document.location.host + '\n');
     if (target.host !== document.location.host) {
       this.browser.setAttribute('mozbrowser', true);
       // XXX Should be remote for http i guess
