@@ -99,10 +99,8 @@ function(UrlHelper, RegisterKeyBindings, Browsers, PopupHelper) {
       resultWindow = PopupHelper.open({
         url: '/src/views/places/index.html',
         name: 'places',
-        rect: {
-          y: 39
-        }
       });
+      resultWindow.setPosition({x: 39, y: 0});
     }
 
     resultWindow.contentWindow.postMessage({
