@@ -24,7 +24,6 @@ html, body {
   border-width: 0;
   font-family: sans-serif;
   font-size: 12px;
-  image-rendering: -moz-crisp-edges;
 }
 
 *::-moz-focus-inner {
