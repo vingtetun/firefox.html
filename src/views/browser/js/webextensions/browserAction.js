@@ -18,6 +18,7 @@ require(["popuphelper"], function(PopupHelper) {
       let btn = buttons.get(id);
       PopupHelper.open({
         url: popup,
+        type: PopupHelper.Popup,
         anchor: btn
       });
     }

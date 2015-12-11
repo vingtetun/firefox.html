@@ -18,13 +18,13 @@
   z-index: 0;
 }
 
-
 .window.popup {
   background-color: transparent;
 }
 
 .window.popup > iframe {
   top: 10px;
+  background-color: white;
 
   border-top: 2px solid -moz-Dialog;
   border-right: 2px solid -moz-Dialog;

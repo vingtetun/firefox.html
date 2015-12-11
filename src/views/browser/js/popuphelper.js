@@ -38,8 +38,8 @@ define(['popup'], function() {
   function Rect(rect = DefaultRect, margin = {}) {
     this.x = (rect.x || 0);
     this.y = (rect.y || 0) + (rect.height || 0);
-    this.maxWidth = window.innerWidth - this.x - margin.width;
-    this.maxHeight = window.innerHeight - this.y - margin.height;
+    this.maxWidth = window.innerWidth - this.x - (margin.width || 0);
+    this.maxHeight = window.innerHeight - this.y - (margin.height || 0);
   }
 
   Rect.prototype.toString = function() {

@@ -16,17 +16,48 @@ define(['/src/shared/js/eventemitter.js'], function(EventEmitter) {
     // First, look for a window with the same name. Iff none, create a
     // new one.
     let browser = this.browser = document.createElement('iframe');
-    browser.setAttribute('mozbrowser', true);
     browser.setAttribute('mozpasspointerevents', 'true');
     browser.setAttribute('ignoreuserfocus', 'true');
     browser.setAttribute('transparent', 'true');
 
-    this.appendChild(browser);
+    browser.addEventListener('mozbrowserscrollareachanged', this);
+    browser.addEventListener('mozbrowserloadend', this);
+
     this.appendChild(arrow);
   };
 
+  popupProto.handleEvent = function(e) {
+    dump(e.type + '\n');
+
+    switch (e.type) {
+      case 'mozbrowserscrollareachanged':
+        dump(e.detail.width + '\n');
+        dump(e.detail.height + '\n');
+        break;
+
+      case 'mozbrowserloadend':
+        this.browser.getContentDimensions().onsuccess = (e) => {
+          dump(e.target.result.width + '\n');
+          dump(e.target.result.height + '\n');
+
+          this.style.maxHeight = (e.target.result.height + 3) + 'px';
+          this.style.maxWidth = (e.target.result.width + 3) + 'px';
+        };
+        break;
+    }
+  };
+
   popupProto.setLocation = function(url) {
+    var target = new URL(url, document.location);
+    dump(target.host + ': ' + document.location.host + '\n');
+    if (target.host !== document.location.host) {
+      this.browser.setAttribute('mozbrowser', true);
+      // XXX Should be remote for http i guess
+      //this.browser.setAttribute('remote', true);
+    }
+
     this.browser.src = url;
+    this.appendChild(this.browser);
   };
 
   popupProto.setPosition = function(rect) {

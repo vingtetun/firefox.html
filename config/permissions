@@ -8,5 +8,5 @@
 
 # Browser API access
 origin	browser	1	http://browserhtml.org
+origin	systemXHR	1	http://browserhtml.org
 origin	browser:universalxss	1	http://browserhtml.org
-origin	webextensions-uiglue	1	http://browserhtml.org
