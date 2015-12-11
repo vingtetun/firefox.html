@@ -24,44 +24,9 @@ define(['popup'], function() {
     throw new Error('PopupHelper: ' + str);
   }
 
-  const DefaultRect = {
-    x: 0,
-    y: 0,
-    height: 0,
-  };
-
-  const DefaultMargin = {
-    width: 20,
-    height: 20
-  };
-
-  function Rect(rect = DefaultRect, margin = {}) {
-    this.x = (rect.x || 0);
-    this.y = (rect.y || 0) + (rect.height || 0);
-    this.maxWidth = window.innerWidth - this.x - (margin.width || 0);
-    this.maxHeight = window.innerHeight - this.y - (margin.height || 0);
-  }
-
-  Rect.prototype.toString = function() {
-    return '' +
-      'Rect {\n'+
-      '\t x:' + this.x + '\n' +
-      '\t y:' + this.y + '\n' +
-      '\t width:' + this.maxWidth + '\n' +
-      '\t height:' + this.maxHeight + '\n' +
-      '}\n';
-  }
-
-  function calculateAnchorRect(target) {
-    var rootRect = target.getBoundingClientRect();
-    return rootRect;
-  }
-
   function openPopup(options) {
-    var anchorRect = calculateAnchorRect(options.anchor);
-    options.rect = new Rect(anchorRect, DefaultMargin);
-
     var popup = openWindow(options);
+    popup.attachTo(options.anchor);
     popup.classList.add('popup');
     return popup;
   }
@@ -69,6 +34,19 @@ define(['popup'], function() {
   function openContextMenu(options) {
     var contextmenu = openWindow(options);
     contextmenu.classList.add('contextmenu');
+
+    options.anchor = {
+      getBoundingClientRect: function() {
+        return {
+          x: options.x,
+          y: options.y,
+          width: 0,
+          height: 0
+        }
+      }
+    };
+
+    contextmenu.attachTo(options.anchor);
 
     var data = options.data;
     contextmenu.addEventListener('mozbrowserloadend', function onLoad(e) {
@@ -95,7 +73,6 @@ define(['popup'], function() {
       popup.classList.add('window');
     }
 
-    popup.setPosition(options.rect);
     popup.setLocation(options.url);
     return document.body.appendChild(popup);
   }
@@ -117,8 +94,6 @@ define(['popup'], function() {
       if (!options.type) {
         options.type = Types.Window;
       }
-
-      options.rect = new Rect(options.rect);
 
       switch (options.type) {
         case Types.Window:

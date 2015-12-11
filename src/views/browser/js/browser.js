@@ -304,11 +304,9 @@ define(
         PopupHelper.open({
           url: '/src/views/contextmenu/index.html',
           name: 'contextmenu' + Math.random(),
-          type: PopupHelper.contextMenu,
-          rect: {
-            x: e.detail.clientX,
-            y: e.detail.clientY + 39
-          },
+          type: PopupHelper.ContextMenu,
+          x: e.detail.clientX,
+          y: e.detail.clientY,
           data: e.detail.data
         });
         break;

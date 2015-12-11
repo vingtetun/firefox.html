@@ -6,7 +6,7 @@
  *
  */
 
-require(
+define(
   [
     '/src/shared/js/urlhelper.js',
     '/src/shared/js/keybindings.js',
@@ -226,4 +226,10 @@ function(UrlHelper, RegisterKeyBindings, Browsers, PopupHelper) {
     return input;
   };
 
+
+  return {
+    get height() {
+      return navbar.getBoundingClientRect().height;
+    }
+  }
 });

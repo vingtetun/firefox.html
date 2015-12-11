@@ -4,7 +4,7 @@
  * Implements a web component for popups
  *
  */
-define([], function() {
+define(['rect'], function(Rect) {
   'use strict';
 
   let popupProto = Object.create(HTMLElement.prototype);
@@ -20,6 +20,7 @@ define([], function() {
     browser.setAttribute('ignoreuserfocus', 'true');
     browser.setAttribute('transparent', 'true');
 
+    window.addEventListener('resize', this);
     browser.addEventListener('mozbrowserscrollareachanged', this);
     browser.addEventListener('mozbrowserloadend', this);
 
@@ -27,24 +28,72 @@ define([], function() {
     browser.addEventListener('click', PopupHelper.close.bind(PopupHelper, this));
 
     this.appendChild(arrow);
+    this.rect = new Rect(0, 0, innerWidth, innerHeight);
+  };
+
+  popupProto.setPosition = function(point) {
+    this._updatePosition(point);
+  };
+
+  popupProto.attachTo = function(anchor) {
+    if (!anchor) {
+      throw new Error('AttachTo called without an anchor');
+    }
+
+    this.anchor = anchor;
+    let anchorRect = anchor.getBoundingClientRect();
+    this._updatePosition({x: anchorRect.x, y: anchorRect.y + anchorRect.height});
+  };
+
+  popupProto._updatePosition = function(point = null) {
+    if (!point) {
+      point = {};
+
+      if (this.anchor) {
+        let anchorRect = this.anchor.getBoundingClientRect();
+        point.x = anchorRect.x;
+        point.y = anchorRect.y + anchorRect.height;
+      } else {
+        point.x = this.rect.x;
+        point.x = this.rect.y;
+      }
+    }
+
+    this.rect.x = point.x;
+    this.rect.y = point.y;
+    this.rect.width = innerWidth - point.x;
+    this.rect.height = innerHeight - point.y;
+
+    var navbar = require('navbar');
+    var viewportWithMargin =
+      new Rect(20, navbar.height, innerWidth - 40, innerHeight - 50);
+    this.rect = this.rect.translateInside(viewportWithMargin);
+
+    this.style.top = this.rect.y + 'px'
+    this.style.left = this.rect.x + 'px';
+    this.style.width = this.rect.width + 'px';
+    this.style.height = this.rect.height + 'px';
+    this.style.maxWidth = (this.maxWidth || this.rect.width) + 'px';
+    this.style.maxHeight = (this.maxHeight || this.rect.height) + 'px';
   };
 
   popupProto.handleEvent = function(e) {
 
     switch (e.type) {
       case 'mozbrowserscrollareachanged':
-        dump(e.detail.width + '\n');
-        dump(e.detail.height + '\n');
         break;
 
       case 'mozbrowserloadend':
         this.browser.getContentDimensions().onsuccess = (e) => {
-          dump(e.target.result.width + '\n');
-          dump(e.target.result.height + '\n');
-
-          this.style.maxHeight = (e.target.result.height + 3) + 'px';
-          this.style.maxWidth = (e.target.result.width + 3) + 'px';
+          // Why +3 ??? Should be some css thingy.
+          this.maxWidth = e.target.result.width + 3;
+          this.maxHeight = e.target.result.width + 3;
+          this._updatePosition();
         };
+        break;
+
+      case 'resize':
+        this._updatePosition();
         break;
     }
   };
@@ -62,12 +111,6 @@ define([], function() {
     this.appendChild(this.browser);
   };
 
-  popupProto.setPosition = function(rect) {
-    this.style.maxHeight = rect.maxHeight + 'px';
-    this.style.maxWidth = rect.maxWidth + 'px';
-    this.style.top = rect.y + 'px'
-    this.style.left = rect.x + 'px';
-  };
 
   Object.defineProperty(popupProto, "contentWindow", {
     get: function() {
