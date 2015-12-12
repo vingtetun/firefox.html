@@ -199,15 +199,31 @@ function(EventEmitter, UUID) {
 
   EventEmitter.decorate(Tabs);
 
+  var SystemFrame = {
+    forward: function(msg) {
+      this.ready.then((target) => {
+        target.postMessage(msg, '*');
+      });
+    },
+
+    ready: new Promise(function(resolve) {
+      var target = document.getElementById('system');
+      if (target.ready) {
+        resolve(target.contentWindow);
+      } else { 
+        target.addEventListener('load', () => {
+          resolve(target.contentWindow);
+        });
+      }
+    })
+  };
+
   function sendMessage(type, data) {
-    setTimeout(function() {
-      var frames = document.getElementById('system');
-      frames.contentWindow.postMessage({
-        name: 'Tab:' + type,
-        uuid: data.uuid,
-        url: data.url
-      }, '*');
-    }, 200);
+    SystemFrame.forward({
+      name: 'Tab:' + type,
+      uuid: data.uuid,
+      url: data.url
+    });
   }
 
   window.addEventListener('message', function(e) {

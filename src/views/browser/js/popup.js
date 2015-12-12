@@ -25,7 +25,7 @@ define(['rect'], function(Rect) {
     browser.addEventListener('mozbrowserscrollareachanged', this);
     browser.addEventListener('mozbrowserloadend', this);
 
-    this.loaded = new Promise(function(resolve, reject) {
+    this.ready = new Promise(function(resolve, reject) {
       browser.addEventListener('mozbrowserloadend', function foo(e) {
         browser.removeEventListener(e.type, foo);
         resolve(browser.contentWindow);
@@ -56,7 +56,7 @@ define(['rect'], function(Rect) {
   };
 
   popupProto.forward = function(msg) {
-    this.loaded.then(function(target) {
+    this.ready.then(function(target) {
       target.postMessage(msg, '*');
     });
   };

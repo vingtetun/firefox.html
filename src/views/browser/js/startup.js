@@ -8,3 +8,8 @@ require([
   'shortcuts',
   'webextensions/browserAction'
 ]);
+
+addEventListener('load', function() {
+  window.frameElement.ready = true;
+  window.frameElement.dispatchEvent(new CustomEvent('load'));
+});
