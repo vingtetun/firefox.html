@@ -48,15 +48,10 @@ define(['popup'], function() {
 
     contextmenu.attachTo(options.anchor);
 
-    var data = options.data;
-    contextmenu.addEventListener('mozbrowserloadend', function onLoad(e) {
-      contextmenu.removeEventListener(e.type, onLoad);
-
-      setTimeout(function() {
-        contextmenu.contentWindow.postMessage({
-          infos: options.data 
-        }, '*');
-      }, 500);
+    contextmenu.loaded.then(function() {
+      contextmenu.contentWindow.postMessage({
+        infos: options.data
+      }, '*');
     });
 
     return contextmenu;

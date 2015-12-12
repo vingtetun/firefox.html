@@ -305,9 +305,7 @@ define(
           url: '/src/views/contextmenu/index.html',
           name: 'contextmenu' + Math.random(),
           type: PopupHelper.ContextMenu,
-          x: e.detail.clientX,
-          y: e.detail.clientY,
-          data: e.detail.data
+          data: e.detail
         });
         break;
       default:

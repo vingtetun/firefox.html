@@ -40,6 +40,7 @@
   -moz-border-right-colors: ThreeDShadow -moz-Dialog;
   -moz-border-left-colors: ThreeDShadow -moz-Dialog;
   -moz-border-bottom-colors: ThreeDShadow -moz-Dialog;
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
 }
 
 .window.popup > .arrow {

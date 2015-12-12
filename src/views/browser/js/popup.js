@@ -28,6 +28,16 @@ define(['rect'], function(Rect) {
     browser.addEventListener('mozbrowserscrollareachanged', this);
     browser.addEventListener('mozbrowserloadend', this);
 
+    this.loaded = new Promise(function(resolve, reject) {
+      browser.addEventListener('mozbrowserloadend', function foo(e) {
+        browser.removeEventListener(e.type, foo);
+        resolve();
+      });
+
+      browser.onload = function() {
+        resolve();
+      };
+    });
 
     this.appendChild(arrow);
     this.rect = new Rect(0, 0, innerWidth, innerHeight);
@@ -93,7 +103,6 @@ define(['rect'], function(Rect) {
   };
 
   popupProto.handleEvent = function(e) {
-
     switch (e.type) {
       case 'mozbrowserscrollareachanged':
           this.rect.width = this.maxWidth = e.detail.width;
