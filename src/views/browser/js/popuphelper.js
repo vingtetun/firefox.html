@@ -25,8 +25,11 @@ define(['popup'], function() {
   }
 
   function openPopup(options) {
+    if (!options.usemargins) {
+      options.usemargins = true;
+    }
+
     var popup = openWindow(options);
-    popup.attachTo(options.anchor);
     popup.classList.add('popup');
     return popup;
   }
@@ -34,26 +37,6 @@ define(['popup'], function() {
   function openContextMenu(options) {
     var contextmenu = openWindow(options);
     contextmenu.classList.add('contextmenu');
-
-    options.anchor = {
-      getBoundingClientRect: function() {
-        return {
-          x: options.x,
-          y: options.y,
-          width: 0,
-          height: 0
-        }
-      }
-    };
-
-    contextmenu.attachTo(options.anchor);
-
-    contextmenu.loaded.then(function() {
-      contextmenu.contentWindow.postMessage({
-        infos: options.data
-      }, '*');
-    });
-
     return contextmenu;
   }
 
@@ -65,11 +48,28 @@ define(['popup'], function() {
 
     if (!popup) {
       popup = document.createElement('popup-element');
+      popup.setAttribute('name', options.name);
       popup.classList.add('window');
+      document.body.appendChild(popup);
+      popup.setLocation(options.url);
     }
 
-    popup.setLocation(options.url);
-    return document.body.appendChild(popup);
+    if (options.anchor) {
+      popup.attachTo(options.anchor,
+                     options.type === Types.Popup);
+    }
+
+    if (options.data) {
+      popup.forward(options.data);
+    }
+
+    if (options.usemargins && !popup.hasAttribute('usemargins')) {
+      popup.setAttribute('usemargins', 'true');
+    } else if (popup.hasAttribute('usemargins')) {
+      popup.removeAttribute('usemargins');
+    }
+
+    return popup;
   }
 
   var PopupHelper = {
@@ -98,8 +98,7 @@ define(['popup'], function() {
           return openContextMenu(options);
 
         case Types.Popup:
-          return options.anchor ? openPopup(options)
-                                : openWindow(options);
+          return openPopup(options);
 
         default:
           return ErrorMessage(Errors.UnknowType + ' (' + options.type + ')');

@@ -10,9 +10,6 @@ define(['rect'], function(Rect) {
   let popupProto = Object.create(HTMLElement.prototype);
 
   popupProto.createdCallback = function() {
-    var arrow = this.arrow = document.createElement('div');
-    arrow.className = 'arrow';
-
     // First, look for a window with the same name. Iff none, create a
     // new one.
     let browser = this.browser = document.createElement('iframe');
@@ -31,26 +28,37 @@ define(['rect'], function(Rect) {
     this.loaded = new Promise(function(resolve, reject) {
       browser.addEventListener('mozbrowserloadend', function foo(e) {
         browser.removeEventListener(e.type, foo);
-        resolve();
+        resolve(browser.contentWindow);
       });
 
-      browser.onload = function() {
-        resolve();
-      };
+      browser.addEventListener('load', function foo2(e) {
+        browser.removeEventListener(e.type, foo2);
+        resolve(browser.contentWindow);
+      });
     });
 
-    this.appendChild(arrow);
     this.rect = new Rect(0, 0, innerWidth, innerHeight);
   };
 
-  popupProto.attachTo = function(anchor) {
+  popupProto.attachTo = function(anchor, useArrow) {
     if (!anchor) {
       throw new Error('AttachTo called without an anchor');
     }
 
+    if (useArrow) {
+      var arrow = this.arrow = document.createElement('div');
+      arrow.className = 'arrow';
+      this.appendChild(arrow);
+    }
+
     this.anchor = anchor;
-    let anchorRect = anchor.getBoundingClientRect();
-    this.move({x: anchorRect.x, y: anchorRect.y + anchorRect.height});
+    this.move();
+  };
+
+  popupProto.forward = function(msg) {
+    this.loaded.then(function(target) {
+      target.postMessage(msg, '*');
+    });
   };
 
   popupProto.move = function(point = null) {
@@ -73,11 +81,17 @@ define(['rect'], function(Rect) {
     this.rect.height = this.rect.height || (innerHeight - point.y);
 
     var navbar = require('navbar');
-    var viewportWithMargin = new Rect(
-      10, navbar.height,
-      innerWidth - 20, innerHeight - navbar.height - 10
+    var viewport = new Rect(
+      0, navbar.height,
+      innerWidth, innerHeight - navbar.height
     );
-    this.rect = this.rect.translateInside(viewportWithMargin);
+    this.rect = this.rect.translateInside(viewport);
+
+    var margins = new Rect(10, 10, innerWidth - 20, innerHeight - 20);
+    if (this.hasAttribute('usemargins')) {
+      this.rect = this.rect.translateInside(margins);
+    }
+
 
     this.style.top = this.rect.y + 'px'
     this.style.left = this.rect.x + 'px';
@@ -143,14 +157,6 @@ define(['rect'], function(Rect) {
     this.browser.src = url;
     this.appendChild(this.browser);
   };
-
-
-  Object.defineProperty(popupProto, "contentWindow", {
-    get: function() {
-      return this.browser.contentWindow;
-    },
-    set: function(value) {}
-  });
 
   let Popup = document.registerElement('popup-element', {prototype: popupProto});
 

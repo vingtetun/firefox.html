@@ -110,3 +110,8 @@ function createElement(value, title, type) {
 
   return element;
 }
+
+
+addEventListener('load', function() {
+  window.frameElement.dispatchEvent(new CustomEvent('load'));
+});

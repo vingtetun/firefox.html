@@ -303,10 +303,11 @@ define(
       case 'mozbrowsercontextmenu':
         PopupHelper.open({
           url: '/src/views/contextmenu/index.html',
-          name: 'contextmenu' + Math.random(),
+          name: 'contextmenu',
           type: PopupHelper.ContextMenu,
           data: e.detail
         });
+        e.preventDefault();
         break;
       default:
         somethingChanged = false;

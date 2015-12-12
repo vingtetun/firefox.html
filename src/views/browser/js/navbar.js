@@ -53,9 +53,7 @@ function(UrlHelper, RegisterKeyBindings, Browsers, PopupHelper) {
         e.keyCode === 9 ||
         e.keyCode === 38 ||
         e.keyCode === 40)) {
-      resultWindow.contentWindow.postMessage({
-        'keycode': e.keyCode
-      }, '*');
+      resultWindow.forward({keycode: e.keyCode});
       e.preventDefault();
     }
   });
@@ -99,13 +97,12 @@ function(UrlHelper, RegisterKeyBindings, Browsers, PopupHelper) {
       resultWindow = PopupHelper.open({
         url: '/src/views/places/index.html',
         name: 'places',
+        anchor: navbar,
+        data: { value: text }
       });
-      resultWindow.move({x: 39, y: 0});
+    } else {
+      resultWindow.forward({ value: text });
     }
-
-    resultWindow.contentWindow.postMessage({
-      'value': text
-    }, '*')
   }
 
   function UrlInputValidated() {

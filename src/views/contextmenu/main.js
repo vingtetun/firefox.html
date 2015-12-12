@@ -1,5 +1,5 @@
 window.addEventListener('message', function(e) {
-  var data = e.data.infos;
+  var data = e.data;
 
   var element = document.querySelector('.contextmenu');
   element.style.left = data.clientX + 'px';
