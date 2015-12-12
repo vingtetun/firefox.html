@@ -305,7 +305,7 @@ define(
           url: '/src/views/contextmenu/index.html',
           name: 'contextmenu',
           type: PopupHelper.ContextMenu,
-          data: e.detail
+          data: JSON.parse(JSON.stringify(e.detail))
         });
         e.preventDefault();
         break;
