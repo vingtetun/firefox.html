@@ -8,3 +8,5 @@ require([
   'webextensions/tabs'
 ]);
 
+// Start Services early
+new SharedWorker('/src/workers/worker.js');

@@ -1,16 +1,5 @@
 'use strict';
 
-window.addEventListener('mozbrowserlocationchange', function(e) {
-  if (!PlacesDatabase.isReady()) {
-    // XXX Should just be postpone instead and we should
-    // be careful about session store.
-    return;
-  }
-
-  PlacesDatabase.incrementVisitCount(e.detail);
-  PlacesDatabase.updateTimestamp(e.detail, Date.now());
-});
-
 var PlacesDatabase = {
   db: null,
   _saveTimeout: 0
@@ -37,8 +26,8 @@ PlacesDatabase.restore = function() {
 };
 
 PlacesDatabase.save = function() {
-  window.clearTimeout(this._saveTimeout);
-  this._saveTimeout = window.setTimeout(function(self) {
+  clearTimeout(this._saveTimeout);
+  this._saveTimeout = setTimeout(function(self) {
     asyncStorage.setItem('places_history', self.db);
   }, 500, this);
 };
@@ -94,6 +83,11 @@ PlacesDatabase.getMatches = function(value) {
   }
 
   return results;
+};
+
+PlacesDatabase.update = function(value) {
+  this.incrementVisitCount(value);
+  this.updateTimestamp(value, Date.now());
 };
 
 

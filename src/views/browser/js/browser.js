@@ -284,11 +284,12 @@ define(
         break;
       case 'mozbrowsertitlechange':
         this._title = e.detail;
-        //PlacesDatabase.updateTitle(this._location, this._title);
+        Services.history.method('updateTitle', this._location, this._title);
         break;
       case 'mozbrowserlocationchange':
         this.userInput = '';
         this._location = e.detail;
+        Services.history.method('update', this._location);
         break;
       case 'mozbrowsericonchange':
         this._favicon = e.detail.href;

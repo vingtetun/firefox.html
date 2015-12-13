@@ -1,5 +1,4 @@
 
-
 var source = null;
 window.addEventListener('message', function(e) {
   source = e.source;
@@ -62,31 +61,32 @@ function showResults(value) {
 
   createElement(value, 'Yahoo Search', 'suggestion');
 
-  var historyEntries = PlacesDatabase.getMatches(value);
-  for (var i = 0; i < Math.min(historyEntries.length, 5); i++) {
-    createElement(historyEntries[i].url, historyEntries[i].title, 'history');
-  }
+  Services.history.method('getMatches', value).then(historyEntries => {
+    for (var i = 0; i < Math.min(historyEntries.length, 5); i++) {
+      createElement(historyEntries[i].url, historyEntries[i].title, 'history');
+    }
 
-  var suggestionsCount = Math.min(6 - results.childNodes.length, 3);
-  if (suggestionsCount > 0) {
-    var xhr = new XMLHttpRequest({mozSystem: true});
-    var url = 'http://ff.search.yahoo.com/gossip?output=fxjson&command=';
-    xhr.open('GET', url + value, true);
-    xhr.send();
+    var suggestionsCount = Math.min(6 - results.childNodes.length, 3);
+    if (suggestionsCount > 0) {
+      var xhr = new XMLHttpRequest({mozSystem: true});
+      var url = 'http://ff.search.yahoo.com/gossip?output=fxjson&command=';
+      xhr.open('GET', url + value, true);
+      xhr.send();
 
-    xhr.onload = function() {
-      runningXHR = null;
+      xhr.onload = function() {
+        runningXHR = null;
 
-      var data = JSON.parse(xhr.response)[1];
-      for (var i = 0; i < Math.min(data.length, suggestionsCount); i++) {
-        createElement(data[i], '', 'suggestion');
+        var data = JSON.parse(xhr.response)[1];
+        for (var i = 0; i < Math.min(data.length, suggestionsCount); i++) {
+          createElement(data[i], '', 'suggestion');
+        }
       }
     }
-  }
 
-  _current = 0;
-  results.childNodes[0].setAttribute('selected', 'true');
-  runningXHR = xhr;
+    _current = 0;
+    results.childNodes[0].setAttribute('selected', 'true');
+    runningXHR = xhr;
+  });
 }
 
 function createElement(value, title, type) {

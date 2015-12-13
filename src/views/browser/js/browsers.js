@@ -54,15 +54,16 @@ function(EventEmitter, Browser) {
   }
 
   window.addEventListener('message', function(e) {
-    if (!e.data.name.startsWith('Tab:')) {
+    var data = e.data;
+    if (!data || !data.name || !data.name.startsWith('Tab:')) {
       return;
     }
 
-    var browser = document.querySelector('[uuid="' + e.data.uuid + '"]');
+    var browser = document.querySelector('[uuid="' + data.uuid + '"]');
     if (browser) {
       Browsers.select(browser);
     } else {
-      browser = Browsers.add(e.data);
+      browser = Browsers.add(data);
       Browsers.select(browser);
     }
   });

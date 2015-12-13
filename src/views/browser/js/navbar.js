@@ -59,7 +59,7 @@ function(UrlHelper, RegisterKeyBindings, Browsers, PopupHelper) {
   });
 
   window.addEventListener('message', function(e) {
-    if ('selected_value' in e.data) {
+    if (e.data && e.data.selected_value) {
       urlinput.value = e.data.selected_value;
     }
   });
