@@ -1,0 +1,3 @@
+[submodule "src/shared/js/bridge"]
+	path = src/shared/js/bridge
+	url = https://github.com/fxos-components/bridge
