@@ -15,8 +15,11 @@ user_pref("network.dns.localDomains", "browserhtml.org");
 user_pref("browser.tabs.remote.autostart", true);
 user_pref("dom.ipc.processCount", 10000);
 
+// Enable pre-launching content processes for improved startup time
+// (hiding latency).
+user_pref("dom.ipc.processPrelaunch.enabled", true);
 // Wait this long before pre-launching a new subprocess.
-pref("dom.ipc.processPrelaunch.delayMs", 5000);
+user_pref("dom.ipc.processPrelaunch.delayMs", 5000);
 
 //
 // Additional dom apis
@@ -31,6 +34,11 @@ user_pref("dom.webextensions-uiglue.enabled", true);
 //
 user_pref("layers.compositor-lru-size", 10);
 
+//
+// Extensions
+//
+user_pref("extensions.autoDisableScopes", 0);
+user_pref("xpinstall.signatures.required", false);
 
 //
 // Debugging Prefs
