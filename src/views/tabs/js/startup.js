@@ -3,10 +3,8 @@ require.config({
 });
 
 require([
+  'services',
   'tabstrip',
   'shortcuts',
   'webextensions/tabs'
 ]);
-
-// Start Services early
-new SharedWorker('/src/workers/worker.js');
