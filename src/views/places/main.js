@@ -59,18 +59,15 @@ function showResults(value) {
     , Services.suggestions.method('get', value)
   ]
 
-  Promise.all(promises).then(values => {
-    let [ historyEntries, suggestions ] = values;
-
-    for (let i = 0; i < Math.min(historyEntries.length, 5); i++) {
-      createElement(historyEntries[i].url, historyEntries[i].title, 'history');
+  Promise.all(promises).then(([histories, suggestions]) => {
+    let historyCount = 5;
+    for (let i = 0; i < Math.min(histories.length, historyCount); i++) {
+      createElement(histories[i].url, histories[i].title, 'history');
     }
 
     let suggestionsCount = Math.min(6 - results.childNodes.length, 3);
-    if (suggestionsCount > 0) {
-      for (let i = 0; i < Math.min(suggestions.length, suggestionsCount); i++) {
-        createElement(suggestions[i], '', 'suggestion');
-      }
+    for (let i = 0; i < Math.min(suggestions.length, suggestionsCount); i++) {
+      createElement(suggestions[i], '', 'suggestion');
     }
 
     _current = 0;
