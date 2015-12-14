@@ -4,6 +4,9 @@ var documentURI = null;
 
 window.addEventListener('message', function(e) {
   var data = e.data;
+  if (!data || !data.systemTargets || !data.systemTargets[0]) {
+    return;
+  }
 
   function dumpObject(obj, level = 0) {
     var indent = '';
@@ -33,23 +36,13 @@ window.addEventListener('message', function(e) {
 });
 
 addEventListener('click', function(e) {
-  var bc = new BroadcastChannel('tabs');
-
-  dump('click: ' + e.target + ':' + e.target.id + '\n');
   switch (e.target.id) {
     case 'open-in-new-tab':
-      bc.postMessage({
-        action: 'create',
-        options: {
-          url: targetURI
-        }
-      });
+      Services.tabs.method('add', {url: targetURI});
       break;
 
     case 'view-page-source':
-      bc.postMessage({
-        action: 'view-source'
-      });
+      Services.tabs.method('viewsource');
       break;
 
     default:

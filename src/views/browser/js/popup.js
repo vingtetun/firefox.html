@@ -19,7 +19,9 @@ define(['rect'], function(Rect) {
 
     window.addEventListener('resize', this);
     let PopupHelper = require('popuphelper');
-    this.addEventListener('click', PopupHelper.close.bind(PopupHelper, this));
+    this.addEventListener('click', () => {
+      setTimeout(PopupHelper.close.bind(PopupHelper, this), 100);
+    });
     window.addEventListener('click', this);
 
     browser.addEventListener('mozbrowserscrollareachanged', this);
@@ -139,7 +141,7 @@ define(['rect'], function(Rect) {
 
       case 'click':
         if (e.button === 0) {
-          require('popuphelper').close(this);
+          setTimeout(() => require('popuphelper').close(this), 100);
         }
         break;
     }

@@ -1,16 +1,24 @@
-(function() {
+(function(global) {
   'use strict';
 
-  function getSharedWorker() {
-    return new SharedWorker('/src/workers/worker.js');
+  function defineLazyGetter(obj, name) {
+    Object.defineProperty(obj, name, {
+      configurable: true,
+      get: function() {
+        return Object.defineProperty(obj, name, {
+                __proto__: null,
+                value: bridge.client(name, new BroadcastChannel(name)),
+                writable: false,
+                enumerable: false,
+                configurable: false
+              })[name];
+      }
+    });
   }
 
-  var Services = {
-    get history() {
-      delete this.history;
-      return this.history = bridge.client('history', getSharedWorker());
-    }
-  };
+  var Services = {};
+  defineLazyGetter(Services, 'history');
+  defineLazyGetter(Services, 'tabs');
 
   window.Services = Services;
-})();
+})(this);

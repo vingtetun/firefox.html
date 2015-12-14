@@ -8,4 +8,4 @@ bridge.service('history')
   .method('update', PlacesDatabase.update.bind(PlacesDatabase))
   .method('updateTitle', PlacesDatabase.updateTitle.bind(PlacesDatabase))
   .method('getMatches', PlacesDatabase.getMatches.bind(PlacesDatabase))
-  .listen();
+  .listen(new BroadcastChannel('history'));

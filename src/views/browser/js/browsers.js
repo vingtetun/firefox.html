@@ -34,11 +34,7 @@ function(EventEmitter, Browser) {
       let browser = e.target.parentNode;
 
       if (e.type === 'mozbrowseropenwindow') {
-        window.parent.postMessage({
-          type: 'Tab:Add',
-          url: e.detail.url
-        }, '*');
-
+        Services.tabs.method('add', { url: e.detail.url});
         return;
       }
 

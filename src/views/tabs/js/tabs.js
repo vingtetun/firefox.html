@@ -9,10 +9,11 @@
 
 define(
   [
+    '/src/shared/js/bridge/service.js',
     '/src/shared/js/eventemitter.js',
     'uuid'
   ],
-function(EventEmitter, UUID) {
+function(Bridge, EventEmitter, UUID) {
 
   'use strict';
 
@@ -231,11 +232,6 @@ function(EventEmitter, UUID) {
       return;
     }
 
-    if (e.data.type === 'Tab:Add') {
-      Tabs.add(e.data);
-      return;
-    }
-
     let uuid = e.data.uuid;
     let index = _tabsArray.findIndex(function(config) {
       return config.uuid === uuid;
@@ -254,6 +250,14 @@ function(EventEmitter, UUID) {
   });
   
   Tabs.restoreSession();
+
+  const Service = Bridge.service('tabs')
+    .method('add', Tabs.add.bind(Tabs))
+    .method('viewsource', function() {
+      let url = 'view-source:' + Tabs.getSelected().url;
+      Tabs.add({select: true, url: url});
+    })
+    .listen(new BroadcastChannel('tabs'));
 
   return Tabs;
 });
