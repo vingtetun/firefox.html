@@ -34,18 +34,18 @@ function(EventEmitter, Browser) {
       let browser = e.target.parentNode;
 
       if (e.type === 'mozbrowseropenwindow') {
-        Services.tabs.method('add', { url: e.detail.url});
+        Services.tabs.method('add', {url: e.detail.url});
         return;
       }
 
-      window.parent.postMessage({
-        type: 'Tab:Update',
+      Services.tabs.method('update', {
         uuid: browser.uuid,
         title: browser.title,
         loading: browser.loading,
         url: browser.location.toString(),
         favicon: browser.favicon
-      }, '*');
+      });
+
     });
   }
 

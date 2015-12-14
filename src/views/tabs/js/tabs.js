@@ -227,32 +227,27 @@ function(Bridge, EventEmitter, UUID) {
     });
   }
 
-  window.addEventListener('message', function(e) {
-    if (!e.data.type.startsWith('Tab:')) {
-      return;
-    }
-
-    let uuid = e.data.uuid;
-    let index = _tabsArray.findIndex(function(config) {
-      return config.uuid === uuid;
-    });
-
-    var config = _tabsArray[index];
-    if (config) {
-      config.title = e.data.title;
-      config.url = e.data.url;
-      config.favicon = e.data.favicon;
-      Tabs.saveSession();
-
-      config.loading = e.data.loading;
-      Tabs.emit('update', config);
-    }
-  });
-  
   Tabs.restoreSession();
 
   const Service = Bridge.service('tabs')
     .method('add', Tabs.add.bind(Tabs))
+    .method('update', function(options) {
+      let uuid = options.uuid;
+      let index = _tabsArray.findIndex(function(config) {
+        return config.uuid === uuid;
+      });
+
+      var config = _tabsArray[index];
+      if (config) {
+        config.title = options.title;
+        config.url = options.url;
+        config.favicon = options.favicon;
+        Tabs.saveSession();
+
+        config.loading = options.loading;
+        Tabs.emit('update', config);
+      }
+    })
     .method('viewsource', function() {
       let url = 'view-source:' + Tabs.getSelected().url;
       Tabs.add({select: true, url: url});
