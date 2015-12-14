@@ -57,6 +57,12 @@ function(Bridge, EventEmitter, Browser) {
     }
 
     var browser = document.querySelector('[uuid="' + data.uuid + '"]');
+
+    if (data.name === 'Tab:Remove') {
+      Browsers.remove(data);
+      return;
+    }
+
     if (browser) {
       Browsers.select(browser);
     } else {
