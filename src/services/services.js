@@ -19,6 +19,7 @@
   var Services = {};
   defineLazyGetter(Services, 'history');
   defineLazyGetter(Services, 'tabs');
+  defineLazyGetter(Services, 'suggestions');
 
   window.Services = Services;
 })(this);
