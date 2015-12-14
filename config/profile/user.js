@@ -47,6 +47,11 @@ user_pref("xpinstall.signatures.required", false);
 // Disable caching for html content
 user_pref("browser.cache.disk.enable", false);
 
+// Ctrl-C to kill the browser ends up triggering
+// the sage mode window. It's really annoying while
+// hacking, so let disable that.
+user_pref("toolkit.startup.max_resumed_crashes", -1);
+
 // window.dump() on the console
 user_pref("browser.dom.window.dump.enabled", true);
 
