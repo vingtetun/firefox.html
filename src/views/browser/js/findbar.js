@@ -1,6 +1,6 @@
 
-require(['/src/shared/js/keybindings.js', 'browsers'],
-function(RegisterKeyBindings, Browsers) {
+require(['/src/shared/js/bridge/service.js'],
+function(Bridge) {
   
   'use strict';
 
@@ -18,14 +18,10 @@ function(RegisterKeyBindings, Browsers) {
   });
 
   let next = placeholder.querySelector('button.next');
-  next.addEventListener('click', (e) => {
-    Browsers.getSelected().findNext('forward');
-  });
+  next.addEventListener('click', e => Services.browsers.method('findForward'));
 
-  let previous = placeholder.querySelector('button.previous');
-  previous.addEventListener('click', (e) => {
-    Browsers.getSelected().findNext('backward');
-  });
+  let prev = placeholder.querySelector('button.previous');
+  prev.addEventListener('click', e => Services.browsers.method('findBackward'));
 
   let close = placeholder.querySelector('button.close');
   close.addEventListener('click', (e) => {
@@ -36,19 +32,18 @@ function(RegisterKeyBindings, Browsers) {
     placeholder.classList.remove('visible');
     urlinput.value = '';
     urlinput.blur();
-    Browsers.getSelected().clearMatch();
+    Services.browsers.method('clearMatch');
   }
 
   function SearchInputValidated() {
-    Browsers.getSelected().findAll(urlinput.value, 'case-insensitive');
+    Services.browsers.method('findAll', urlinput.value);
   }
 
-  let mod = window.OS == 'osx' ? 'Cmd' : 'Ctrl';
-  RegisterKeyBindings(
-    [mod,    'f',   () => {
+  Bridge.service('find')
+    .method('open', () => {
       placeholder.classList.add('visible');
       urlinput.focus();
       urlinput.select();
-    }]
-  );
+    })
+    .listen(new BroadcastChannel('find'));
 });

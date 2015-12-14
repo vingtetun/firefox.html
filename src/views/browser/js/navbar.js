@@ -9,11 +9,11 @@
 define(
   [
     '/src/shared/js/urlhelper.js',
-    '/src/shared/js/keybindings.js',
+    '/src/shared/js/bridge/service.js',
     'browsers',
     'popuphelper'
 ],
-function(UrlHelper, RegisterKeyBindings, Browsers, PopupHelper) {
+function(UrlHelper, Bridge, Browsers, PopupHelper) {
 
   'use strict';
 
@@ -69,18 +69,12 @@ function(UrlHelper, RegisterKeyBindings, Browsers, PopupHelper) {
     UrlInputChanged();
   });
 
-  let mod = window.OS == 'osx' ? 'Cmd' : 'Ctrl';
-
-  RegisterKeyBindings(
-    [mod,    'l',   () => {
+  Bridge.service('urlbar')
+    .method('focus', () => {
       urlinput.focus();
       urlinput.select();
-    }],
-    [mod,    'k',   () => {
-      urlinput.focus();
-      urlinput.select();
-    }]
-  );
+    })
+    .listen(new BroadcastChannel('urlbar'));
 
   var resultWindow = null;
   function UrlInputChanged() {

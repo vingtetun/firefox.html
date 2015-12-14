@@ -64,7 +64,29 @@ function(Bridge, EventEmitter, UUID) {
       this.saveSession();
     },
 
+    update: function(options) {
+      let uuid = options.uuid;
+      let index = _tabsArray.findIndex(function(config) {
+        return config.uuid === uuid;
+      });
+
+      var config = _tabsArray[index];
+      if (config) {
+        config.title = options.title;
+        config.url = options.url;
+        config.favicon = options.favicon;
+        Tabs.saveSession();
+
+        config.loading = options.loading;
+        Tabs.emit('update', config);
+      }
+    },
+
     remove: function(uuid) {
+      if (!uuid) {
+        uuid = this.getSelected().uuid;
+      }
+
       let index = _tabsArray.findIndex(function(config) {
         return config.uuid === uuid;
       });
@@ -231,23 +253,12 @@ function(Bridge, EventEmitter, UUID) {
 
   const Service = Bridge.service('tabs')
     .method('add', Tabs.add.bind(Tabs))
-    .method('update', function(options) {
-      let uuid = options.uuid;
-      let index = _tabsArray.findIndex(function(config) {
-        return config.uuid === uuid;
-      });
-
-      var config = _tabsArray[index];
-      if (config) {
-        config.title = options.title;
-        config.url = options.url;
-        config.favicon = options.favicon;
-        Tabs.saveSession();
-
-        config.loading = options.loading;
-        Tabs.emit('update', config);
-      }
-    })
+    .method('remove', Tabs.remove.bind(Tabs))
+    .method('selectPrevious', Tabs.selectPrevious.bind(Tabs))
+    .method('selectNext', Tabs.selectNext.bind(Tabs))
+    .method('movePrevious', Tabs.movePrevious.bind(Tabs))
+    .method('moveNext', Tabs.moveNext.bind(Tabs))
+    .method('update', Tabs.update.bind(Tabs))
     .method('viewsource', function() {
       let url = 'view-source:' + Tabs.getSelected().url;
       Tabs.add({select: true, url: url});

@@ -5,6 +5,5 @@ require.config({
 require([
   'services',
   'tabstrip',
-  'shortcuts',
   'webextensions/tabs'
 ]);

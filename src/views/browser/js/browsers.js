@@ -12,10 +12,11 @@
 
 define(
   [
+    '/src/shared/js/bridge/service.js',
     '/src/shared/js/eventemitter.js',
     'browser',
   ],
-function(EventEmitter, Browser) {
+function(Bridge, EventEmitter, Browser) {
 
   'use strict';
 
@@ -144,6 +145,24 @@ function(EventEmitter, Browser) {
   }
 
   EventEmitter.decorate(Browsers);
+
+  function selectedBrowser() {
+    return Browsers.getSelected();
+  }
+
+  Bridge.service('browsers')
+    .method('reload', () => selectedBrowser().reload())
+    .method('goBack', () => selectedBrowser().goBack())
+    .method('goForward', () => selectedBrowser().goForward())
+    .method('zoomIn', () => selectedBrowser().zoomIn())
+    .method('zoomOut', () => selectedBrowser().zoomOut())
+    .method('resetZoom', () => selectedBrowser().resetZoom())
+    .method('findAll', (value) => selectedBrowser().findAll(value, 'case-insensitive'))
+    .method('findForward', () => selectedBrowser().findNext('forward'))
+    .method('findBackward', () => selectedBrowser().findNext('backward'))
+    .method('clearMatch', () => selectedBrowser().clearMatch())
+    .method('toggleDevtools', () => selectedBrowser().toggleDevtools())
+    .listen(new BroadcastChannel('browsers'));
 
   return Browsers;
 });
