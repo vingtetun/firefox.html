@@ -100,15 +100,21 @@ function(Bridge, Browser) {
         return;
       }
 
-      let previouslySelectedBrowser = _selectedBrowser;
-      if (previouslySelectedBrowser) {
-        previouslySelectedBrowser.hide();
-      };
+      // Make sure to not keep turning on/off processes
+      // if the user is navigating into tabs with a 
+      // shortcut very quickly.
+      clearTimeout(this.selectTimeout);
+      this.selectTimeout = setTimeout(() => {
+        let previouslySelectedBrowser = _selectedBrowser;
+        if (previouslySelectedBrowser) {
+          previouslySelectedBrowser.hide();
+        };
 
-      _selectedBrowser = browser;
-      _selectedBrowser.show();
+        _selectedBrowser = browser;
+        _selectedBrowser.show();
 
-      service.broadcast('select');
+        service.broadcast('select');
+      }, 150);
     },
 
     getSelected: function() {

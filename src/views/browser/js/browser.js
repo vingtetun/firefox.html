@@ -53,17 +53,17 @@ define(['popuphelper'], function(PopupHelper) {
   };
 
   browserProto.show = function() {
-    this.removeAttribute('hidden');
     if (this._innerIframe && this._innerIframe.setVisible) {
       this._innerIframe.setVisible(true);
     }
+    this.removeAttribute('hidden');
   };
 
   browserProto.hide = function() {
-    this.setAttribute('hidden', 'true');
     if (this._innerIframe && this._innerIframe.setVisible) {
       this._innerIframe.setVisible(false);
     }
+    this.setAttribute('hidden', 'true');
   };
 
   browserProto.createdCallback = function() {
