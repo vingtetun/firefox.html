@@ -29,6 +29,7 @@ function(Bridge, Browser) {
     'mozbrowsererror'
   ];
 
+  let service;
   let Tabs = Services.tabs;
 
   for (let type of _eventsToTrack) {
@@ -106,6 +107,8 @@ function(Bridge, Browser) {
 
       _selectedBrowser = browser;
       _selectedBrowser.show();
+
+      service.broadcast('select');
     },
 
     getSelected: function() {
@@ -124,7 +127,7 @@ function(Bridge, Browser) {
   Tabs.on('select', Browsers.select.bind(Browsers));
   Tabs.on('remove', Browsers.remove.bind(Browsers));
 
-  Bridge.service('browsers')
+  service = Bridge.service('browsers')
     .method('reload', () => selectedBrowser().reload())
     .method('goBack', () => selectedBrowser().goBack())
     .method('goForward', () => selectedBrowser().goForward())

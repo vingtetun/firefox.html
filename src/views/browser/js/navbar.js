@@ -129,14 +129,12 @@ function(UrlHelper, Bridge, Browsers, PopupHelper) {
         urlinput.focus();
         urlinput.select();
       }
-      for (let e of events) {
-        lastSelectedTab.on(e, UpdateTab);
-      }
       UpdateTab(null, null, selectedTabIframe);
     }
   }
 
   OnTabSelected();
+  Services.browsers.on('select', OnTabSelected);
 
   function UpdateTab(eventName, event, browser) {
     if (browser != Browsers.getSelected()) {
@@ -206,7 +204,6 @@ function(UrlHelper, Bridge, Browsers, PopupHelper) {
 
     return input;
   };
-
 
   return {
     get height() {
