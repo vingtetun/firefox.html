@@ -17,7 +17,6 @@ bridge.service('suggestions')
       xhr.open('GET', URL + value, true);
       xhr.send();
       runningXHR = xhr; 
-      dump(URL + value + '\n');
 
       xhr.onload = function() {
         runningXHR = null;
