@@ -21,6 +21,7 @@ function(Bridge, Browser) {
 
   var _eventsToTrack = [
     'mozbrowseropenwindow',
+    'mozbrowseropentab',
     'mozbrowserloadstart',
     'mozbrowserloadend',
     'mozbrowsertitlechange',
@@ -37,7 +38,12 @@ function(Bridge, Browser) {
       let browser = e.target.parentNode;
 
       if (e.type === 'mozbrowseropenwindow') {
-        Tabs.method('add', {url: e.detail.url});
+        Tabs.method('add', {select: true, url: e.detail.url});
+        return;
+      }
+
+      if (e.type === 'mozbrowseropentab') {
+        Tabs.method('add', {select: false, url: e.detail.url});
         return;
       }
 

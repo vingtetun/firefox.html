@@ -217,6 +217,7 @@ function(Bridge, UUID) {
     .method('select', Tabs.select.bind(Tabs))
     .method('add', Tabs.add.bind(Tabs))
     .method('remove', Tabs.remove.bind(Tabs))
+    .method('getSelected', Tabs.getSelected.bind(Tabs))
     .method('select', Tabs.select.bind(Tabs))
     .method('selectPrevious', Tabs.selectPrevious.bind(Tabs))
     .method('selectNext', Tabs.selectNext.bind(Tabs))

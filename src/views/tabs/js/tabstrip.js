@@ -141,9 +141,12 @@ require([], function() {
   Tabs.on('add', (detail) => {
     let tab = new Tab(detail);
     allTabs.set(detail.uuid, tab);
-    //if (detail.uuid == Tabs.getSelected().uuid) {
-      tab.select();
-    //}
+
+    Tabs.method('getSelected').then(function(config) {
+      if (detail.uuid === config.uuid) {
+        tab.select();
+      }
+    });
   });
 
   Tabs.on('remove', (detail) => {
