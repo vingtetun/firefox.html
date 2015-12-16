@@ -6,11 +6,11 @@
  *
  */
 
-define(['tabs'], function(Tabs) {
+define([], function() {
   let channel = new BroadcastChannel("tabs");
   channel.onmessage = function ({data}) {
     if (data.action == "create") {
-      Tabs.add({select: true, url: data.options.url});
+      Services.tabs.method('add', {select: true, url: data.options.url});
     }
   };
 });

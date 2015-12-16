@@ -4,6 +4,7 @@ require.config({
 
 require([
   'services',
+  'tabs',
   'tabstrip',
   'webextensions/tabs'
 ]);
