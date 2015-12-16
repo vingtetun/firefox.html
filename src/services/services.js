@@ -31,6 +31,11 @@
 
   // Globally listen for key events.
   global.addEventListener('keypress', e => {
+    let activeElement = document.activeElement;
+    if (!activeElement || activeElement.contentDocument) {
+      return;
+    }
+
     Services.shortcuts.method('on', {
       key: e.key,
       keyCode: e.keyCode,

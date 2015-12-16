@@ -50,27 +50,6 @@ function(Bridge, EventEmitter, Browser) {
     });
   }
 
-  window.addEventListener('message', function(e) {
-    var data = e.data;
-    if (!data || !data.name || !data.name.startsWith('Tab:')) {
-      return;
-    }
-
-    var browser = document.querySelector('[uuid="' + data.uuid + '"]');
-
-    if (data.name === 'Tab:Remove') {
-      Browsers.remove(data);
-      return;
-    }
-
-    if (browser) {
-      Browsers.select(browser);
-    } else {
-      browser = Browsers.add(data);
-      Browsers.select(browser);
-    }
-  });
-
   let _browserMap = new Map();
   let _selectedBrowser = null;
 
@@ -114,7 +93,8 @@ function(Bridge, EventEmitter, Browser) {
     select: function(config) {
       let browser = _browserMap.get(config.uuid);
       if (!browser) {
-        throw new Error('Unknown browser');
+        // This is an unknow browser, let's create a new one.
+        browser = this.add(config);
       }
 
       if (browser === _selectedBrowser) {
@@ -157,6 +137,8 @@ function(Bridge, EventEmitter, Browser) {
   }
 
   Bridge.service('browsers')
+    .method('kill', Browsers.remove.bind(Browsers))
+    .method('select', Browsers.select.bind(Browsers))
     .method('reload', () => selectedBrowser().reload())
     .method('goBack', () => selectedBrowser().goBack())
     .method('goForward', () => selectedBrowser().goForward())
