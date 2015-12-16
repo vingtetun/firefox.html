@@ -6,11 +6,7 @@
  *
  */
 
-define(
-  [
-    '/src/shared/js/eventemitter.js',
-    'popuphelper'
-  ], function(EventEmitter, PopupHelper) {
+define(['popuphelper'], function(PopupHelper) {
 
   'use strict';
 
@@ -61,7 +57,6 @@ define(
     if (this._innerIframe && this._innerIframe.setVisible) {
       this._innerIframe.setVisible(true);
     }
-    this.emit('visible');
   };
 
   browserProto.hide = function() {
@@ -69,13 +64,11 @@ define(
     if (this._innerIframe && this._innerIframe.setVisible) {
       this._innerIframe.setVisible(false);
     }
-    this.emit('hidden');
   };
 
   browserProto.createdCallback = function() {
     this._zoom = 1;
     this._clearBrowserData();
-    EventEmitter.decorate(this);
   };
 
   browserProto._createInnerIframe = function(remote) {
@@ -308,9 +301,6 @@ define(
       default:
         somethingChanged = false;
     }
-
-    // Forward event
-    this.emit(e.type, e, this);
   };
 
   let Browser = document.registerElement('browser-element', {prototype: browserProto});
