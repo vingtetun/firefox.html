@@ -112,8 +112,6 @@ function(UrlHelper, Bridge, Browsers, PopupHelper) {
     browser.focus();
   }
 
-  Browsers.on('select', OnTabSelected);
-
   let lastSelectedTab = null;
 
   let events = [
@@ -126,12 +124,6 @@ function(UrlHelper, Bridge, Browsers, PopupHelper) {
 
   function OnTabSelected() {
     let selectedTabIframe = Browsers.getSelected();
-    if (lastSelectedTab) {
-      for (let e of events) {
-        lastSelectedTab.off(e, UpdateTab);
-      }
-    }
-    lastSelectedTab = selectedTabIframe;
     if (selectedTabIframe) {
       if (!selectedTabIframe.location) {
         urlinput.focus();

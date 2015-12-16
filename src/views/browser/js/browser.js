@@ -56,12 +56,6 @@ define(
     this._innerIframe.src = url;
   };
 
-  browserProto.willBeVisibleSoon = function() {
-    if (this._innerIframe && this._innerIframe.setVisible) {
-      this._innerIframe.setVisible(true);
-    }
-  };
-
   browserProto.show = function() {
     this.removeAttribute('hidden');
     if (this._innerIframe && this._innerIframe.setVisible) {
@@ -86,6 +80,7 @@ define(
 
   browserProto._createInnerIframe = function(remote) {
     let iframe = document.createElement('iframe');
+    iframe.className = 'browser';
     iframe.setAttribute('mozbrowser', 'true');
     iframe.setAttribute('flex', '1');
     iframe.setAttribute('remote', remote);

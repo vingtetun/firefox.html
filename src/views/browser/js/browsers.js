@@ -13,10 +13,9 @@
 define(
   [
     '/src/shared/js/bridge/service.js',
-    '/src/shared/js/eventemitter.js',
     'browser',
   ],
-function(Bridge, EventEmitter, Browser) {
+function(Bridge, Browser) {
 
   'use strict';
 
@@ -65,8 +64,6 @@ function(Bridge, EventEmitter, Browser) {
       parent.appendChild(browser);
       _browserMap.set(config.uuid, browser);
 
-      this.emit('add', {browser: browser});
-
       if (config.url) {
         browser.setLocation(config.url);
       }
@@ -88,8 +85,6 @@ function(Bridge, EventEmitter, Browser) {
 
       _browserMap.delete(config.uuid);
       browser.remove();
-
-      this.emit('remove', {browser});
     },
 
     select: function(config) {
@@ -104,23 +99,13 @@ function(Bridge, EventEmitter, Browser) {
         return;
       }
 
-      browser.willBeVisibleSoon();
-
       let previouslySelectedBrowser = _selectedBrowser;
       if (previouslySelectedBrowser) {
-        this.emit('unselect', {browser: previouslySelectedBrowser});
-      }
+        previouslySelectedBrowser.hide();
+      };
 
       _selectedBrowser = browser;
-
-      this.emit('select', {browser});
-
-      window.requestAnimationFrame(() => {
-        if (previouslySelectedBrowser) {
-          previouslySelectedBrowser.hide();
-        }
-        browser.show();
-      });
+      _selectedBrowser.show();
     },
 
     getSelected: function() {
@@ -131,8 +116,6 @@ function(Bridge, EventEmitter, Browser) {
   Browsers[Symbol.iterator] = function*() {
     return  _browserMap[Symbol.iterator]();
   }
-
-  EventEmitter.decorate(Browsers);
 
   function selectedBrowser() {
     return Browsers.getSelected();
