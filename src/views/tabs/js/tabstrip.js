@@ -8,7 +8,7 @@
  */
 
 
-require(['tabs'], function(Tabs) {
+require([], function() {
   'use strict';
 
   // Tabs will be appended in there.
@@ -41,20 +41,20 @@ require(['tabs'], function(Tabs) {
     button.onmouseup = (event) => {
       if (event.button == 0) {
         event.stopPropagation();
-        Tabs.remove(config.uuid);
+        Tabs.method('remove', config.uuid);
       }
     };
 
     hbox.onmousedown = (event) => {
       if (event.button == 0) {
-        Tabs.select(config.uuid);
+        Tabs.method('select', config.uuid);
       }
     };
 
     hbox.onmouseup = (event) => {
       if (event.button == 1) {
         event.stopPropagation();
-        Tabs.remove(config.uuid);
+        Tabs.method('remove', config.uuid);
       }
     }
 
@@ -121,7 +121,9 @@ require(['tabs'], function(Tabs) {
     },
   };
 
-  Tabs.on('update', (event, detail) => {
+  var Tabs = Services.tabs;
+
+  Tabs.on('update', (detail) => {
     let tab = allTabs.get(detail.uuid);
     if (tab) {
       tab.config = detail;
@@ -129,22 +131,22 @@ require(['tabs'], function(Tabs) {
     }
   });
 
-  Tabs.on('move', (event, detail) => {
+  Tabs.on('move', (detail) => {
     let tab = allTabs.get(detail.uuid);
     if (tab) {
       tab.move(detail.direction);
     }
   });
 
-  Tabs.on('add', (event, detail) => {
+  Tabs.on('add', (detail) => {
     let tab = new Tab(detail);
     allTabs.set(detail.uuid, tab);
-    if (detail.uuid == Tabs.getSelected().uuid) {
+    //if (detail.uuid == Tabs.getSelected().uuid) {
       tab.select();
-    }
+    //}
   });
 
-  Tabs.on('remove', (event, detail) => {
+  Tabs.on('remove', (detail) => {
     let tab = allTabs.get(detail.uuid);
     if (tab) {
       tab.destroy();
@@ -152,30 +154,28 @@ require(['tabs'], function(Tabs) {
     }
   });
 
-  Tabs.on('select', (event, detail) => {
+  Tabs.on('select', (detail) => {
     let tab = allTabs.get(detail.uuid);
     if (tab) {
       tab.select();
     }
   });
 
-  Tabs.on('unselect', (event, detail) => {
+  Tabs.on('unselect', (detail) => {
     let tab = allTabs.get(detail.uuid);
     if (tab) {
       tab.unselect();
     }
   });
 
-  for (let config of Tabs) {
-    let tab = new Tab(config);
-    allTabs.set(config.uuid, tab);
-  }
-
-  let config = Tabs.getSelected();
-  if (config) {
-    let tab = allTabs.get(config.uuid);
-    tab.select();
-  }
+  Tabs.method('getAll').then(tabs => {
+    tabs.forEach(config => {
+      let tab = new Tab(config);
+      allTabs.set(config.uuid, tab);
+    });
+    
+    tabs.length && Tabs.method('select', tabs[0].uuid);
+  });
 
   /* Build curved tabs */
 

@@ -10,13 +10,13 @@
 define(
   [
     '/src/shared/js/bridge/service.js',
-    '/src/shared/js/eventemitter.js',
     'uuid'
   ],
-function(Bridge, EventEmitter, UUID) {
+function(Bridge, UUID) {
 
   'use strict';
 
+  let service = null;
   const HOMEPAGE = 'about:home';
 
   let _tabsArray = [];
@@ -55,11 +55,11 @@ function(Bridge, EventEmitter, UUID) {
       };
       _tabsArray.push(config);
 
-      if (options.select || _selectIndex < 0) {
+      if (options.select) {
         this.select(config.uuid);
       }
 
-      this.emit('add', config);
+      service.broadcast('add', config);
 
       this.saveSession();
     },
@@ -78,7 +78,8 @@ function(Bridge, EventEmitter, UUID) {
         Tabs.saveSession();
 
         config.loading = options.loading;
-        Tabs.emit('update', config);
+        
+        service.broadcast('update', config);
       }
     },
 
@@ -114,11 +115,9 @@ function(Bridge, EventEmitter, UUID) {
       }
 
       let config = _tabsArray.splice(index, 1)[0];
-      Services.browsers.method('kill', config);
+      service.broadcast('remove', config);
 
       this.saveSession();
-
-      this.emit('remove', {uuid});
     },
 
     select: function(uuid) {
@@ -137,18 +136,13 @@ function(Bridge, EventEmitter, UUID) {
 
       let previouslySelectedTab = _tabsArray[_selectIndex];
       if (previouslySelectedTab) {
-        this.emit('unselect', {uuid: previouslySelectedTab.uuid});
+        service.broadcast('unselect', {uuid: previouslySelectedTab.uuid});
       }
 
       _selectIndex = index;
 
-      this.emit('select', {uuid});
-
       let config = _tabsArray[index];
-      Services.browsers.method('select', {
-        uuid: uuid,
-        url: config.url
-      });
+      service.broadcast('select', config);
     },
 
     selectNext: function() {
@@ -181,7 +175,7 @@ function(Bridge, EventEmitter, UUID) {
 
       let config = _tabsArray[_selectIndex];
       let direction = 1;
-      this.emit('move', {uuid: config.uuid, direction});
+      service.broadcast('move', {uuid: config.uuid, direction});
 
       this.saveSession();
     },
@@ -200,7 +194,7 @@ function(Bridge, EventEmitter, UUID) {
 
       let config = _tabsArray[_selectIndex];
       let direction = -1;
-      this.emit('move', {uuid: config.uuid, direction});
+      service.broadcast('move', {uuid: config.uuid, direction});
 
       this.saveSession();
     },
@@ -212,21 +206,18 @@ function(Bridge, EventEmitter, UUID) {
     getCount: function() {
       return _tabsArray.length;
     },
+
+    getAll: function() {
+      return _tabsArray;
+    },
   }
 
-  Tabs[Symbol.iterator] = function*() {
-    for (let config of _tabsArray) {
-      yield config;
-    }
-  }
-
-  EventEmitter.decorate(Tabs);
-
-  Tabs.restoreSession();
-
-  const Service = Bridge.service('tabs')
+  service = Bridge.service('tabs')
+    .method('getAll', Tabs.getAll.bind(Tabs))
+    .method('select', Tabs.select.bind(Tabs))
     .method('add', Tabs.add.bind(Tabs))
     .method('remove', Tabs.remove.bind(Tabs))
+    .method('select', Tabs.select.bind(Tabs))
     .method('selectPrevious', Tabs.selectPrevious.bind(Tabs))
     .method('selectNext', Tabs.selectNext.bind(Tabs))
     .method('movePrevious', Tabs.movePrevious.bind(Tabs))
@@ -238,5 +229,6 @@ function(Bridge, EventEmitter, UUID) {
     })
     .listen(new BroadcastChannel('tabs'));
 
+  Tabs.restoreSession();
   return Tabs;
 });

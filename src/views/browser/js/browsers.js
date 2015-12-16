@@ -30,16 +30,18 @@ function(Bridge, EventEmitter, Browser) {
     'mozbrowsererror'
   ];
 
+  let Tabs = Services.tabs;
+
   for (let type of _eventsToTrack) {
     window.addEventListener(type, function(e) {
       let browser = e.target.parentNode;
 
       if (e.type === 'mozbrowseropenwindow') {
-        Services.tabs.method('add', {url: e.detail.url});
+        Tabs.method('add', {url: e.detail.url});
         return;
       }
 
-      Services.tabs.method('update', {
+      Tabs.method('update', {
         uuid: browser.uuid,
         title: browser.title,
         loading: browser.loading,
@@ -136,9 +138,10 @@ function(Bridge, EventEmitter, Browser) {
     return Browsers.getSelected();
   }
 
+  Tabs.on('select', Browsers.select.bind(Browsers));
+  Tabs.on('remove', Browsers.remove.bind(Browsers));
+
   Bridge.service('browsers')
-    .method('kill', Browsers.remove.bind(Browsers))
-    .method('select', Browsers.select.bind(Browsers))
     .method('reload', () => selectedBrowser().reload())
     .method('goBack', () => selectedBrowser().goBack())
     .method('goForward', () => selectedBrowser().goForward())
