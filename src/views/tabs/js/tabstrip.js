@@ -177,7 +177,10 @@ require([], function() {
       allTabs.set(config.uuid, tab);
     });
     
-    tabs.length && Tabs.method('select', tabs[0].uuid);
+    // Ensure browsers service has started.
+    Services.browsers.method('ping').then(() => {
+      Tabs.method('select', tabs[0].uuid);
+    });
   });
 
   /* Build curved tabs */

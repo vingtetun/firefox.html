@@ -140,6 +140,7 @@ function(Bridge, Browser) {
   Tabs.on('remove', Browsers.remove.bind(Browsers));
 
   service = Bridge.service('browsers')
+    .method('ping', () => 'pong')
     .method('reload', () => selectedBrowser().reload())
     .method('goBack', () => selectedBrowser().goBack())
     .method('goForward', () => selectedBrowser().goForward())
