@@ -38,7 +38,7 @@ function(Bridge, UUID) {
 
       if (Array.isArray(session) && session.length > 0) {
         session.forEach((config, index) => {
-          config.loading = index === 0;
+          config.loading = index === 1 && config.url;
           Tabs.add(config);
         });
       } else {

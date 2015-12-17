@@ -235,7 +235,7 @@ require([], function() {
 
       // draw background
       let lingrad = ctx.createLinearGradient(0, 0, 0, r);
-      lingrad.addColorStop(0, bg1);
+      lingrad.addColorStop(0, bg2);
       lingrad.addColorStop(1, bg2);
       ctx.fillStyle = lingrad;
       ctx.fillRect(0, 0, 3 * r, r);

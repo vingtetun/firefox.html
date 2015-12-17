@@ -12,7 +12,7 @@
 
 .navbar {
   padding: 4px 6px;
-  background-image: linear-gradient(#F1F1F1, #D3D3D3);
+  background-color: #ededed; 
   border-bottom: 1px solid #a1a1a1;
 }
 
