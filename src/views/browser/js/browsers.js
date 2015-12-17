@@ -47,13 +47,17 @@ function(Bridge, Browser) {
         return;
       }
 
-      Tabs.method('update', {
-        uuid: browser.uuid,
-        title: browser.title,
-        loading: browser.loading,
-        url: browser.location.toString(),
-        favicon: browser.favicon
-      });
+      // Coalesce the update events.
+      clearTimeout(this._selectTimeout);
+      this._selectTimeout = setTimeout(() => {
+        Tabs.method('update', {
+          uuid: browser.uuid,
+          title: browser.title,
+          loading: browser.loading,
+          url: browser.location,
+          favicon: browser.favicon
+        });
+      }, 100);
 
     });
   }

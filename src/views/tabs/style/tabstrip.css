@@ -69,12 +69,13 @@
 .tab > .favicon, .tab > .throbber {
   width: 16px;
   height: 16px;
-  margin: 0 3px 0 -6px;
-  image-rendering: optimizequality;
+  margin: 0 0.5rem 0 -6px;
+  image-rendering: optimizeQuality;
 }
 
 .tab > .favicon:not([src]) {
   display: none;
+  visibility: hidden;
 }
 
 .tab > .throbber {

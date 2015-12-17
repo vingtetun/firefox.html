@@ -199,7 +199,7 @@ define(['popuphelper'], function(PopupHelper) {
 
   Object.defineProperty(browserProto, 'location', {
     get: function() {
-      return this._location;
+      return this._innerIframe ? this._innerIframe.src : '';
     }
   });
 

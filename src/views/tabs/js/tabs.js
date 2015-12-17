@@ -37,11 +37,12 @@ function(Bridge, UUID) {
       } catch (e) {}
 
       if (Array.isArray(session) && session.length > 0) {
-        for (let config of session) {
+        session.forEach((config, index) => {
+          config.loading = index === 0;
           Tabs.add(config);
-        }
+        });
       } else {
-        Tabs.add({url: HOMEPAGE});
+        Tabs.add({url: HOMEPAGE, loading: true});
       }
     },
 
@@ -50,7 +51,7 @@ function(Bridge, UUID) {
         url: options.url || '',
         title: options.title || '',
         favicon: options.favicon || '',
-        loading: false,
+        loading: options.loading || false,
         uuid: UUID.generate()
       };
       _tabsArray.push(config);
