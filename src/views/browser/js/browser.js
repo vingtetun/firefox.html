@@ -6,19 +6,37 @@
  *
  */
 
-define(['popuphelper'], function(PopupHelper) {
-
+define([
+  '/src/shared/js/urlhelper.js',
+  '/src/shared/js/bridge/service.js',
+  'popuphelper'
+], function(UrlHelper, Bridge, PopupHelper) {
   'use strict';
+
+  const Tabs = Services.tabs;
+  const History = Services.history;
+  const Browsers = Services.browsers;
 
   const MIN_ZOOM = 0.5;
   const MAX_ZOOM = 2;
+  const BROADCAST_UPDATES_DELAY = 100;
 
   const IFRAME_EVENTS = [
-    'mozbrowserasyncscroll', 'mozbrowserclose', 'mozbrowsercontextmenu',
-    'mozbrowsererror', 'mozbrowsericonchange', 'mozbrowserloadend',
-    'mozbrowserloadstart', 'mozbrowserlocationchange', 'mozbrowseropenwindow',
-    'mozbrowsersecuritychange', 'mozbrowsershowmodalprompt', 'mozbrowsertitlechange',
-    'mozbrowserusernameandpasswordrequired', 'mozbrowsercontextmenu'
+    'mozbrowserasyncscroll'
+    , 'mozbrowserclose'
+    , 'mozbrowsercontextmenu'
+    , 'mozbrowsererror'
+    , 'mozbrowsericonchange'
+    , 'mozbrowserloadend'
+    , 'mozbrowserloadstart'
+    , 'mozbrowserlocationchange'
+    , 'mozbrowseropentab'
+    , 'mozbrowseropenwindow'
+    , 'mozbrowsersecuritychange'
+    , 'mozbrowsershowmodalprompt'
+    , 'mozbrowsertitlechange'
+    , 'mozbrowserusernameandpasswordrequired'
+    , 'mozbrowsercontextmenu'
   ];
 
   // Non-Remote iframes may steal the focus :/
@@ -42,142 +60,32 @@ define(['popuphelper'], function(PopupHelper) {
     , 'about:devtools-panel'
   ];
 
+  function getTemplate() {
+    let template = document.getElementById('browser-template');
+    return document.importNode(template.content, true);
+  }
+
+
+  /**
+   * <browser-element> Impl
+   */
   let browserProto = Object.create(HTMLElement.prototype);
-
-  browserProto.setLocation = function(url) {
-    if (!this._innerIframe) {
-      this._createInnerIframe(INPROCESS_URLS.indexOf(url) == -1);
-    }
-
-    this._innerIframe.src = url;
-  };
-
-  browserProto.show = function() {
-    if (this._innerIframe && this._innerIframe.setVisible) {
-      this._innerIframe.setVisible(true);
-    }
-    this.removeAttribute('hidden');
-  };
-
-  browserProto.hide = function() {
-    if (this._innerIframe && this._innerIframe.setVisible) {
-      this._innerIframe.setVisible(false);
-    }
-    this.setAttribute('hidden', 'true');
-  };
 
   browserProto.createdCallback = function() {
     this._zoom = 1;
+    this._prepareContent();
     this._clearBrowserData();
-  };
-
-  browserProto._createInnerIframe = function(remote) {
-    let iframe = document.createElement('iframe');
-    iframe.className = 'browser';
-    iframe.setAttribute('mozbrowser', 'true');
-    iframe.setAttribute('flex', '1');
-    iframe.setAttribute('remote', remote);
-    iframe.setAttribute('mozallowfullscreen', 'true');
-    this.appendChild(iframe);
-    for (let eventName of IFRAME_EVENTS) {
-      iframe.addEventListener(eventName, this);
-    }
-    this._innerIframe = iframe;
-    this._applyZoom();
   };
 
   browserProto.attachedCallback = function() {
   };
 
   browserProto.detachedCallback = function() {
-    if (this._innerIframe) {
-      for (let eventName of IFRAME_EVENTS) {
-        this._innerIframe.removeEventListener(eventName, this);
-      }
-    }
   };
 
-  browserProto.zoomIn = function() {
-    this._zoom += 0.1;
-    this._zoom = Math.min(MAX_ZOOM, this._zoom);
-    this._applyZoom();
-  };
-
-  browserProto.zoomOut = function() {
-    this._zoom -= 0.1;
-    this._zoom = Math.max(MIN_ZOOM, this._zoom);
-    this._applyZoom();
-  };
-
-  browserProto.resetZoom = function() {
-    this._zoom = 1;
-    this._applyZoom();
-  };
-
-  browserProto._applyZoom = function() {
-    if (this._innerIframe && this._innerIframe.zoom) {
-      this._innerIframe.zoom(this._zoom);
-    }
-  };
-
-  browserProto.reload = function() {
-    if (this._innerIframe) this._innerIframe.reload();
-  };
-
-  browserProto.stop = function() {
-    if (this._innerIframe) this._innerIframe.stop();
-  };
-
-  browserProto.goBack = function() {
-    if (this._innerIframe) this._innerIframe.goBack();
-  };
-
-  browserProto.findAll = function(str, caseSensitive) {
-    if (this._innerIframe) {
-      this._innerIframe.findAll(str, caseSensitive);
-    }
-  };
-
-  browserProto.findNext = function(str, direction) {
-    if (this._innerIframe) {
-      this._innerIframe.findNext(str, direction);
-    }
-  };
-
-  browserProto.clearMatch = function() {
-    if (this._innerIframe) {
-      this._innerIframe.clearMatch();
-    }
-  };
-
-
-  browserProto.goForward = function() {
-    if (this._innerIframe) this._innerIframe.goForward();
-  };
-
-  browserProto.toggleDevtools = function() {
-    if (this.tools) {
-      this.tools.remove();
-      this.tools = null;
-      return;
-    }
-    let tools = this.tools = document.createElement('iframe');
-    tools.setAttribute('mozbrowser', 'true');
-    tools.setAttribute('flex', '1');
-    tools.setAttribute('src', 'about:devtools-panel');
-    tools.setAttribute('style', 'visibility:hidden');
-    tools.target = this._innerIframe;
-    this.appendChild(tools);
-  };
-
-  browserProto._clearBrowserData = function() {
-    this._loading = false;
-    this._title = '';
-    this._location = '';
-    this._favicon = '';
-    this._securityState = 'insecure';
-    this._securityExtendedValidation = false;
-  };
+  /*
+   * <browser-element> Properties
+   */
 
   Object.defineProperty(browserProto, 'loading', {
     get: function() {
@@ -199,7 +107,7 @@ define(['popuphelper'], function(PopupHelper) {
 
   Object.defineProperty(browserProto, 'location', {
     get: function() {
-      return this._innerIframe ? this._innerIframe.src : '';
+      return this._frameElement ? this._frameElement.src : '';
     }
   });
 
@@ -221,48 +129,323 @@ define(['popuphelper'], function(PopupHelper) {
     }
   });
 
-  browserProto.canGoBack = function() {
-    return new Promise((resolve, reject) => {
-      if (!this._innerIframe) {
-        return resolve(false);
+  browserProto.userInput = '';
+
+  browserProto.setLocation = function(url) {
+    if (!this._frameElement) {
+      this._createFrameElement(INPROCESS_URLS.indexOf(url) == -1);
+    }
+
+    this._frameElement.src = url;
+  };
+
+  browserProto.show = function() {
+    this._frameElement && this._frameElement.setVisible(true);
+    this.removeAttribute('hidden');
+  };
+
+  browserProto.hide = function() {
+    this._frameElement && this._frameElement.setVisible(false);
+    this.setAttribute('hidden', 'true');
+  };
+
+  browserProto._prepareContent = function() {
+    let shadow = this.createShadowRoot();
+    shadow.appendChild(getTemplate());
+
+    let navbar = shadow.querySelector('.navbar');
+    let urlbar = navbar.querySelector('.urlbar');
+    let urlinput = navbar.querySelector('.urlinput');
+    let backButton = navbar.querySelector('.back-button')
+    let forwardButton = navbar.querySelector('.forward-button')
+    let reloadButton = navbar.querySelector('.reload-button');
+    let stopButton = navbar.querySelector('.stop-button');
+
+    backButton.onclick = () => this.goBack();
+    forwardButton.onclick = () => this.goForward();
+    reloadButton.onclick = () => this.reload();
+    stopButton.onclick = () => this.stop();
+
+    urlinput.addEventListener('focus', () => {
+      urlinput.select();
+      urlbar.classList.add('focus');
+    })
+
+    urlinput.addEventListener('blur', () => {
+      if (resultWindow) {
+        PopupHelper.close(resultWindow);
+        resultWindow = null;
       }
-      this._innerIframe.getCanGoBack().onsuccess = r => {
-        return resolve(r.target.result);
-      };
+
+      urlbar.classList.remove('focus');
+    })
+
+  urlinput.addEventListener('keypress', (e) => {
+    if (e.keyCode == 13) {
+      UrlInputValidated()
+    }
+
+    if (resultWindow && (
+        e.keyCode === 9 ||
+        e.keyCode === 38 ||
+        e.keyCode === 40)) {
+      resultWindow.forward({keycode: e.keyCode});
+      e.preventDefault();
+    }
+  });
+
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.selected_value) {
+      urlinput.value = e.data.selected_value;
+    }
+  });
+
+  urlinput.addEventListener('input', () => {
+    this.userInput = urlinput.value;
+    UrlInputChanged();
+  });
+
+  Bridge.service('urlbar')
+    .method('focus', () => {
+      urlinput.focus();
+      urlinput.select();
+    })
+    .listen(new BroadcastChannel('urlbar'));
+
+  var resultWindow = null;
+  function UrlInputChanged() {
+    let text = urlinput.value;
+    if (text === '') {
+      if (resultWindow) {
+        PopupHelper.close(resultWindow);
+        resultWindow = null;
+      }
+      return;
+    }
+
+    if (resultWindow === null) {
+      resultWindow = PopupHelper.open({
+        url: '/src/views/places/index.html',
+        name: 'places',
+        anchor: navbar,
+        data: { value: text }
+      });
+    } else {
+      resultWindow.forward({ value: text });
+    }
+  }
+
+  let browser = this;
+  function UrlInputValidated() {
+    if (resultWindow) {
+      PopupHelper.close(resultWindow);
+      resultWindow = null;
+    }
+
+    let text = urlinput.value;
+    let url = PreprocessUrlInput(text);
+    browser.setLocation(url);
+    browser.focus();
+  }
+
+  let events = [
+    'mozbrowserloadstart',
+    'mozbrowserloadend',
+    'mozbrowserlocationchange',
+    'mozbrowsererror',
+    'mozbrowsersecuritychange',
+  ];
+  events.forEach((name) => {
+    browser.addEventListener(name, UpdateTab);
+  });
+
+  function OnTabSelected(config) {
+    if (config.uuid !== browser.uuid) {
+      return;
+    }
+
+    if (!browser.location) {
+      urlinput.focus();
+      urlinput.select();
+    }
+    UpdateTab();
+  }
+
+  OnTabSelected(browser);
+  Browsers.on('select', OnTabSelected);
+
+  function UpdateTab() {
+    if (browser.loading) {
+      navbar.classList.add('loading');
+    } else {
+      navbar.classList.remove('loading');
+    }
+
+    if (browser.userInput) {
+      urlinput.value = browser.userInput;
+    } else if (browser.location) {
+      urlinput.value = UrlHelper.trim(browser.location);
+    } else {
+      urlinput.value = '';
+    }
+
+    if (browser.securityState == 'secure') {
+      navbar.classList.add('ssl');
+      navbar.classList.toggle('sslev', browser.securityExtendedValidation);
+    } else {
+      navbar.classList.remove('ssl');
+      navbar.classList.remove('sslev');
+    }
+
+    browser.canGoBack().then(canGoBack => {
+      backButton.classList.toggle('disabled', !canGoBack);
     });
+
+    browser.canGoForward().then(canGoForward => {
+      forwardButton.classList.toggle('disabled', !canGoForward);
+    });
+  };
+
+
+  function PreprocessUrlInput(input) {
+    if (UrlHelper.isNotURL(input)) {
+      let urlTemplate = 'https://search.yahoo.com/search?p={searchTerms}';
+      return urlTemplate.replace('{searchTerms}', encodeURIComponent(input));
+    }
+
+    if (!UrlHelper.hasScheme(input)) {
+      input = 'http://' + input;
+    }
+
+    return input;
+  };
+
+
+
+
+  };
+
+  browserProto._createFrameElement = function(remote) {
+    let frameElement = document.createElement('iframe');
+    frameElement.className = 'browser';
+    frameElement.setAttribute('mozbrowser', 'true');
+    frameElement.setAttribute('flex', '1');
+    frameElement.setAttribute('remote', remote);
+    frameElement.setAttribute('mozallowfullscreen', 'true');
+    this.shadowRoot.querySelector('.iframes').appendChild(frameElement);
+
+    for (let eventName of IFRAME_EVENTS) {
+      frameElement.addEventListener(eventName, this);
+    }
+
+    this._frameElement = frameElement;
+    this._applyZoom();
+  };
+
+
+  browserProto.zoomIn = function() {
+    this._zoom += 0.1;
+    this._zoom = Math.min(MAX_ZOOM, this._zoom);
+    this._applyZoom();
+  };
+
+  browserProto.zoomOut = function() {
+    this._zoom -= 0.1;
+    this._zoom = Math.max(MIN_ZOOM, this._zoom);
+    this._applyZoom();
+  };
+
+  browserProto.resetZoom = function() {
+    this._zoom = 1;
+    this._applyZoom();
+  };
+
+  browserProto._applyZoom = function() {
+    this._frameElement && this._frameElement.zoom(this._zoom);
+  };
+
+  browserProto.reload = function() {
+    this._frameElement && this._frameElement.reload();
+  };
+
+  browserProto.stop = function() {
+    this._frameElement && this._frameElement.stop();
+  };
+
+  browserProto.goBack = function() {
+    this._frameElement && this._frameElement.goBack();
+  };
+
+  browserProto.findAll = function(str, caseSensitive) {
+    this._frameElement && this._frameElement.findAll(str, caseSensitive);
+  };
+
+  browserProto.findNext = function(str, direction) {
+    this._frameElement && this._frameElement.findNext(str, direction);
+  };
+
+  browserProto.clearMatch = function() {
+    this._frameElement && this._frameElement.clearMatch();
+  };
+
+
+  browserProto.goForward = function() {
+    this._frameElement && this._frameElement.goForward();
+  };
+
+  browserProto.toggleDevtools = function() {
+    if (this.tools) {
+      this.tools.remove();
+      this.tools = null;
+      return;
+    }
+    let tools = this.tools = document.createElement('iframe');
+    tools.setAttribute('mozbrowser', 'true');
+    tools.setAttribute('flex', '1');
+    tools.setAttribute('src', 'about:devtools-panel');
+    tools.setAttribute('style', 'visibility:hidden');
+    tools.target = this._frameElement;
+    this.appendChild(tools);
+  };
+
+  browserProto._clearBrowserData = function() {
+    this._loading = false;
+    this._title = '';
+    this._location = '';
+    this._favicon = '';
+    this._securityState = 'insecure';
+    this._securityExtendedValidation = false;
+  };
+
+
+  browserProto.canGoBack = function() {
+    if (!this._frameElement) {
+      return Promise.resolve(false);
+    }
+
+    return this._frameElement.getCanGoBack();
   };
 
   browserProto.canGoForward = function() {
-    return new Promise((resolve, reject) => {
-      if (!this._innerIframe) {
-        return resolve(false);
-      }
-      this._innerIframe.getCanGoForward().onsuccess = r => {
-        return resolve(r.target.result);
-      };
-    });
+    if (!this._frameElement) {
+      return Promise.resolve(false);
+    }
+
+    return this._frameElement.getCanGoForward();
   };
 
   browserProto.focus = function() {
-    if (this._innerIframe) {
-      this._innerIframe.focus();
-    }
+    this._frameElement && this._frameElement.focus();
   };
-
-  browserProto.isMozBrowser = function() {
-    if (this._innerIframe && this._innerIframe.setVisible) {
-      return true;
-    }
-
-    return false;
-  };
-
-  browserProto.userInput = '';
 
   browserProto.handleEvent = function(e) {
-    let somethingChanged = true;
-
     switch (e.type) {
+      case 'mozbrowseropenwindow':
+        Tabs.method('add', {select: true, url: e.detail.url});
+        break;
+      case 'mozbrowseropentab':
+        Tabs.method('add', {select: false, url: e.detail.url});
+        break;
       case 'mozbrowserloadstart':
         this._clearBrowserData();
         this._loading = true;
@@ -272,12 +455,12 @@ define(['popuphelper'], function(PopupHelper) {
         break;
       case 'mozbrowsertitlechange':
         this._title = e.detail;
-        Services.history.method('updateTitle', this._location, this._title);
+        History.method('updateTitle', this._location, this._title);
         break;
       case 'mozbrowserlocationchange':
         this.userInput = '';
         this._location = e.detail;
-        Services.history.method('update', this._location);
+        History.method('update', this._location);
         break;
       case 'mozbrowsericonchange':
         this._favicon = e.detail.href;
@@ -299,19 +482,21 @@ define(['popuphelper'], function(PopupHelper) {
         e.preventDefault();
         break;
       default:
-        somethingChanged = false;
+        break;
     }
+
+    // Coalesce the update events.
+    clearTimeout(this._selectTimeout);
+    this._selectTimeout = setTimeout(() => {
+      Tabs.method('update', {
+        uuid: this.uuid,
+        title: this.title,
+        loading: this.loading,
+        url: this.location,
+        favicon: this.favicon
+      });
+    }, BROADCAST_UPDATES_DELAY);
   };
 
-  let Browser = document.registerElement('browser-element', {prototype: browserProto});
-
-  /*
-  PopupHelper.open({
-    url: 'http://google.fr',
-    type: PopupHelper.Popup,
-    anchor: document.querySelector('.reload-button')
-  });
-  */
-
-  return Browser;
+  return document.registerElement('browser-element', {prototype: browserProto});
 });

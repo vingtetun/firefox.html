@@ -19,49 +19,7 @@ function(Bridge, Browser) {
 
   'use strict';
 
-  var _eventsToTrack = [
-    'mozbrowseropenwindow',
-    'mozbrowseropentab',
-    'mozbrowserloadstart',
-    'mozbrowserloadend',
-    'mozbrowsertitlechange',
-    'mozbrowserlocationchange',
-    'mozbrowsericonchange',
-    'mozbrowsererror'
-  ];
-
   let service;
-  let Tabs = Services.tabs;
-
-  for (let type of _eventsToTrack) {
-    window.addEventListener(type, function(e) {
-      let browser = e.target.parentNode;
-
-      if (e.type === 'mozbrowseropenwindow') {
-        Tabs.method('add', {select: true, url: e.detail.url});
-        return;
-      }
-
-      if (e.type === 'mozbrowseropentab') {
-        Tabs.method('add', {select: false, url: e.detail.url});
-        return;
-      }
-
-      // Coalesce the update events.
-      clearTimeout(this._selectTimeout);
-      this._selectTimeout = setTimeout(() => {
-        Tabs.method('update', {
-          uuid: browser.uuid,
-          title: browser.title,
-          loading: browser.loading,
-          url: browser.location,
-          favicon: browser.favicon
-        });
-      }, 100);
-
-    });
-  }
-
   let _browserMap = new Map();
   let _selectedBrowser = null;
 
@@ -71,7 +29,7 @@ function(Bridge, Browser) {
       browser.setAttribute('flex', '1');
       browser.setAttribute('uuid', config.uuid);
 
-      let parent = document.querySelector('.iframes');
+      let parent = document.querySelector('#outervbox');
       parent.appendChild(browser);
       _browserMap.set(config.uuid, browser);
 
@@ -110,11 +68,14 @@ function(Bridge, Browser) {
         return;
       }
 
+
       // Make sure to not keep turning on/off processes
       // if the user is navigating into tabs with a 
       // shortcut very quickly.
       clearTimeout(this.selectTimeout);
       this.selectTimeout = setTimeout(() => {
+        this.selectTimeout = 0;
+
         let previouslySelectedBrowser = _selectedBrowser;
         if (previouslySelectedBrowser) {
           previouslySelectedBrowser.hide();
@@ -123,7 +84,7 @@ function(Bridge, Browser) {
         _selectedBrowser = browser;
         _selectedBrowser.show();
 
-        service.broadcast('select');
+        service.broadcast('select', config);
       }, 150);
     },
 
@@ -140,6 +101,7 @@ function(Bridge, Browser) {
     return Browsers.getSelected();
   }
 
+  let Tabs = Services.tabs;
   Tabs.on('select', Browsers.select.bind(Browsers));
   Tabs.on('remove', Browsers.remove.bind(Browsers));
 

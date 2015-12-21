@@ -82,7 +82,10 @@ define(['rect'], function(Rect) {
     this.rect.width = this.rect.width || (innerWidth - point.x);
     this.rect.height = this.rect.height || (innerHeight - point.y);
 
-    var navbar = require('navbar');
+    var navbar = {
+      height: 41
+    };
+    //require('navbar');
     var viewport = new Rect(
       0, navbar.height,
       innerWidth, innerHeight - navbar.height

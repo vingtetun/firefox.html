@@ -3,7 +3,7 @@ require.config({
 });
 
 require([
-  'navbar',
+  'browsers',
   'findbar',
   'webextensions/browserAction'
 ]);
