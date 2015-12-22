@@ -141,12 +141,6 @@ require([], function() {
   Tabs.on('add', (detail) => {
     let tab = new Tab(detail);
     allTabs.set(detail.uuid, tab);
-
-    Tabs.method('getSelected').then(function(config) {
-      if (detail.uuid === config.uuid) {
-        tab.select();
-      }
-    });
   });
 
   Tabs.on('remove', (detail) => {
@@ -169,18 +163,6 @@ require([], function() {
     if (tab) {
       tab.unselect();
     }
-  });
-
-  Tabs.method('getAll').then(tabs => {
-    tabs.forEach(config => {
-      let tab = new Tab(config);
-      allTabs.set(config.uuid, tab);
-    });
-    
-    // Ensure browsers service has started.
-    Services.browsers.method('ping').then(() => {
-      Tabs.method('select', tabs[0].uuid);
-    });
   });
 
   /* Build curved tabs */

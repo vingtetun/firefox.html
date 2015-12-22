@@ -18,6 +18,7 @@ function(Bridge, UUID) {
 
   let service = null;
   const HOMEPAGE = 'about:home';
+  const kUseSessionRestore = false;
 
   let _tabsArray = [];
   let _selectIndex = -1;
@@ -27,22 +28,27 @@ function(Bridge, UUID) {
     // This is a poor man session storage. Just a temporary
     // thing (localStorage is bad).
     saveSession: function() {
-      window.localStorage.session = JSON.stringify(_tabsArray);
+      if (kUseSessionRestore) {
+        window.localStorage.session = JSON.stringify(_tabsArray);
+      }
     },
 
     restoreSession: function() {
       let session = [];
       try {
-        session = JSON.parse(window.localStorage.session);
+        if (kUseSessionRestore) {
+          session = JSON.parse(window.localStorage.session);
+        }
       } catch (e) {}
 
       if (Array.isArray(session) && session.length > 0) {
         session.forEach((config, index) => {
           config.loading = index === 1 && config.url;
+          config.select = index === 1;
           Tabs.add(config);
         });
       } else {
-        Tabs.add({url: HOMEPAGE, loading: true});
+        Tabs.add({url: HOMEPAGE, loading: true, select: true});
       }
     },
 
@@ -51,16 +57,16 @@ function(Bridge, UUID) {
         url: options.url || '',
         title: options.title || '',
         favicon: options.favicon || '',
-        loading: options.loading || false,
-        uuid: UUID.generate()
+        loading: !!options.loading,
+        uuid: UUID.generate(),
       };
       _tabsArray.push(config);
+
+      service.broadcast('add', config);
 
       if (options.select) {
         this.select(config.uuid);
       }
-
-      service.broadcast('add', config);
 
       this.saveSession();
     },
@@ -231,6 +237,6 @@ function(Bridge, UUID) {
     })
     .listen(new BroadcastChannel('tabs'));
 
-  Tabs.restoreSession();
+  Services.browsers.method('ping').then(Tabs.restoreSession);
   return Tabs;
 });

@@ -2,12 +2,23 @@
 <html>
   <head>
     <style>
-      body {
-        width: 800px;
-        height: 600px;
+      html, body, iframe {
+        width: 100%;
+        min-width: 800px;
+
+        height: 100%;
+        min-height: 600px;
+
+        border: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
       }
     </style>
-    <meta http-equiv="refresh" content="0; url=src/views/tabs/" />
   </head>
+
+  <body onload="frames[0].focus();">
+    <iframe mozbrowser src="src/views/tabs/"></iframe>
+  </body>
 </html>
 

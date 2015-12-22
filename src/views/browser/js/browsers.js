@@ -59,15 +59,13 @@ function(Bridge, Browser) {
     select: function(config) {
       let browser = _browserMap.get(config.uuid);
       if (!browser) {
-        // This is an unknow browser, let's create a new one.
-        browser = this.add(config);
+        return;
       }
 
       if (browser === _selectedBrowser) {
         // already selected
         return;
       }
-
 
       // Make sure to not keep turning on/off processes
       // if the user is navigating into tabs with a 
@@ -102,6 +100,7 @@ function(Bridge, Browser) {
   }
 
   let Tabs = Services.tabs;
+  Tabs.on('add', Browsers.add.bind(Browsers));
   Tabs.on('select', Browsers.select.bind(Browsers));
   Tabs.on('remove', Browsers.remove.bind(Browsers));
 

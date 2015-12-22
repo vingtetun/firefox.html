@@ -13,6 +13,7 @@ define([
 ], function(UrlHelper, Bridge, PopupHelper) {
   'use strict';
 
+  const gScriptsToInject = {};
   const Tabs = Services.tabs;
   const History = Services.history;
   const Browsers = Services.browsers;
@@ -137,20 +138,30 @@ define([
     }
 
     this._frameElement.src = url;
+    this.maybeInjectScripts(url);
   };
 
   browserProto.show = function() {
     this._frameElement && this._frameElement.setVisible(true);
+    this._frameElement && this._frameElement.setActive(true);
     this.removeAttribute('hidden');
+    this.focus();
   };
 
   browserProto.hide = function() {
     this._frameElement && this._frameElement.setVisible(false);
+    this._frameElement && this._frameElement.setActive(false);
     this.setAttribute('hidden', 'true');
+    this.blur();
   };
 
   browserProto._prepareContent = function() {
-    let shadow = this.createShadowRoot();
+    // Ideally it would be nice to do:
+    // let shadow = this.createShadowRoot();
+    // But adding the mozbrowser iframe as an element of the shadow
+    // root prevent it to be focused and as a result, it will not
+    // receive key events. So let's use normal dom for now :/
+    let shadow = this;
     shadow.appendChild(getTemplate());
 
     let navbar = shadow.querySelector('.navbar');
@@ -179,6 +190,26 @@ define([
 
       urlbar.classList.remove('focus');
     })
+
+  browserProto.maybeInjectScripts = function(url) {
+    let script = gScriptsToInject[url];
+    if (!script) {
+      return;
+    }
+
+    let frame = this._frameElement;
+    frame.addEventListener('mozbrowserlocationchange', function f(e) {
+      frame.removeEventListener(e.type, f);
+      let req = frame.executeScript(script, {url: url});
+      req.onsuccess = function(rv) {
+        dump('ExecuteScript succes: ' + req.result + '\n');
+      };
+
+      req.onerror = function(code) {
+        dump('ExecuteScript failure: ' + req.result + '\n');
+      };
+    });
+  };
 
   urlinput.addEventListener('keypress', (e) => {
     if (e.keyCode == 13) {
@@ -332,7 +363,7 @@ define([
     frameElement.setAttribute('flex', '1');
     frameElement.setAttribute('remote', remote);
     frameElement.setAttribute('mozallowfullscreen', 'true');
-    this.shadowRoot.querySelector('.iframes').appendChild(frameElement);
+    this.querySelector('.iframes').appendChild(frameElement);
 
     for (let eventName of IFRAME_EVENTS) {
       frameElement.addEventListener(eventName, this);
@@ -436,6 +467,10 @@ define([
 
   browserProto.focus = function() {
     this._frameElement && this._frameElement.focus();
+  };
+
+  browserProto.blur = function() {
+    this._frameElement && this._frameElement.blur();
   };
 
   browserProto.handleEvent = function(e) {
