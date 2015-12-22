@@ -2,26 +2,27 @@
 var targetURI = null;
 var documentURI = null;
 
+function dumpObject(obj, level = 0) {
+  var indent = '';
+  for (var i = 0; i < level; i++) {
+    indent += '\t';
+  }
+
+  for (var key in obj) {
+    if (typeof obj[key] == 'object') {
+      dump(indent + key + '\n');
+      dumpObject(obj[key], level + 1);
+    } else {
+      dump(indent + key + ': ' + obj[key] + '\n');
+    }
+  }
+}
+
+
 window.addEventListener('message', function(e) {
   var data = e.data;
   if (!data || !data.systemTargets || !data.systemTargets[0]) {
     return;
-  }
-
-  function dumpObject(obj, level = 0) {
-    var indent = '';
-    for (var i = 0; i < level; i++) {
-      indent += '\t';
-    }
-
-    for (var key in obj) {
-      if (typeof obj[key] == 'object') {
-        dump(indent + key + '\n');
-        dumpObject(obj[key], level + 1);
-      } else {
-        dump(indent + key + ': ' + obj[key] + '\n');
-      }
-    }
   }
 
   //dumpObject(data);
