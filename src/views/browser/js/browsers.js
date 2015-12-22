@@ -67,23 +67,21 @@ function(Bridge, Browser) {
         return;
       }
 
-      // Make sure to not keep turning on/off processes
-      // if the user is navigating into tabs with a 
-      // shortcut very quickly.
-      clearTimeout(this.selectTimeout);
-      this.selectTimeout = setTimeout(() => {
-        this.selectTimeout = 0;
-
+      requestAnimationFrame(() => {
         let previouslySelectedBrowser = _selectedBrowser;
-        if (previouslySelectedBrowser) {
-          previouslySelectedBrowser.hide();
-        };
 
         _selectedBrowser = browser;
         _selectedBrowser.show();
 
-        service.broadcast('select', config);
-      }, 150);
+        if (previouslySelectedBrowser) {
+          requestAnimationFrame(() => {
+            previouslySelectedBrowser.hide();
+            service.broadcast('select', config);
+          });
+        } else {
+          service.broadcast('select', config);
+        }
+      });
     },
 
     getSelected: function() {

@@ -7,7 +7,17 @@ html, body {
   background-color: white;
 }
 
-.iframes > .browser[hidden] {
-  display: block;
-  visibility: hidden;
+.browsers, browser-element {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  z-index: 0;
+}
+
+browser-element[hidden] {
+  display: flex;
+  z-index: -1;
 }
