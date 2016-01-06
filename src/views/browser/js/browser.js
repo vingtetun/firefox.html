@@ -391,37 +391,67 @@ define([
     this._applyZoom();
   };
 
+  browserProto.methodCheck = function(name, args) {
+    this._frameElement &&
+    this._frameElement[name] &&
+    this._frameElement[name].apply(this._frameElement, args || []);
+  };
+
   browserProto._applyZoom = function() {
-    this._frameElement && this._frameElement.zoom(this._zoom);
+    this.methodCheck('zoom', [this._zoom]);
   };
 
   browserProto.reload = function() {
-    this._frameElement && this._frameElement.reload();
+    this.methodCheck('reload');
   };
 
   browserProto.stop = function() {
-    this._frameElement && this._frameElement.stop();
+    this.methodCheck('stop');
   };
 
   browserProto.goBack = function() {
-    this._frameElement && this._frameElement.goBack();
+    this.methodCheck('goBack');
   };
 
   browserProto.findAll = function(str, caseSensitive) {
-    this._frameElement && this._frameElement.findAll(str, caseSensitive);
+    this.methodCheck('findAll', [str, caseSensitive]);
   };
 
   browserProto.findNext = function(str, direction) {
-    this._frameElement && this._frameElement.findNext(str, direction);
+    this.methodCheck('findNext', [str, direction]);
   };
 
   browserProto.clearMatch = function() {
-    this._frameElement && this._frameElement.clearMatch();
+    this.methodCheck('clearMatch');
+  };
+
+  browserProto.goForward = function() {
+    this.methodCheck('goForward');
+  };
+
+  browserProto.focus = function() {
+    this.methodCheck('focus');
+  };
+
+  browserProto.blur = function() {
+    this.methodCheck('blur');
   };
 
 
-  browserProto.goForward = function() {
-    this._frameElement && this._frameElement.goForward();
+  browserProto.canGoBack = function() {
+    if (!this._frameElement) {
+      return Promise.resolve(false);
+    }
+
+    return this._frameElement.getCanGoBack();
+  };
+
+  browserProto.canGoForward = function() {
+    if (!this._frameElement) {
+      return Promise.resolve(false);
+    }
+
+    return this._frameElement.getCanGoForward();
   };
 
   browserProto.toggleDevtools = function() {
@@ -446,31 +476,6 @@ define([
     this._favicon = '';
     this._securityState = 'insecure';
     this._securityExtendedValidation = false;
-  };
-
-
-  browserProto.canGoBack = function() {
-    if (!this._frameElement) {
-      return Promise.resolve(false);
-    }
-
-    return this._frameElement.getCanGoBack();
-  };
-
-  browserProto.canGoForward = function() {
-    if (!this._frameElement) {
-      return Promise.resolve(false);
-    }
-
-    return this._frameElement.getCanGoForward();
-  };
-
-  browserProto.focus = function() {
-    this._frameElement && this._frameElement.focus();
-  };
-
-  browserProto.blur = function() {
-    this._frameElement && this._frameElement.blur();
   };
 
   browserProto.handleEvent = function(e) {
