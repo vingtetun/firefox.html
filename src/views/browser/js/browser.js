@@ -9,11 +9,11 @@
 define([
   '/src/shared/js/urlhelper.js',
   '/src/shared/js/bridge/service.js',
+  '/src/shared/js/content-scripts.js',
   'popuphelper'
-], function(UrlHelper, Bridge, PopupHelper) {
+], function(UrlHelper, Bridge, ContentScripts, PopupHelper) {
   'use strict';
 
-  const gScriptsToInject = {};
   const Tabs = Services.tabs;
   const History = Services.history;
   const Browsers = Services.browsers;
@@ -192,7 +192,7 @@ define([
     })
 
   browserProto.maybeInjectScripts = function(url) {
-    let script = gScriptsToInject[url];
+    let script = ContentScripts.get(url);
     if (!script) {
       return;
     }
