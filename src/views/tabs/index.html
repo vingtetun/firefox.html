@@ -19,15 +19,10 @@
   <body>
     <vbox id='outervbox' flex='1'> <!-- This is not XUL. It's html. -->
       <hbox class='tabstrip toolbar'>
+        <div hidden='true' class='dummy-tab-curve'></div>
         <hbox flex='1' id="tabs" class='tabscontainer'>
         </hbox>
-        <div hidden='true' class='dummy-tab-curve'></div>
       </hbox>
-
-      <hbox id='outerhbox' flex='1'>
-        <iframe id='system' class='system' src='/src/views/browser/index.html' flex='1'></iframe>
-      </hbox>
-
     </vbox>
   </body>
 </html>

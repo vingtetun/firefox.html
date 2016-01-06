@@ -167,7 +167,12 @@ require([], function() {
 
   /* Build curved tabs */
 
-  addEventListener('load', onDocumentLoaded);
+  let ready = (document.readyState === 'complete');
+  if (ready) {
+    BuildCurvedTabs();
+  } else {
+    addEventListener('load', onDocumentLoaded);
+  }
 
   function onDocumentLoaded() {
     removeEventListener('load', onDocumentLoaded);
