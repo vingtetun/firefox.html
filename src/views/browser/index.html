@@ -30,23 +30,23 @@
           @import url('style/window.css');
           @import url('style/webextensions/browserAction.css');
         </style>
-        <vbox flex='1'>
-          <hbox class='navbar toolbar' align='center'>
+        <div flex='1' direction='column'>
+          <div flex='0' class='navbar toolbar' align='center'>
             <button class='back-button disabled' title='Go back one page'></button>
             <button class='forward-button disabled' title='Go forward one page'></button>
             <button class='reload-button' title='Reload current page'></button>
             <button class='stop-button' title='Stop loading this page'></button>
-            <hbox class='urlbar' flex='1' align='center'>
+            <div class='urlbar' flex='1' align='center'>
               <div class='identity'></div>
               <input autofocus placeholder='Search or enter address' class='urlinput' flex='1'>
-            </hbox>
-            <hbox id='navbar-extensions'></hbox>
-          </hbox>
+            </div>
+            <div id='navbar-extensions'></div>
+          </div>
 
-          <hbox id='outerhbox' flex='1'>
-            <box class='iframes' flex='1'></box>
-          </hbox>
-        </vbox>
+          <div id='outerhbox' flex='1'>
+            <div class='iframes' flex='1'></div>
+          </div>
+        </div>
       </template>
     </div>
 
