@@ -135,7 +135,7 @@ let onManifest = (type, directive, extension, manifest) => {
 };
 extensions.on("manifest_browser_action", onManifest);
 
-extensions.registerAPI((extension, context) => {
+extensions.registerSchemaAPI("browserAction", null, (extension, context) => {
   function getProperty(property, value, tabIdOrDetails) {
     let tabId = typeof(tabIdOrDetails) == "object" && tabIdOrDetails.tabId ?
                 tabIdOrDetails.tabId : tabIdOrDetails;

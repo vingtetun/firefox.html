@@ -51,7 +51,7 @@ extensions.on("page-load", (type, page, params, sender, delegate) => {
   delegate.getSender = getSender;
 });
 
-extensions.registerSchemaAPI('tabs', null, (extension, context) => {
+extensions.registerSchemaAPI("tabs", null, (extension, context) => {
   return {
     tabs: {
       onClicked: new EventManager(context, "browserAction.onClicked", fire => {
