@@ -21,9 +21,10 @@ require([], function() {
   // Tab JS object. This should use web components.
   // issue #64
   function Tab(config={}) {
-    let hbox = document.createElement('hbox');
-    hbox.className = 'tab';
-    hbox.setAttribute('align', 'center');
+    let tab = document.createElement('div');
+    tab.className = 'tab';
+    tab.setAttribute('flex', '0');
+    tab.setAttribute('align', 'center');
 
     let throbber = document.createElement('div');
     throbber.className = 'throbber';
@@ -31,7 +32,7 @@ require([], function() {
     let favicon = document.createElement('img');
     favicon.className = 'favicon';
 
-    let title = document.createElement('hbox');
+    let title = document.createElement('div');
     title.className = 'title';
 
     let button = document.createElement('button');
@@ -45,26 +46,26 @@ require([], function() {
       }
     };
 
-    hbox.onmousedown = (event) => {
+    tab.onmousedown = (event) => {
       if (event.button == 0) {
         Tabs.method('select', config.uuid);
       }
     };
 
-    hbox.onmouseup = (event) => {
+    tab.onmouseup = (event) => {
       if (event.button == 1) {
         event.stopPropagation();
         Tabs.method('remove', config.uuid);
       }
     }
 
-    hbox.appendChild(throbber);
-    hbox.appendChild(favicon);
-    hbox.appendChild(title);
-    hbox.appendChild(button);
+    tab.appendChild(throbber);
+    tab.appendChild(favicon);
+    tab.appendChild(title);
+    tab.appendChild(button);
 
     this.config = config;
-    this.dom = hbox;
+    this.dom = tab;
 
     tabscontainer.appendChild(this.dom);
     this.updateDom();

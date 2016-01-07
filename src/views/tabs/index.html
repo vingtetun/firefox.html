@@ -5,7 +5,7 @@
 
     <link rel='stylesheet' href='/src/shared/style/layout.css'>
     <link rel='stylesheet' href='style/tabstrip.css'>
-    <link rel='stylesheet' href='style/window.css'>
+    <link rel='stylesheet' href='style/tab.css'>
 
     <script src='/src/shared/js/os.js' defer></script>
     <script src='/src/shared/js/bridge/client.js' defer></script>
@@ -17,12 +17,7 @@
   </head>
 
   <body>
-    <vbox id='outervbox' flex='1'> <!-- This is not XUL. It's html. -->
-      <hbox class='tabstrip toolbar'>
-        <div hidden='true' class='dummy-tab-curve'></div>
-        <hbox flex='1' id="tabs" class='tabscontainer'>
-        </hbox>
-      </hbox>
-    </vbox>
+    <div id='tabs' flex="1" class='toolbar'></div>
+    <div hidden='true' class='dummy-tab-curve'></div>
   </body>
 </html>
