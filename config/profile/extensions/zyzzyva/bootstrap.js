@@ -10,10 +10,9 @@ const Ci = Components.interfaces;
   Cu.import("resource://gre/modules/Services.jsm");
   let manifest = Services.dirsvc.get('ProfD', Ci.nsIFile);
   manifest.append('extensions');
-  manifest.append('webextensions');
+  manifest.append('zyzzyva');
   Components.manager.addBootstrappedManifestLocation(manifest);
 })();
-
 
 function startup() {
   Cu.import("resource://gre/modules/ExtensionManagement.jsm");
@@ -28,7 +27,7 @@ function shutdown() {
     Cu.import("resource://gre/modules/Services.jsm");
     let manifest = Services.dirsvc.get('ProfD', Ci.nsIFile);
     manifest.append('extensions');
-    manifest.append('webextensions');
+    manifest.append('zyzzyva');
     Components.manager.removeBootstrappedManifestLocation(manifest);
   })();
 }
