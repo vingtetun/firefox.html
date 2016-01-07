@@ -4,6 +4,7 @@ require.config({
 
 require([
   'browsers',
+  'modal',
   'findbar',
   'webextensions/browserAction'
 ]);
