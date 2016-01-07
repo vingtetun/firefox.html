@@ -36,6 +36,15 @@
       return;
     }
 
+    // Reading key/keyCode may throw some security errors.
+    let key;
+    try {
+      e.key;
+      e.keyCode;
+    } catch(e) {
+      return;
+    }
+
     Services.shortcuts.method('on', {
       key: e.key,
       keyCode: e.keyCode,
@@ -45,6 +54,8 @@
       altKey: e.getModifierState('Alt'),
     });
   });
+
+  Services.service = bridge.service;
 
   global.Services = Services;
 })(this);

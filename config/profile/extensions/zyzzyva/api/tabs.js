@@ -9,16 +9,10 @@ var {
     runSafe,
 } = ExtensionUtils;
 
-function dispatch(name, event, options) {
+function getServiceFor(name) {
   let window = Services.wm.getMostRecentWindow(null);
-  // As window is an xray, attributes on it are not visible to the content
-  let channel = window["BroadcastChannel-" + name];
-  if (!channel) {
-    channel = window["BroadcastChannel-" + name] = new window.BroadcastChannel(name);
-  }
-  channel.postMessage({ action: event, options });
+  return window.Services[name];
 }
-
 
 function getSender(context, target, sender) {
   // The message was sent from a content script to a <browser> element.
@@ -72,7 +66,7 @@ extensions.registerSchemaAPI('tabs', null, (extension, context) => {
         }).api(),
 
       create(createProperties) {
-        dispatch("tabs", "create", createProperties);
+        getServiceFor('tabs').add({select: true, url: createProperties.url});
       },
     },
   };

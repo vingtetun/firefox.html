@@ -9,10 +9,9 @@
 
 define(
   [
-    '/src/shared/js/bridge/service.js',
     'uuid'
   ],
-function(Bridge, UUID) {
+function(UUID) {
 
   'use strict';
 
@@ -62,7 +61,7 @@ function(Bridge, UUID) {
       };
       _tabsArray.push(config);
 
-      service.broadcast('add', config);
+      this.service.broadcast('add', config);
 
       if (options.select) {
         this.select(config.uuid);
@@ -86,7 +85,7 @@ function(Bridge, UUID) {
 
         config.loading = options.loading;
         
-        service.broadcast('update', config);
+        this.service.broadcast('update', config);
       }
     },
 
@@ -122,7 +121,7 @@ function(Bridge, UUID) {
       }
 
       let config = _tabsArray.splice(index, 1)[0];
-      service.broadcast('remove', config);
+      this.service.broadcast('remove', config);
 
       this.saveSession();
     },
@@ -143,13 +142,13 @@ function(Bridge, UUID) {
 
       let previouslySelectedTab = _tabsArray[_selectIndex];
       if (previouslySelectedTab) {
-        service.broadcast('unselect', {uuid: previouslySelectedTab.uuid});
+        this.service.broadcast('unselect', {uuid: previouslySelectedTab.uuid});
       }
 
       _selectIndex = index;
 
       let config = _tabsArray[index];
-      service.broadcast('select', config);
+      this.service.broadcast('select', config);
     },
 
     selectNext: function() {
@@ -182,7 +181,7 @@ function(Bridge, UUID) {
 
       let config = _tabsArray[_selectIndex];
       let direction = 1;
-      service.broadcast('move', {uuid: config.uuid, direction});
+      this.service.broadcast('move', {uuid: config.uuid, direction});
 
       this.saveSession();
     },
@@ -201,7 +200,7 @@ function(Bridge, UUID) {
 
       let config = _tabsArray[_selectIndex];
       let direction = -1;
-      service.broadcast('move', {uuid: config.uuid, direction});
+      this.service.broadcast('move', {uuid: config.uuid, direction});
 
       this.saveSession();
     },
@@ -219,24 +218,8 @@ function(Bridge, UUID) {
     },
   }
 
-  service = Bridge.service('tabs')
-    .method('getAll', Tabs.getAll.bind(Tabs))
-    .method('select', Tabs.select.bind(Tabs))
-    .method('add', Tabs.add.bind(Tabs))
-    .method('remove', Tabs.remove.bind(Tabs))
-    .method('getSelected', Tabs.getSelected.bind(Tabs))
-    .method('select', Tabs.select.bind(Tabs))
-    .method('selectPrevious', Tabs.selectPrevious.bind(Tabs))
-    .method('selectNext', Tabs.selectNext.bind(Tabs))
-    .method('movePrevious', Tabs.movePrevious.bind(Tabs))
-    .method('moveNext', Tabs.moveNext.bind(Tabs))
-    .method('update', Tabs.update.bind(Tabs))
-    .method('viewsource', function() {
-      let url = 'view-source:' + Tabs.getSelected().url;
-      Tabs.add({select: true, url: url});
-    })
-    .listen(new BroadcastChannel('tabs'));
-
   Services.browsers.method('ping').then(Tabs.restoreSession);
+
+  Tabs.service = Services.service('tabs');
   return Tabs;
 });
