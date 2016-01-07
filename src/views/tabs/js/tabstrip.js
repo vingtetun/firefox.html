@@ -78,6 +78,7 @@ require([], function() {
     },
 
     select: function() {
+      this.dom.scrollIntoView(true);
       this.dom.classList.add('selected');
     },
 

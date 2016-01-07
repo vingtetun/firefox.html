@@ -1,13 +1,10 @@
-.toolbar {
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1;
+body {
+  background-color: lightgray;
+}
 
+.toolbar {
   padding: 0 1rem 0 1rem;
   margin-bottom: calc(-1 * var(--hwd-pixel));
-
-  overflow: hidden;
-  background-color: lightgray;
 }
 
 .button {
