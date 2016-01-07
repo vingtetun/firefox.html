@@ -9,9 +9,20 @@ var {
     runSafe,
 } = ExtensionUtils;
 
-function getServiceFor(name) {
-  let window = Services.wm.getMostRecentWindow(null);
-  return window.Services[name];
+
+function serialize(data) {
+  return getWindow().JSON.parse(JSON.stringify(data));
+}
+
+function getWindow() {
+  return Services.wm
+                 .getMostRecentWindow('navigator:browser')
+                 .frames[0]
+                 .wrappedJSObject;
+}
+
+function getService() {
+  return getWindow().Services.tabs;
 }
 
 function getSender(context, target, sender) {
@@ -66,7 +77,8 @@ extensions.registerSchemaAPI("tabs", null, (extension, context) => {
         }).api(),
 
       create(createProperties) {
-        getServiceFor('tabs').add({select: true, url: createProperties.url});
+        let data = serialize({ select: true, url: createProperties.url });
+        getService().method('add', data);
       },
     },
   };

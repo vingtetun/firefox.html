@@ -11,17 +11,16 @@ var {
 } = ExtensionUtils;
 
 function getChannel(name, callback) {
-  let window = Services.wm.getMostRecentWindow(null);
-  if (window.document.readyState != "complete") {
-    window.setTimeout(getChannel, 1000, name, callback);
-    return;
-  }
-  // As window is an xray, attributes on it are not visible to the content
-  let channel = window["BroadcastChannel-" + name];
-  if (!channel) {
-    channel = window["BroadcastChannel-" + name] = new window.BroadcastChannel(name);
-  }
-  callback(channel);
+  let window = Services.wm.getMostRecentWindow('navigator:browser')
+                          .frames[1];
+  window.wrappedJSObject.Services.browsers.method('ping').then(() => {
+    // As window is an xray, attributes on it are not visible to the content
+    let channel = window["BroadcastChannel-" + name];
+    if (!channel) {
+      channel = window["BroadcastChannel-" + name] = new window.BroadcastChannel(name);
+    }
+    callback(channel);
+  });
 }
 
 function dispatch(name, action, options) {
