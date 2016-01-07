@@ -8,7 +8,7 @@
  * non-positive widths and heights in that case.
  */
   
-define(['point'], function(Point) {
+define(['geometry/point'], function(Point) {
   const Rect = function Rect(x, y, w, h) {
     this.left = x;
     this.top = y;

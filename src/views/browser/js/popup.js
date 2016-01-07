@@ -4,7 +4,7 @@
  * Implements a web component for popups
  *
  */
-define(['rect'], function(Rect) {
+define(['geometry/rect'], function(Rect) {
   'use strict';
 
   let popupProto = Object.create(HTMLElement.prototype);
