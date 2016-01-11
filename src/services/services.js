@@ -25,7 +25,6 @@
     'browsers',
     'toolbar',
     'suggestions',
-    'popups',
     'shortcuts',
     'find',
     'urlbar'

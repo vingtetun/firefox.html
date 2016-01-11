@@ -124,9 +124,5 @@ define(['popup'], function() {
     PopupHelper[type] = Types[type];
   }
 
-  Services.service('popups')
-          .method('open', PopupHelper.open.bind(PopupHelper))
-          .listen(new BroadcastChannel('popups'));
-
   return PopupHelper;
 });

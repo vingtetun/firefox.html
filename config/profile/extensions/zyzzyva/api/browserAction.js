@@ -72,11 +72,10 @@ BrowserAction.prototype = {
     }
     if (this._data.popup) {
       let options = {
-        url: this._data.popup,
-        type: 2,
-        anchor: '[data-id="' + this._data.id + '"]'
+        id: this._data.id,
+        url: this._data.popup
       };
-      WindowUtils.emit('popups', 'open', options);
+      WindowUtils.emit('toolbar', 'openPopup', options);
     }
     for(let listener of this._listeners) {
       listener();

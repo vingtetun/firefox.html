@@ -9,7 +9,7 @@
  *
  */
 
-define([], function() {
+define(['popuphelper'], function(PopupHelper) {
   let map = new Map();
 
   function getContainer() {
@@ -85,15 +85,22 @@ define([], function() {
       } else {
         removeBadge(button);
       }
+    },
 
+    openPopup: function(options) {
+      let button = map.get(options.id);
+      PopupHelper.open({
+        url: options.url,
+        type: PopupHelper.Popup,
+        anchor: button
+      });
     }
   };
 
   Toolbar.service =
     Services.service('toolbar')
             .method('ping', () => 'pong')
-            .method('add', Toolbar.add.bind(Toolbar))
-            .method('remove', Toolbar.remove.bind(Toolbar))
+            .method('openPopup', Toolbar.openPopup.bind(Toolbar))
             .method('update', Toolbar.update.bind(Toolbar))
             .listen(new BroadcastChannel('toolbar'));
 

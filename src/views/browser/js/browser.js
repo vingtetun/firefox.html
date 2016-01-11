@@ -8,10 +8,9 @@
 
 define([
   '/src/shared/js/urlhelper.js',
-  '/src/shared/js/bridge/service.js',
   '/src/shared/js/content-scripts.js',
   'popuphelper'
-], function(UrlHelper, Bridge, ContentScripts, PopupHelper) {
+], function(UrlHelper, ContentScripts, PopupHelper) {
   'use strict';
 
   const Tabs = Services.tabs;
@@ -236,7 +235,7 @@ define([
     UrlInputChanged();
   });
 
-  Bridge.service('urlbar')
+  Services.service('urlbar')
     .method('focus', () => {
       urlinput.focus();
       urlinput.select();
