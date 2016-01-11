@@ -55,6 +55,10 @@ define(['popup'], function() {
     }
 
     if (options.anchor) {
+      if (typeof options.anchor === 'string') {
+        options.anchor = document.querySelector(options.anchor);
+      }
+
       popup.attachTo(options.anchor,
                      options.type === Types.Popup);
     }
@@ -119,6 +123,10 @@ define(['popup'], function() {
   for (let type in Types) {
     PopupHelper[type] = Types[type];
   }
+
+  Services.service('popups')
+          .method('open', PopupHelper.open.bind(PopupHelper))
+          .listen(new BroadcastChannel('popups'));
 
   return PopupHelper;
 });

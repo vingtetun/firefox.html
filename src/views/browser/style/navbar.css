@@ -134,3 +134,46 @@
     background-image: url(images/identity-icons-https-ev@2x.png);
   }
 }
+
+/* Toolbar buttons */
+
+.toolbar-button {
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  padding: 2px 4px;
+  border: var(--hwd-pixel) solid transparent;
+  background-origin: content-box, border-box, border-box;
+  background-clip: content-box, border-box, border-box;
+  border-radius: 3px;
+}
+
+.toolbar-button.disabled {
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.toolbar-button:hover {
+  border-color: var(--toolbarbutton-hover-bordercolor);
+  box-shadow: var(--toolbarbutton-hover-boxshadow);
+}
+
+.toolbar-button:hover:active {
+  border-color: var(--toolbarbutton-active-bordercolor);
+  box-shadow: var(--toolbarbutton-active-boxshadow);
+}
+
+.toolbar-button > img {
+  width: 16px;
+  height: 16px;
+}
+
+.button-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0px;
+  border: 0.1rem solid black;
+  border-radius: 0.5rem;
+  background-color: #e0e0e0;
+}
+

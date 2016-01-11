@@ -60,8 +60,10 @@ extensions.registerSchemaAPI("tabs", null, (extension, context) => {
         }).api(),
 
       create(createProperties) {
-        let data = WindowUtils.cloneInto({ select: true, url: createProperties.url });
-        WindowUtils.getService('tabs').method('add', data);
+        WindowUtils.emit('tabs', 'add', {
+          select: true,
+          url: createProperties.url
+        });
       },
     },
   };

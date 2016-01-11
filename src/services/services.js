@@ -23,7 +23,9 @@
     'history',
     'tabs',
     'browsers',
+    'toolbar',
     'suggestions',
+    'popups',
     'shortcuts',
     'find',
     'urlbar'
@@ -63,9 +65,19 @@
   }
 
   // Indicate if core Services are loaded and ready to be used.
+  let pageIsLoaded = new Promise(function(resolve) {
+    if (global.window && global.document.readyState === 'complete') {
+      resolve();
+    } else {
+      addEventListener('load', resolve);
+    }
+  });
+
   Services.ready = Promise.all([
-    Services.tabs.method('ping')
+    pageIsLoaded,
+    , Services.tabs.method('ping')
     , Services.browsers.method('ping')
+    , Services.toolbar.method('ping')
   ]);
 
   global.Services = Services;

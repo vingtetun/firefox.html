@@ -5,36 +5,7 @@ Cu.import("resource://gre/modules/ExtensionUtils.jsm");
 
 var {
     EventManager,
-    runSafe,
 } = ExtensionUtils;
-
-function getChannel(name, callback) {
-  let window = WindowUtils.getWindow();
-  window.wrappedJSObject.Services.ready.then(() => {
-    // As window is an xray, attributes on it are not visible to the content
-    let channel = window["BroadcastChannel-" + name];
-    if (!channel) {
-      channel = window["BroadcastChannel-" + name] = new window.BroadcastChannel(name);
-    }
-    callback(channel);
-  });
-}
-
-function dispatch(name, action, options) {
-  getChannel(name, channel => {
-    channel.postMessage({ action, options });
-  });
-}
-
-function listen(name, event, callback) {
-  getChannel(name, channel => {
-    channel.addEventListener("message", function ({data}) {
-      if (data.event == event) {
-        callback(event, data.args);
-      }
-    });
-  });
-}
 
 let browserActionMap = new Map();
 
@@ -92,22 +63,27 @@ function BrowserAction(options, extension) {
 }
 BrowserAction.prototype = {
   _build() {
-    dispatch("browserAction", "update", this._data);
-    listen("browserAction", "click", this.onClick.bind(this));
+    WindowUtils.emit('toolbar', "update", this._data);
+    WindowUtils.on('toolbar', "click", this.onClick.bind(this));
   },
-  onClick(_, {buttonId}) {
+  onClick({buttonId}) {
     if (buttonId != this._data.id) {
       return;
     }
     if (this._data.popup) {
-      dispatch("browserAction", "openPopup", { id: this._data.id, popup: this._data.popup });
+      let options = {
+        url: this._data.popup,
+        type: 2,
+        anchor: '[data-id="' + this._data.id + '"]'
+      };
+      WindowUtils.emit('popups', 'open', options);
     }
     for(let listener of this._listeners) {
       listener();
     }
   },
   _update(data) {
-    dispatch("browserAction", "update", data);
+    WindowUtils.emit('toolbar', "update", data);
   },
   getProperty(name, tabId) {
     return this._data[name];
@@ -117,7 +93,6 @@ BrowserAction.prototype = {
     this._update(this.data);
   },
   addClickListener(listener) {
-    dump(" add click listener\n");
     this._listeners.add(listener);
   },
   removeClickListener(listener) {
