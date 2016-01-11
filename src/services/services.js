@@ -64,7 +64,7 @@
 
   // Indicate if core Services are loaded and ready to be used.
   Services.ready = Promise.all([
-    Services.tabs.method('ping'),
+    Services.tabs.method('ping')
     , Services.browsers.method('ping')
   ]);
 

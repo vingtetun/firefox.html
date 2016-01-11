@@ -1,8 +1,6 @@
 
 dump('browserAction\n');
 
-Cu.import("resource://gre/modules/Services.jsm");
-
 Cu.import("resource://gre/modules/ExtensionUtils.jsm");
 
 var {
@@ -11,9 +9,8 @@ var {
 } = ExtensionUtils;
 
 function getChannel(name, callback) {
-  let window = Services.wm.getMostRecentWindow('navigator:browser')
-                          .frames[1];
-  window.wrappedJSObject.Services.browsers.method('ping').then(() => {
+  let window = WindowUtils.getWindow();
+  window.wrappedJSObject.Services.ready.then(() => {
     // As window is an xray, attributes on it are not visible to the content
     let channel = window["BroadcastChannel-" + name];
     if (!channel) {

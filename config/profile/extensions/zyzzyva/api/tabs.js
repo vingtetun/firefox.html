@@ -1,29 +1,12 @@
 
 dump("Tabs\n");
 
-Cu.import("resource://gre/modules/Services.jsm");
-
+Cu.import("resource://webextensions/glue.jsm");
 Cu.import("resource://gre/modules/ExtensionUtils.jsm");
 var {
     EventManager,
-    runSafe,
 } = ExtensionUtils;
 
-
-function serialize(data) {
-  return getWindow().JSON.parse(JSON.stringify(data));
-}
-
-function getWindow() {
-  return Services.wm
-                 .getMostRecentWindow('navigator:browser')
-                 .frames[0]
-                 .wrappedJSObject;
-}
-
-function getService() {
-  return getWindow().Services.tabs;
-}
 
 function getSender(context, target, sender) {
   // The message was sent from a content script to a <browser> element.
@@ -77,8 +60,8 @@ extensions.registerSchemaAPI("tabs", null, (extension, context) => {
         }).api(),
 
       create(createProperties) {
-        let data = serialize({ select: true, url: createProperties.url });
-        getService().method('add', data);
+        let data = WindowUtils.cloneInto({ select: true, url: createProperties.url });
+        WindowUtils.getService('tabs').method('add', data);
       },
     },
   };
