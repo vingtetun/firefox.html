@@ -12,10 +12,9 @@
 
 define(
   [
-    '/src/shared/js/bridge/service.js',
     'browser',
   ],
-function(Bridge, Browser) {
+function(Browser) {
 
   'use strict';
 
@@ -102,7 +101,7 @@ function(Bridge, Browser) {
   Tabs.on('select', Browsers.select.bind(Browsers));
   Tabs.on('remove', Browsers.remove.bind(Browsers));
 
-  service = Bridge.service('browsers')
+  service = Services.service('browsers')
     .method('ping', () => 'pong')
     .method('reload', () => selectedBrowser().reload())
     .method('goBack', () => selectedBrowser().goBack())
