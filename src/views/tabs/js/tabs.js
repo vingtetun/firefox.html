@@ -218,7 +218,7 @@ function(UUID) {
     },
   }
 
-  Services.browsers.method('ping').then(Tabs.restoreSession);
+  Services.ready.then(Tabs.restoreSession);
 
   Tabs.service = Services.service('tabs');
   return Tabs;

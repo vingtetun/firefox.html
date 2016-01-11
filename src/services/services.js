@@ -55,7 +55,18 @@
     });
   });
 
-  Services.service = bridge.service;
+  // If bridge.service is loaded, expose it via Services.service.
+  // In some cases it is not needed. For example, the webextensions
+  // code should be pure service consumption.
+  if (bridge.service) {
+    Services.service = bridge.service;
+  }
+
+  // Indicate if core Services are loaded and ready to be used.
+  Services.ready = Promise.all([
+    Services.tabs.method('ping'),
+    , Services.browsers.method('ping')
+  ]);
 
   global.Services = Services;
 })(this);

@@ -43,6 +43,7 @@ function(Tabs) {
    */
   Tabs
     .service
+    .method('ping', () => 'pong')
     .method('getAll', Tabs.getAll.bind(Tabs))
     .method('select', Tabs.select.bind(Tabs))
     .method('add', Tabs.add.bind(Tabs))
