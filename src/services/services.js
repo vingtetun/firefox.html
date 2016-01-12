@@ -24,6 +24,7 @@
     'tabs',
     'browsers',
     'toolbar',
+    'popups',
     'suggestions',
     'shortcuts',
     'find',

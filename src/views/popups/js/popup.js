@@ -68,7 +68,7 @@ define(['geometry/rect'], function(Rect) {
       point = {};
 
       if (this.anchor) {
-        let anchorRect = this.anchor.getBoundingClientRect();
+        let anchorRect = this.anchor;
         point.x = anchorRect.x;
         point.y = anchorRect.y + anchorRect.height;
       } else {
@@ -83,7 +83,7 @@ define(['geometry/rect'], function(Rect) {
     this.rect.height = this.rect.height || (innerHeight - point.y);
 
     var navbar = {
-      height: 41
+      height: 41 + 29
     };
     //require('navbar');
     var viewport = new Rect(
@@ -106,7 +106,7 @@ define(['geometry/rect'], function(Rect) {
     this.style.maxHeight = (this.maxHeight || this.rect.height) + 'px';
 
     if (this.anchor && this.arrow) {
-      let anchorRect = this.anchor.getBoundingClientRect();
+      let anchorRect = this.anchor;
       let rect = new Rect(
         anchorRect.x + anchorRect.width / 2,
         anchorRect.y + anchorRect.height,

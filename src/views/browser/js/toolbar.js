@@ -9,7 +9,7 @@
  *
  */
 
-define(['popuphelper'], function(PopupHelper) {
+define(['popup-client'], function(PopupClient) {
   let map = new Map();
 
   function getContainer() {
@@ -89,11 +89,14 @@ define(['popuphelper'], function(PopupHelper) {
 
     openPopup: function(options) {
       let button = map.get(options.id);
-      PopupHelper.open({
+      let rect = button.getBoundingClientRect();
+      Services.popups.method('openPopup', {
+        id: 'toolbar-popup',
         url: options.url,
-        type: PopupHelper.Popup,
-        anchor: button
+        anchor: { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
       });
+
+      PopupClient.observe(button, 'toolbar-popup');
     }
   };
 

@@ -10,17 +10,20 @@ define(['popup'], function() {
   const Types = {
     Window: 0,
     ContextMenu: 1,
-    Popup: 2
+    Popup: 2,
+    Tooltip: 3
   };
 
   const Errors = {
     NoParameters: 'No parameters',
     NoURL: 'Needs a target url',
     NoTarget: 'Needs a target',
+    NoIdentifier: 'Needs an identifier',
     UnknowType: 'Unknow type'
   };
 
   function ErrorMessage(str) {
+    dump('Error: ' + (new Error()).stack + '\n');
     throw new Error('PopupHelper: ' + str);
   }
 
@@ -48,6 +51,7 @@ define(['popup'], function() {
 
     if (!popup) {
       popup = document.createElement('popup-element');
+      popup.setAttribute('id', options.id);
       popup.setAttribute('name', options.name);
       popup.classList.add('window');
       document.body.appendChild(popup);
@@ -55,10 +59,7 @@ define(['popup'], function() {
     }
 
     if (options.anchor) {
-      if (typeof options.anchor === 'string') {
-        options.anchor = document.querySelector(options.anchor);
-      }
-
+      let anchorRect = options.anchor;
       popup.attachTo(options.anchor,
                      options.type === Types.Popup);
     }
@@ -77,6 +78,27 @@ define(['popup'], function() {
   }
 
   var PopupHelper = {
+    openTooltip: function(options) {
+      options.type = Types.Tooltip;
+      this.open(options);
+    },
+
+    openContextMenu: function(options) {
+      options.type = Types.ContextMenu;
+      options.url = 'contextmenu/';
+      this.open(options);
+    },
+
+    openPopup: function(options) {
+      options.type = Types.Popup;
+      this.open(options);
+    },
+
+    openPanel: function(options) {
+      options.type = Types.Panel;
+      this.open(options);
+    },
+
     open: function(options) {
       if (!options) {
         return ErrorMessage(Errors.NoParameters);
@@ -111,12 +133,39 @@ define(['popup'], function() {
       return null;
     },
 
-    close: function(target) {
+    close: function(options) {
+      if (!options.id) {
+        return ErrorMessage(Errors.NoIdentifier);
+      }
+
+      dump('Foo:' + options.id + '\n');
+      let target = document.getElementById(options.id);
       if (!target) {
         return ErrorMessage(Errors.NoTarget);
       }
 
+      this.service.broadcast('popuphidden', {id: target.id});
       target.remove();
+    },
+
+    update: function(options) {
+      if (!options.id) {
+        return ErrorMessage(Errors.NoIdentifier);
+      }
+
+      let target = document.getElementById(options.id);
+      if (!target) {
+        return ErrorMessage(Errors.NoTarget);
+      }
+
+      if (options.anchor) {
+        target.anchor = options.anchor;
+        target.move();
+      }
+
+      if (options.data) {
+        target.forward(options.data);
+      }
     }
   };
 
@@ -124,5 +173,6 @@ define(['popup'], function() {
     PopupHelper[type] = Types[type];
   }
 
+  PopupHelper.service = Services.service('popups');
   return PopupHelper;
 });

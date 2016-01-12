@@ -9,8 +9,7 @@
 define([
   '/src/shared/js/urlhelper.js',
   '/src/shared/js/content-scripts.js',
-  'popuphelper'
-], function(UrlHelper, ContentScripts, PopupHelper) {
+], function(UrlHelper, ContentScripts) {
   'use strict';
 
   const Tabs = Services.tabs;
@@ -182,9 +181,9 @@ define([
     })
 
     urlinput.addEventListener('blur', () => {
-      if (resultWindow) {
-        PopupHelper.close(resultWindow);
-        resultWindow = null;
+      if (hasResultWindow) {
+        Services.popups.method('close', { id: 'places' });
+        hasResultWindow = false;
       }
 
       urlbar.classList.remove('focus');
@@ -215,11 +214,11 @@ define([
       UrlInputValidated()
     }
 
-    if (resultWindow && (
+    if (hasResultWindow && (
         e.keyCode === 9 ||
         e.keyCode === 38 ||
         e.keyCode === 40)) {
-      resultWindow.forward({keycode: e.keyCode});
+      Services.popups.method('update', { id: 'places', data: { keycode: e.keyCode } });
       e.preventDefault();
     }
   });
@@ -242,34 +241,37 @@ define([
     })
     .listen(new BroadcastChannel('urlbar'));
 
-  var resultWindow = null;
+  var hasResultWindow = false;
   function UrlInputChanged() {
     let text = urlinput.value;
     if (text === '') {
-      if (resultWindow) {
-        PopupHelper.close(resultWindow);
-        resultWindow = null;
+      if (hasResultWindow) {
+        Services.popups.method('close', { id: 'places' });
+        hasResultWindow = false;
       }
       return;
     }
 
-    if (resultWindow === null) {
-      resultWindow = PopupHelper.open({
+    if (hasResultWindow) {
+      Services.popups.method('update', { id: 'places', data: { value: text } });
+    } else {
+      let rect = navbar.getBoundingClientRect();
+      Services.popups.method('openPanel', {
         url: '/src/views/places/index.html',
+        id: 'places',
         name: 'places',
-        anchor: navbar,
+        anchor: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
         data: { value: text }
       });
-    } else {
-      resultWindow.forward({ value: text });
+      hasResultWindow = true;
     }
   }
 
   let browser = this;
   function UrlInputValidated() {
-    if (resultWindow) {
-      PopupHelper.close(resultWindow);
-      resultWindow = null;
+    if (hasResultWindow) {
+      Services.popups.method('close', { id: 'places' });
+      hasResultWindow = false;
     }
 
     let text = urlinput.value;
@@ -512,12 +514,10 @@ define([
         this._securityExtendedValidation = e.detail.extendedValidation;
         break;
       case 'mozbrowsercontextmenu':
-        PopupHelper.open({
-          url: '/src/views/contextmenu/index.html',
-          name: 'contextmenu',
-          type: PopupHelper.ContextMenu,
+        Services.popups.method('openContextMenu', {
           data: JSON.parse(JSON.stringify(e.detail))
         });
+
         e.preventDefault();
         break;
       default:
