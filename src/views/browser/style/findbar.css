@@ -66,18 +66,18 @@
   position: absolute;
   right: 0;
 
-  background-image: url(/src/views/find/resources/close.png);
+  background-image: url(../resources/find/close.png);
 }
 
 .findbar > .close:hover {
-  background-image: url(/src/views/find/resources/close_hover.png);
+  background-image: url(../resources/find/close_hover.png);
 }
 
 
 .findbar .previous {
   width: 28px;
   height: 27px;
-  background-image: url(/src/views/find/resources/prev.png);
+  background-image: url(../resources/find/prev.png);
   background-size: 28px 27px;
   background-position: left top;
 
@@ -86,17 +86,17 @@
 }
 
 .findbar .previous:hover {
-  background-image: url(/src/views/find/resources/prev_hover.png);
+  background-image: url(../resources/find/prev_hover.png);
 }
 
 .findbar .previous:hover:active {
-  background-image: url(/src/views/find/resources/prev_pressed.png);
+  background-image: url(../resources/find/prev_pressed.png);
 }
 
 .findbar .next {
   width: 28px;
   height: 27px;
-  background-image: url(/src/views/find/resources/next.png);
+  background-image: url(../resources/find/next.png);
   background-size: 28px 27px;
   background-position: left top;
 
@@ -105,9 +105,9 @@
 }
 
 .findbar .next:hover {
-  background-image: url(/src/views/find/resources/next_hover.png);
+  background-image: url(../resources/find/next_hover.png);
 }
 
 .findbar .next:hover:active {
-  background-image: url(/src/views/find/resources/next_pressed.png);
+  background-image: url(../resources/find/next_pressed.png);
 }

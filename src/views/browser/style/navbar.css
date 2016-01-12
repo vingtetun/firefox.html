@@ -30,7 +30,7 @@
   border: var(--hwd-pixel) solid transparent;
   background-origin: content-box, border-box, border-box;
   background-clip: content-box, border-box, border-box;
-  background-image: url(images/Toolbar.png);
+  background-image: url(../resources/navbar/Toolbar.png);
   background-size: 756px 72px;
   border-radius: 3px;
 }
@@ -41,26 +41,26 @@
 }
 
 .navbar > button:hover {
-  background-image: url(images/Toolbar.png), var(--toolbarbutton-hover-background-image);
+  background-image: url(../resources/navbar/Toolbar.png), var(--toolbarbutton-hover-background-image);
   border-color: var(--toolbarbutton-hover-bordercolor);
   box-shadow: var(--toolbarbutton-hover-boxshadow);
 }
 
 .navbar > button:hover:active {
-  background-image: url(images/Toolbar.png), var(--toolbarbutton-active-background-image);
+  background-image: url(../resources/navbar/Toolbar.png), var(--toolbarbutton-active-background-image);
   border-color: var(--toolbarbutton-active-bordercolor);
   box-shadow: var(--toolbarbutton-active-boxshadow);
 }
 
 @media (min-resolution: 2dppx) {
   .navbar > button {
-    background-image: url(images/Toolbar@2x.png);
+    background-image: url(../resources/navbar/Toolbar@2x.png);
   }
   .navbar > button:hover {
-    background-image: url(images/Toolbar@2x.png), var(--toolbarbutton-hover-background-image);
+    background-image: url(../resources/navbar/Toolbar@2x.png), var(--toolbarbutton-hover-background-image);
   }
   .navbar > button:hover:active {
-    background-image: url(images/Toolbar@2x.png), var(--toolbarbutton-active-background-image);
+    background-image: url(../resources/navbar/Toolbar@2x.png), var(--toolbarbutton-active-background-image);
   }
 }
 
@@ -106,7 +106,7 @@
   margin: 0 6px;
   background-size: 32px 16px;
   background-position: -16px 0;
-  background-image: url(images/identity-icons-generic.png);
+  background-image: url(../resources/navbar/identity-icons-generic.png);
 }
 
 .identity:hover {
@@ -114,24 +114,24 @@
 }
 
 .navbar.ssl .identity {
-  background-image: url(images/identity-icons-https.png);
+  background-image: url(../resources/navbar/identity-icons-https.png);
 }
 
 .navbar.sslev .identity {
-  background-image: url(images/identity-icons-https-ev.png);
+  background-image: url(../resources/navbar/identity-icons-https-ev.png);
 }
 
 @media (min-resolution: 2dppx) {
   .identity {
-    background-image: url(images/identity-icons-generic@2x.png);
+    background-image: url(../resources/navbar/identity-icons-generic@2x.png);
   }
 
   .navbar.ssl .identity {
-    background-image: url(images/identity-icons-https@2x.png);
+    background-image: url(../resources/navbar/identity-icons-https@2x.png);
   }
 
   .navbar.sslev .identity {
-    background-image: url(images/identity-icons-https-ev@2x.png);
+    background-image: url(../resources/navbar/identity-icons-https-ev@2x.png);
   }
 }
 
