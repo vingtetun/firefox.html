@@ -241,6 +241,7 @@ define([
     })
     .method('navigate', (options) => {
       urlinput.value = options.url
+      browser.userInput = options.url;
     })
     .listen(new BroadcastChannel('urlbar'));
 
