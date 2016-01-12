@@ -1,17 +1,16 @@
 
 var source = null;
 window.addEventListener('message', function(e) {
-  source = e.source;
-
   if ('value' in e.data) {
     showResults(e.data.value);
   } else if ('keycode' in e.data) {
     navigateResults(e.data.keycode);
 
     var currentSelected = results.childNodes[_current];
-    source.postMessage({
-      'selected_value': currentSelected.firstChild.textContent
-    }, '*');
+    Services.urlbar.method('navigate', {
+      url: currentSelected.firstChild.textContent,
+      load: e.data.keyCode === 13
+    });
   }
 });
 

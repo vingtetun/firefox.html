@@ -239,6 +239,9 @@ define([
       urlinput.focus();
       urlinput.select();
     })
+    .method('navigate', (options) => {
+      urlinput.value = options.url
+    })
     .listen(new BroadcastChannel('urlbar'));
 
   var hasResultWindow = false;
