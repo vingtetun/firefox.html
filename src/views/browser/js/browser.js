@@ -38,27 +38,6 @@ define([
     , 'mozbrowsercontextmenu'
   ];
 
-  // Non-Remote iframes may steal the focus :/
-  const INPROCESS_URLS = [
-      'about:addons',
-    , 'about:config'
-    , 'about:cache'
-    , 'about:crashes',
-    , 'about:debugging'
-    , 'about:downloads'
-    , 'about:healthreport'
-    , 'about:networking'
-    , 'about:newtab'
-    , 'about:performance'
-    , 'about:plugins'
-    , 'about:preferences'
-    , 'about:sharing'
-    , 'about:support'
-    , 'about:telemetry'
-    , 'about:webrtc'
-    , 'about:devtools-panel'
-  ];
-
   function getTemplate() {
     let template = document.getElementById('browser-template');
     return document.importNode(template.content, true);
@@ -132,7 +111,7 @@ define([
 
   browserProto.setLocation = function(url) {
     if (!this._frameElement) {
-      this._createFrameElement(INPROCESS_URLS.indexOf(url) == -1);
+      this._createFrameElement(UrlHelper.isOutOfProcessURL(url));
     }
 
     this._frameElement.src = url;

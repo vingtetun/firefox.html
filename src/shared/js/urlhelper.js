@@ -6,6 +6,26 @@ define(function() {
 
   'use strict';
 
+  const INPROCESS_URLS = [
+      'about:addons',
+    , 'about:config'
+    , 'about:cache'
+    , 'about:crashes',
+    , 'about:debugging'
+    , 'about:downloads'
+    , 'about:healthreport'
+    , 'about:networking'
+    , 'about:newtab'
+    , 'about:performance'
+    , 'about:plugins'
+    , 'about:preferences'
+    , 'about:sharing'
+    , 'about:support'
+    , 'about:telemetry'
+    , 'about:webrtc'
+    , 'about:devtools-panel'
+  ];
+
   var rscheme = /^(?:[a-z\u00a1-\uffff0-9-+]+)(?::|:\/\/)/i;
 
   var UrlHelper = {
@@ -25,6 +45,10 @@ define(function() {
 
     isURL: function urlHelper_isURL(input) {
       return !UrlHelper.isNotURL(input);
+    },
+
+    isOutOfProcessURL: function urlHelper_isOutOfProcessURL(input) {
+      return INPROCESS_URLS.indexOf(input) === -1;
     },
 
     isNotURL: function urlHelper_isNotURL(input) {
