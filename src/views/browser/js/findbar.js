@@ -1,7 +1,5 @@
 
-require(['/src/shared/js/bridge/service.js'],
-function(Bridge) {
-  
+define([], function() {
   'use strict';
 
   let placeholder = document.querySelector('.findbar');
@@ -39,7 +37,7 @@ function(Bridge) {
     Services.browsers.method('findAll', urlinput.value);
   }
 
-  Bridge.service('find')
+  Services.service('find')
     .method('open', () => {
       placeholder.classList.add('visible');
       urlinput.focus();
