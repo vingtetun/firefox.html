@@ -1,5 +1,7 @@
 'use strict';
 
+dump('\tplaces\n');
+
 importScripts('/src/shared/js/bridge/service.js');
 importScripts('/src/shared/js/async_storage.js');
 importScripts('/src/services/places/history.js');

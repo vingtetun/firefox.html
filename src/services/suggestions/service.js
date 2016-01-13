@@ -1,5 +1,7 @@
 'use strict';
 
+dump('\tsuggestions\n');
+
 importScripts('/src/shared/js/bridge/service.js');
 
 const URL = 'http://ff.search.yahoo.com/gossip?output=fxjson&command=';

@@ -1,5 +1,7 @@
 'use strict';
 
+dump('\tshortcuts\n');
+
 importScripts('/src/shared/js/os.js');
 importScripts('/src/shared/js/bridge/client.js');
 importScripts('/src/shared/js/bridge/service.js');

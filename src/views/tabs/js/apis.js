@@ -21,13 +21,7 @@ function(Tabs) {
   // Startup core services early.
   new SharedWorker('/src/workers/worker.js');
 
-  /*
-   * Debug API
-   *
-   */
-  Services.service('debug')
-    .method('reload', () => document.location.reload(true))
-    .listen(new BroadcastChannel('debug'));
+  Services.debug.on('reload', () => document.location.reload(true));
 
   /*
    * Tabs API
