@@ -1,47 +1,60 @@
 
 Components.utils.import('resource://gre/modules/Services.jsm');
-Components.utils.import('resource://gre/modules/PromiseUtils.jsm');
 
 var EXPORTED_SYMBOLS = ['WindowUtils'];
 
 var WindowUtils = {
-  emit: function(service, action, options) {
-    let data = this.cloneInto(options);
-    this.getService(service).method(action, data);
+  emit: function(name, action, options) {
+    this.cloneInto(options).then(data => {
+      this.getService(name).then(service => {
+        service.method(action, data);
+      });
+    });
   },
 
-  on: function(service, action, cb) {
-    let func = this.cloneFunction(cb);
-    this.getService(service).on(action, func);
+  on: function(name, action, cb) {
+    this.cloneFunction(cb).then(func => {
+      this.getService(name).then(service => {
+        service.on(action, func);
+      });
+    });
   },
 
   ready: function() {
-    let deferred = PromiseUtils.defer();
-
-    this.getWindow().wrappedJSObject.Services.ready.then(() => {
-      deferred.resolve();
+    return this.getWindow().then(window => {
+      return window.wrappedJSObject.Services.ready;
     });
-
-    return deferred.promise;
   },
 
   getWindow: function() {
-    return Services.wm
-                   .getMostRecentWindow('navigator:browser')
-                   .frames[0];
+    let topWindow = Services.wm
+                            .getMostRecentWindow('navigator:browser');
+    let window = topWindow.frames[0];
+    if (window && window.document.readyState === 'complete') {
+      return Promise.resolve(window);
+    }
+    return new Promise(done => {
+      topWindow.setTimeout(() => {
+        done(WindowUtils.getWindow());
+      }, 50);
+    });
   },
 
   getService: function(name) {
-    return this.getWindow().wrappedJSObject.Services[name];
+    return this.getWindow().then(window => window.wrappedJSObject.Services[name]);
   },
 
   cloneFunction: function(obj) {
-    return Components.utils.cloneInto(obj, WindowUtils.getWindow(), {
-      cloneFunctions: true
+    return WindowUtils.getWindow().then(window => {
+      return Components.utils.cloneInto(obj, window, {
+        cloneFunctions: true
+      });
     });
   },
 
   cloneInto: function(obj) {
-    return Components.utils.cloneInto(obj, WindowUtils.getWindow());
+    return WindowUtils.getWindow().then(window => {
+      return Components.utils.cloneInto(obj, window);
+    });
   },
 };
