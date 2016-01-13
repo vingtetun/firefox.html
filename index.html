@@ -38,10 +38,10 @@
       #chrome {
         top: 2.9rem;
         height: calc(100% - 2.9rem);
+        pointer-events: none;
       }
 
       #popups {
-        background-color: transparent !important;
         pointer-events: none;
       }
 
@@ -55,8 +55,8 @@
   <body onload="frames[1].focus();">
     <iframe hidden mozbrowser src="src/extensions/"></iframe>
     <iframe id="tabs" mozbrowser src="src/views/tabs/"></iframe>
-    <iframe id="chrome" mozbrowser src="src/views/chrome/"></iframe>
     <iframe id="arena" mozbrowser src="src/views/arena/"></iframe>
+    <iframe id="chrome" mozpasspointerevents transparent mozbrowser src="src/views/chrome/"></iframe>
     <iframe id="popups" mozpasspointerevents transparent mozbrowser src="src/views/popups/"></iframe>
   </body>
 </html>

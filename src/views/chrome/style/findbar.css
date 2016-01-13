@@ -11,6 +11,7 @@
   border: 1px solid #a1a1a1;
   border-top: 0;
   display: none;
+  pointer-events: auto;
 }
 
 .findbar.visible {

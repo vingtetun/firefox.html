@@ -4,7 +4,8 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: white;
+  background-color: transparent;
+  pointer-events: none;
 }
 
 .browsers, chrome-element {
@@ -13,7 +14,6 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: white;
   z-index: 0;
 }
 
