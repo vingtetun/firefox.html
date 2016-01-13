@@ -23,28 +23,31 @@
         min-height: 600px;
       }
 
-      #tabs {
+      iframe {
         position: absolute;
         top: 0;
         left: 0;
-        height: 2.9rem;
+        height: 100%;
         width: 100%;
       }
 
-      #browsers {
-        position: absolute;
+      #tabs {
+        height: 2.9rem;
+      }
+
+      #chrome {
         top: 2.9rem;
         height: calc(100% - 2.9rem);
-        width: 100%;
       }
 
       #popups {
-        position: absolute;
-        top: 0;
-        height: 100%;
-        width: 100%;
         background-color: transparent !important;
         pointer-events: none;
+      }
+
+      #arena {
+        top: 7rem;
+        height: calc(100% - 2.9rem);
       }
     </style>
   </head>
@@ -52,7 +55,8 @@
   <body onload="frames[1].focus();">
     <iframe hidden mozbrowser src="src/extensions/"></iframe>
     <iframe id="tabs" mozbrowser src="src/views/tabs/"></iframe>
-    <iframe id="browsers" mozbrowser src="src/views/browser/"></iframe>
+    <iframe id="chrome" mozbrowser src="src/views/chrome/"></iframe>
+    <iframe id="arena" mozbrowser src="src/views/arena/"></iframe>
     <iframe id="popups" mozpasspointerevents transparent mozbrowser src="src/views/popups/"></iframe>
   </body>
 </html>

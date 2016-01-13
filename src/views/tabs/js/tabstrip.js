@@ -67,6 +67,14 @@ require([], function() {
     this.config = config;
     this.dom = tab;
 
+    this.client =
+      bridge.client(config.uuid, new BroadcastChannel(config.uuid));
+
+    this.client.on('update', (config) => {
+      this.config = config;
+      this.updateDom();
+    });
+
     tabscontainer.appendChild(this.dom);
     this.updateDom();
   }
@@ -124,14 +132,6 @@ require([], function() {
   };
 
   var Tabs = Services.tabs;
-
-  Tabs.on('update', (detail) => {
-    let tab = allTabs.get(detail.uuid);
-    if (tab) {
-      tab.config = detail;
-      tab.updateDom();
-    }
-  });
 
   Tabs.on('move', (detail) => {
     let tab = allTabs.get(detail.uuid);

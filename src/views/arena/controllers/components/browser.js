@@ -14,11 +14,11 @@ define([
 
   const Tabs = Services.tabs;
   const History = Services.history;
-  const Browsers = Services.browsers;
 
   const MIN_ZOOM = 0.5;
   const MAX_ZOOM = 2;
-  const BROADCAST_UPDATES_DELAY = 100;
+  const FOREGROUND_BROADCAST_UPDATES_DELAY = 100;
+  const BACKGROUND_BROADCAST_UPDATES_DELAY = 500;
 
   const IFRAME_EVENTS = [
     'mozbrowserasyncscroll'
@@ -38,12 +38,6 @@ define([
     , 'mozbrowsercontextmenu'
   ];
 
-  function getTemplate() {
-    let template = document.getElementById('browser-template');
-    return document.importNode(template.content, true);
-  }
-
-
   /**
    * <browser-element> Impl
    */
@@ -51,7 +45,6 @@ define([
 
   browserProto.createdCallback = function() {
     this._zoom = 1;
-    this._prepareContent();
     this._clearBrowserData();
   };
 
@@ -61,10 +54,18 @@ define([
   browserProto.detachedCallback = function() {
   };
 
+  browserProto.configure = function(options) {
+
+    this._uuid = options.uuid;
+    this.service = Services.service(this._uuid)
+                           .listen(new BroadcastChannel(this._uuid));
+    options.url && this.navigate(options.url);
+    options.select ? this.show() : this.hide();
+  };
+
   /*
    * <browser-element> Properties
    */
-
   Object.defineProperty(browserProto, 'loading', {
     get: function() {
       return this._loading;
@@ -73,7 +74,7 @@ define([
 
   Object.defineProperty(browserProto, 'uuid', {
     get: function() {
-      return this.getAttribute('uuid');
+      return this._uuid;
     }
   });
 
@@ -107,67 +108,15 @@ define([
     }
   });
 
-  browserProto.userInput = '';
-
-  browserProto.setLocation = function(url) {
-    if (!this._frameElement) {
-      this._createFrameElement(UrlHelper.isOutOfProcessURL(url));
+  Object.defineProperty(browserProto, 'selected', {
+    get: function() {
+      return this.hasAttribute('selected');
     }
-
-    this._frameElement.src = url;
-    this.maybeInjectScripts(url);
-  };
-
-  browserProto.show = function() {
-    this._frameElement && this._frameElement.setVisible(true);
-    this._frameElement && this._frameElement.setActive(true);
-    this.removeAttribute('hidden');
-    this.focus();
-  };
-
-  browserProto.hide = function() {
-    this._frameElement && this._frameElement.setVisible(false);
-    this._frameElement && this._frameElement.setActive(false);
-    this.setAttribute('hidden', 'true');
-    this.blur();
-  };
-
-  browserProto._prepareContent = function() {
-    // Ideally it would be nice to do:
-    // let shadow = this.createShadowRoot();
-    // But adding the mozbrowser iframe as an element of the shadow
-    // root prevent it to be focused and as a result, it will not
-    // receive key events. So let's use normal dom for now :/
-    let shadow = this;
-    shadow.appendChild(getTemplate());
-
-    let navbar = shadow.querySelector('.navbar');
-    let urlbar = navbar.querySelector('.urlbar');
-    let urlinput = navbar.querySelector('.urlinput');
-    let backButton = navbar.querySelector('.back-button')
-    let forwardButton = navbar.querySelector('.forward-button')
-    let reloadButton = navbar.querySelector('.reload-button');
-    let stopButton = navbar.querySelector('.stop-button');
-
-    backButton.onclick = () => this.goBack();
-    forwardButton.onclick = () => this.goForward();
-    reloadButton.onclick = () => this.reload();
-    stopButton.onclick = () => this.stop();
-
-    urlinput.addEventListener('focus', () => {
-      urlinput.select();
-      urlbar.classList.add('focus');
-    })
-
-    urlinput.addEventListener('blur', () => {
-      if (hasResultWindow) {
-        Services.popups.method('close', { id: 'places' });
-        hasResultWindow = false;
-      }
-
-      urlbar.classList.remove('focus');
-    })
-
+  });
+  
+  /*
+   * <browser-element> methods
+   */
   browserProto.maybeInjectScripts = function(url) {
     let script = ContentScripts.get(url);
     if (!script) {
@@ -188,166 +137,34 @@ define([
     });
   };
 
-  urlinput.addEventListener('keypress', (e) => {
-    if (e.keyCode == 13) {
-      UrlInputValidated()
+  browserProto.navigate = function(url) {
+    if (!this._frameElement) {
+      this._createFrameElement(UrlHelper.isOutOfProcessURL(url));
     }
 
-    if (hasResultWindow && (
-        e.keyCode === 9 ||
-        e.keyCode === 38 ||
-        e.keyCode === 40)) {
-      Services.popups.method('update', { id: 'places', data: { keycode: e.keyCode } });
-      e.preventDefault();
-    }
-  });
-
-  window.addEventListener('message', function(e) {
-    if (e.data && e.data.selected_value) {
-      urlinput.value = e.data.selected_value;
-    }
-  });
-
-  urlinput.addEventListener('input', () => {
-    this.userInput = urlinput.value;
-    UrlInputChanged();
-  });
-
-  Services.service('urlbar')
-    .method('focus', () => {
-      urlinput.focus();
-      urlinput.select();
-    })
-    .method('navigate', (options) => {
-      urlinput.value = options.url
-      browser.userInput = options.url;
-    })
-    .listen(new BroadcastChannel('urlbar'));
-
-  var hasResultWindow = false;
-  function UrlInputChanged() {
-    let text = urlinput.value;
-    if (text === '') {
-      if (hasResultWindow) {
-        Services.popups.method('close', { id: 'places' });
-        hasResultWindow = false;
-      }
-      return;
-    }
-
-    if (hasResultWindow) {
-      Services.popups.method('update', { id: 'places', data: { value: text } });
-    } else {
-      let rect = navbar.getBoundingClientRect();
-      Services.popups.method('openPanel', {
-        url: '/src/views/places/index.html',
-        id: 'places',
-        name: 'places',
-        anchor: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
-        data: { value: text }
-      });
-      hasResultWindow = true;
-    }
-  }
-
-  let browser = this;
-  function UrlInputValidated() {
-    if (hasResultWindow) {
-      Services.popups.method('close', { id: 'places' });
-      hasResultWindow = false;
-    }
-
-    let text = urlinput.value;
-    let url = PreprocessUrlInput(text);
-    browser.setLocation(url);
-    browser.focus();
-  }
-
-  let events = [
-    'mozbrowserloadstart',
-    'mozbrowserloadend',
-    'mozbrowserlocationchange',
-    'mozbrowsererror',
-    'mozbrowsersecuritychange',
-  ];
-  events.forEach((name) => {
-    browser.addEventListener(name, UpdateTab);
-  });
-
-  function OnTabSelected(config) {
-    if (config.uuid !== browser.uuid) {
-      return;
-    }
-
-    if (!browser.location) {
-      urlinput.focus();
-      urlinput.select();
-    }
-    UpdateTab();
-  }
-
-  OnTabSelected(browser);
-  Browsers.on('select', OnTabSelected);
-
-  function UpdateTab() {
-    if (browser.loading) {
-      navbar.classList.add('loading');
-    } else {
-      navbar.classList.remove('loading');
-    }
-
-    if (browser.userInput) {
-      urlinput.value = browser.userInput;
-    } else if (browser.location) {
-      urlinput.value = UrlHelper.trim(browser.location);
-    } else {
-      urlinput.value = '';
-    }
-
-    if (browser.securityState == 'secure') {
-      navbar.classList.add('ssl');
-      navbar.classList.toggle('sslev', browser.securityExtendedValidation);
-    } else {
-      navbar.classList.remove('ssl');
-      navbar.classList.remove('sslev');
-    }
-
-    browser.canGoBack().then(canGoBack => {
-      backButton.classList.toggle('disabled', !canGoBack);
-    });
-
-    browser.canGoForward().then(canGoForward => {
-      forwardButton.classList.toggle('disabled', !canGoForward);
-    });
+    this._frameElement.src = url;
+    this.maybeInjectScripts(url);
   };
 
-
-  function PreprocessUrlInput(input) {
-    if (UrlHelper.isNotURL(input)) {
-      let urlTemplate = 'https://search.yahoo.com/search?p={searchTerms}';
-      return urlTemplate.replace('{searchTerms}', encodeURIComponent(input));
-    }
-
-    if (!UrlHelper.hasScheme(input)) {
-      input = 'http://' + input;
-    }
-
-    return input;
+  browserProto.show = function() {
+    this._frameElement && this._frameElement.setVisible(true);
+    this.setAttribute('selected', 'true');
+    this.focus();
   };
 
-
-
-
+  browserProto.hide = function() {
+    this._frameElement && this._frameElement.setVisible(false);
+    this.removeAttribute('selected');
+    this.blur();
   };
 
   browserProto._createFrameElement = function(remote) {
     let frameElement = document.createElement('iframe');
     frameElement.className = 'browser';
     frameElement.setAttribute('mozbrowser', 'true');
-    frameElement.setAttribute('flex', '1');
     frameElement.setAttribute('remote', remote);
     frameElement.setAttribute('mozallowfullscreen', 'true');
-    this.querySelector('.iframes').appendChild(frameElement);
+    this.appendChild(frameElement);
 
     for (let eventName of IFRAME_EVENTS) {
       frameElement.addEventListener(eventName, this);
@@ -356,7 +173,6 @@ define([
     this._frameElement = frameElement;
     this._applyZoom();
   };
-
 
   browserProto.zoomIn = function() {
     this._zoom += 0.1;
@@ -509,16 +325,24 @@ define([
 
     // Coalesce the update events.
     clearTimeout(this._selectTimeout);
+
+    let delay = this.selected ? FOREGROUND_BROADCAST_UPDATES_DELAY
+                              : BACKGROUND_BROADCAST_UPDATES_DELAY;
+
     this._selectTimeout = setTimeout(() => {
-      Tabs.method('update', {
-        uuid: this.uuid,
+      let data = {
         title: this.title,
         loading: this.loading,
-        url: this.location,
-        favicon: this.favicon
-      });
-    }, BROADCAST_UPDATES_DELAY);
+        url: this._location,
+        favicon: this.favicon, // XXX this is expensive...
+        securityState: this._securityState,
+        securityExtendedValidation: this._securityExtendedValidation
+      };
+
+
+      this.service.broadcast('update', data);
+    }, delay);
   };
 
-  return document.registerElement('browser-element', {prototype: browserProto});
+  return frameElement.ownerDocument.registerElement('browser-element', {prototype: browserProto});
 });

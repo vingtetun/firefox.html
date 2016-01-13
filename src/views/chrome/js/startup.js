@@ -3,8 +3,7 @@ require.config({
 });
 
 require([
-  'browsers',
-  'toolbar',
+  'chromes',
   'modal',
   'findbar'
 ]);

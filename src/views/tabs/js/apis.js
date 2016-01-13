@@ -44,7 +44,6 @@ function(Tabs) {
   Tabs
     .service
     .method('ping', () => 'pong')
-    .method('getAll', Tabs.getAll.bind(Tabs))
     .method('select', Tabs.select.bind(Tabs))
     .method('add', Tabs.add.bind(Tabs))
     .method('remove', Tabs.remove.bind(Tabs))
@@ -54,7 +53,6 @@ function(Tabs) {
     .method('selectNext', Tabs.selectNext.bind(Tabs))
     .method('movePrevious', Tabs.movePrevious.bind(Tabs))
     .method('moveNext', Tabs.moveNext.bind(Tabs))
-    .method('update', Tabs.update.bind(Tabs))
     .method('viewsource', function() {
       let url = 'view-source:' + Tabs.getSelected().url;
       Tabs.add({select: true, url: url});

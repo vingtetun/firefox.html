@@ -7,7 +7,7 @@ html, body {
   background-color: white;
 }
 
-.browsers, browser-element {
+.browsers, chrome-element {
   position: absolute;
   top: 0;
   left: 0;
@@ -17,7 +17,7 @@ html, body {
   z-index: 0;
 }
 
-browser-element[hidden] {
+browser-chrome[hidden] {
   display: flex;
   z-index: -1;
 }

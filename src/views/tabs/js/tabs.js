@@ -70,25 +70,6 @@ function(UUID) {
       this.saveSession();
     },
 
-    update: function(options) {
-      let uuid = options.uuid;
-      let index = _tabsArray.findIndex(function(config) {
-        return config.uuid === uuid;
-      });
-
-      var config = _tabsArray[index];
-      if (config) {
-        config.title = options.title;
-        config.url = options.url;
-        config.favicon = options.favicon;
-        Tabs.saveSession();
-
-        config.loading = options.loading;
-        
-        this.service.broadcast('update', config);
-      }
-    },
-
     remove: function(uuid) {
       if (!uuid) {
         uuid = this.getSelected().uuid;
