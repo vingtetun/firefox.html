@@ -2,6 +2,23 @@
 
 let allKeyBindings = [];
 
+// Limit the repetition rate for shortcuts.
+const KeyRepeatDelay = 150;
+let lastKeyBinding = null;
+let lastKeyTimestamp = 0;
+
+function allowKeyShortcut(keyBinding) {
+  if (lastKeyBinding === keyBinding &&
+    Date.now() - lastKeyTimestamp < KeyRepeatDelay) {
+    return false;
+  }
+
+  lastKeyBinding = keyBinding;
+  lastKeyTimestamp = Date.now();
+
+  return true;
+}
+
 const Shortcuts = {
   on: function(e) {
     for (let oneKeyBinding of allKeyBindings) {
@@ -12,7 +29,8 @@ const Shortcuts = {
           break;
         }
       }
-      if (matches) {
+
+      if (matches && allowKeyShortcut(oneKeyBinding)) {
         oneKeyBinding.func.apply(null);
       }
     }
