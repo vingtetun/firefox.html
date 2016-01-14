@@ -22,14 +22,12 @@ define([], function() {
   
   return {
     get: function(url) {
-      dump('Get: ' + url + '\n');
       let script = scripts[url];
       if (!script) {
         return null;
       }
 
       let content = contents[script.child];
-      dump('Looking for content for: ' + script + '\n');
       if (!content) {
         // Register the parent script
         require([script.parent]);
@@ -41,7 +39,6 @@ define([], function() {
         xhr.send();
         contents[url] = content = xhr.responseText;
       }
-      dump('content: ' + content + '\n');
 
       return content;
     }
