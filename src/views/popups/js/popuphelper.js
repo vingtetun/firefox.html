@@ -138,7 +138,6 @@ define(['popup'], function() {
         return ErrorMessage(Errors.NoIdentifier);
       }
 
-      dump('Foo:' + options.id + '\n');
       let target = document.getElementById(options.id);
       if (!target) {
         return ErrorMessage(Errors.NoTarget);
