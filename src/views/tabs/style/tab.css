@@ -10,7 +10,7 @@
   border-image-slice: 0 28 0 28 fill;
   border-color: transparent;
   padding-top: 1px;
-  flex-basis: 180px;
+  flex-basis: 160px;
   background-clip: border-box;
 }
 
@@ -84,6 +84,7 @@
   font: -moz-field;
   font-size: 14px;
   outline: none;
+  text-align: left;
 }
 
 .tab.selected > .title {
