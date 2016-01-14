@@ -53,8 +53,6 @@ define([
 
       _selectedBrowser.show();
       previouslySelectedBrowser && previouslySelectedBrowser.hide();
-
-      this.service.broadcast('select', options);
     },
 
     selectedBrowser: function() {
