@@ -4,6 +4,7 @@
   cursor: default;
   color: #444;
   height: 28px;
+  margin-right: -25px;
   border-style: solid;
   border-width: 0 28px;
   border-image-slice: 0 28 0 28 fill;
