@@ -3,20 +3,19 @@
 dump('\tsuggestions\n');
 
 importScripts('/src/shared/js/bridge/service.js');
-
-const URL = 'http://ff.search.yahoo.com/gossip?output=fxjson&command=';
+importScripts('/src/services/suggestions/opensearch.js');
 
 var runningXHR = null;
 
 bridge.service('suggestions')
-  .method('get', function(value) {
+  .method('get', function(url) {
     if (runningXHR && runningXHR.cancel) {
       runningXHR.cancel();
     }
 
     return new Promise(function(resolve) {
       var xhr = new XMLHttpRequest({mozSystem: true});
-      xhr.open('GET', URL + value, true);
+      xhr.open('GET', url, true);
       xhr.send();
       runningXHR = xhr; 
 
@@ -26,4 +25,5 @@ bridge.service('suggestions')
       }
     });
   })
+  .method('getPlugins', () => self.plugins)
   .listen(new BroadcastChannel('suggestions'));

@@ -111,6 +111,10 @@ define([
       .method('navigate', (options) => {
         this.ui.input.value = options.url
         this.ui.input.userInput = options.url;
+
+        if (options.load) {
+          this.ui.input.validate();
+        }
       })
       .listen(new BroadcastChannel('urlbar'));
   };

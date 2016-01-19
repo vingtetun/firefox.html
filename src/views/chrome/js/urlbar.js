@@ -89,11 +89,6 @@ define([
   });
 
   p._preprocessUrlInput = function(input) {
-    if (UrlHelper.isNotURL(input)) {
-      let urlTemplate = 'https://search.yahoo.com/search?p={searchTerms}';
-      return urlTemplate.replace('{searchTerms}', encodeURIComponent(input));
-    }
-
     if (!UrlHelper.hasScheme(input)) {
       input = 'http://' + input;
     }
@@ -145,14 +140,9 @@ define([
         break;
 
       case 'keypress':
-        // XXX I wonder if not every keypress should be forwarded
-        // to places directly...
-        if (e.keyCode == 13) {
-          this.validate();
-        }
-
         if (Places.opened && (
             e.keyCode === 9 ||
+            e.keyCode === 13 ||
             e.keyCode === 38 ||
             e.keyCode === 40)) {
           Places.update({ keycode: e.keyCode });
