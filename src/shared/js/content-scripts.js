@@ -10,7 +10,7 @@ define([], function() {
   'use strict';
 
   let scripts = {
-    'http://browserhtml.org/src/about/home/':
+    'about:config':
       {
         parent: '/src/about/home/js/scripts/parent.js',
         child: '/src/about/home/js/scripts/content.js'
