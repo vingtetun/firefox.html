@@ -5,9 +5,7 @@
  *
  */
 
-define([
-  '/src/shared/js/urlhelper.js'
-], function(UrlHelper) {
+define([], function() {
   'use strict';
 
   const Popups = Services.popups;
@@ -88,14 +86,6 @@ define([
     }
   });
 
-  p._preprocessUrlInput = function(input) {
-    if (!UrlHelper.hasScheme(input)) {
-      input = 'http://' + input;
-    }
-
-    return input;
-  };
-
   p.focus = function() {
     this.input.select();
     this.input.focus();
@@ -122,10 +112,8 @@ define([
     Places.update({anchor: rect, value: this.value });
   };
 
-  p.validate = function() {
+  p.validate = function(url) {
     Places.close();
-
-    let url = this._preprocessUrlInput(this.value);
     Browsers.method('navigate', {url});
   };
 

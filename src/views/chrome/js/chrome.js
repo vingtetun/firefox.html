@@ -113,7 +113,7 @@ define([
         this.ui.input.userInput = options.url;
 
         if (options.load) {
-          this.ui.input.validate();
+          this.ui.input.validate(options.url);
         }
       })
       .listen(new BroadcastChannel('urlbar'));
