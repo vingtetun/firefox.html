@@ -3,5 +3,6 @@ require.config({
 });
 
 require([
-  'main'
+  'main',
+  'engine-ui'
 ]);

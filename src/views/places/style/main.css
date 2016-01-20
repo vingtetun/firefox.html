@@ -44,6 +44,10 @@ html, body {
   border-color: darkgray;
 }
 
+.engine:not(.selected) {
+  filter: grayscale(100%);
+}
+
 .results {
   /* 
    The width of the results are all the screen, but the height

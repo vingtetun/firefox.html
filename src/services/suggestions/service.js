@@ -13,7 +13,7 @@ bridge.service('suggestions')
       runningXHR.cancel();
     }
 
-    return new Promise(function(resolve) {
+    return new Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest({mozSystem: true});
       xhr.open('GET', url, true);
       xhr.send();
@@ -22,6 +22,11 @@ bridge.service('suggestions')
       xhr.onload = function() {
         runningXHR = null;
         resolve(JSON.parse(xhr.response)[1]);
+      }
+
+      xhr.onerror = function() {
+        runningXHR = null;
+        reject();
       }
     });
   })

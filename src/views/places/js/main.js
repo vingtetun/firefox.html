@@ -1,8 +1,9 @@
 
 
 define([
-  '/src/shared/js/urlhelper.js'
-], function(UrlHelper) {
+  '/src/shared/js/urlhelper.js',
+  'engine-ui',
+], function(UrlHelper, Engine) {
 
 var source = null;
 window.addEventListener('message', function(e) {
@@ -18,79 +19,6 @@ window.addEventListener('message', function(e) {
     });
   }
 });
-
-
-function createEngine(infos) {
-  let engine = document.createElement('span');
-  engine.id = infos.name;
-  engine.className = 'engine';
-  engine.style.backgroundImage = 'url(' + infos.icons[0] + ')';
-  engine.setAttribute('suggestion', infos.suggestion);
-  engine.setAttribute('url', infos.url);
-  engine.setAttribute('description', infos.description);
-
-  let container = document.getElementById('engines-container');
-  container.appendChild(engine);
-
-  if (container.childNodes.length === 1) {
-    container.firstChild.classList.add('selected');
-  }
-}
-
-let engines = [];
-
-Services.suggestions.method('getPlugins').then(function(plugins) {
-  plugins.forEach(function(plugin) {
-    createEngine(plugin);
-  });
-
-  engines = plugins;
-});
-
-function selectEngine(shortcut) {
-  let engines = document.querySelectorAll('.engine');
-  Array.prototype.forEach.call(engines, function(engine) {
-    let match = engine.id[0].toLowerCase() === shortcut;
-    engine.classList.toggle('selected', match);
-  });
-}
-
-function getSelectedEngine() {
-  return document.querySelector('.engine.selected');
-}
-
-function getSuggestionsDescription(value) {
-  let desc = '';
-  if (getSelectedEngine()) {
-    desc = getSelectedEngine().getAttribute('description');
-  }
-
-  return desc;
-}
-
-function getSuggestionsUrl(value) {
-  let url = '';
-  if (getSelectedEngine()) {
-    url = getSelectedEngine().getAttribute('suggestion');
-    url = url.replace('{searchTerms}', value);
-    url = url.replace('{moz:locale}', 'en-US');
-  }
-
-  return url;
-}
-
-function getNavigationUrl(value) {
-  let url = '';
-  if (getSelectedEngine()) {
-    url = getSelectedEngine().getAttribute('url');
-    url = url.replace('{searchTerms}', value);
-    url = url.replace(/ /g, '%20');
-    url = url.replace('{moz:locale}', 'en-US');
-  }
-
-  return url;
-}
-
 
 function navigateResults(keycode) {
   switch (keycode) {
@@ -125,33 +53,64 @@ function selectNext() {
   results.childNodes[++_current].setAttribute('selected', 'true');
 }
 
-function showResults(value) {
-  let isUrl = UrlHelper.isURL(value);
-  let url = value;
+function processValue(value) {
+  let rv = {
+    shortcut: null,
+    value: value,
+    useSearchEngine: true
+  };
 
-  if (isUrl) {
-    if (!UrlHelper.hasScheme(value)) {
-      url = 'http://' + value;
+  if (UrlHelper.isURL(value)) {
+    if (UrlHelper.hasScheme(value)) {
+      rv.value = value;
+    } else {
+      rv.value = 'http://' + value;
     }
-  } else {
+    rv.url = rv.value;
+    rv.useSearchEngine = false;
+  } else if (value.length > 1 && value[1] == ' ') {
     let values = value.split(' ');
-    if (values.length >= 2 && values[0].length === 1) {
-      selectEngine(values[0]);
-      values.shift();
-      value = values.join(' ');
-    }
-    url = getSuggestionsUrl(value);
+    rv.shortcut = values.shift();
+    rv.value = values.join(' ');
+  } else {
+    rv.value = value;
   }
 
+  return rv;
+}
+
+function showResults(value) {
   let results = document.getElementById('results');
   results.innerHTML = '';
 
-  createElement(value, isUrl ? url : getNavigationUrl(value), isUrl ? '' : getSuggestionsDescription(), isUrl ? '' : 'suggestion');
+  let infos = processValue(value);
+
+  if (infos.shortcut) {
+    Engine.selectWithShortcut(infos.shortcut);
+  }
+
+  if (infos.useSearchEngine) {
+    let metadata = Engine.getMetadata(infos.value);
+    infos.url = metadata.navigation;
+    infos.description = metadata.description;
+    infos.suggestions = metadata.suggestions;
+  } else {
+    infos.description = '';
+    infos.suggestions = '';
+  }
+
+  if (infos.value === '') {
+    return;
+  }
+
+
+  // XXX '' should be website or something like this
+  createElement(infos.value, infos.url, infos.description, infos.useSearchEngine ? 'suggestion' : '');
   
-  let promises = [
-      Services.history.method('getMatches', value)
-    , Services.suggestions.method('get', url)
-  ]
+  let promises = [Services.history.method('getMatches', infos.value)];
+  if (infos.useSearchEngine) {
+    promises.push(Services.suggestions.method('get', infos.suggestions));
+  }
 
   Promise.all(promises).then(([histories, suggestions]) => {
     let historyCount = 5;
@@ -159,14 +118,32 @@ function showResults(value) {
       createElement(histories[i].url, histories[i].url, histories[i].title, 'history');
     }
 
-    let suggestionsCount = Math.min(6 - results.childNodes.length, 3);
-    for (let i = 0; i < Math.min(suggestions.length, suggestionsCount); i++) {
-      createElement(suggestions[i], getNavigationUrl(suggestions[i]), getSuggestionsDescription(), 'suggestion');
+    if (suggestions) {
+      let suggestionsCount = Math.min(6 - results.childNodes.length, 3);
+      for (let i = 0; i < Math.min(suggestions.length, suggestionsCount); i++) {
+
+        let rv = Engine.getMetadata(suggestions[i]);
+        createElement(suggestions[i], rv.navigation, rv.description, 'suggestion');
+      }
+    }
+
+    for (let i = results.childElementCount; i < historyCount; i++) {
+      createBlankElement();
     }
 
     _current = 0;
     results.childNodes[0].setAttribute('selected', 'true');
   });
+}
+
+function createBlankElement() {
+  var element = document.createElement('li');
+  element.className = 'result blank';
+
+  var results = document.getElementById('results');
+  results.appendChild(element);
+
+  return element;
 }
 
 function createElement(value, url, title, type) {
