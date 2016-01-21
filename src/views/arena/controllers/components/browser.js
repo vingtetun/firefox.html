@@ -143,12 +143,14 @@ define([
     }
 
     this._frameElement.src = url;
+    this._frameElement.focus();
     this.maybeInjectScripts(url);
   };
 
   browserProto.show = function() {
     this._frameElement && this._frameElement.setVisible(true);
     this.setAttribute('selected', 'true');
+    this._frameElement.focus();
     this.focus();
   };
 
