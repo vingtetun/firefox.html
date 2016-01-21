@@ -102,7 +102,7 @@ define([
     Services.popups.method('openPopup', {
       id: 'toolbar-popup',
       url: options.url,
-      anchor: { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+      anchor: { x: rect.x, y: rect.y + 29, width: rect.width, height: rect.height }
     });
 
     PopupClient.observe(button, 'toolbar-popup');

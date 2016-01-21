@@ -5,20 +5,26 @@ define([
   'engine-ui',
 ], function(UrlHelper, Engine) {
 
-var source = null;
-window.addEventListener('message', function(e) {
-  if ('value' in e.data) {
-    showResults(e.data.value);
-  } else if ('keycode' in e.data) {
-    navigateResults(e.data.keycode);
+function parseMessage(e) {
+  let data = e.detail ? e.detail.data : e.data;
+  Engine.ready.then(() => {
+    if ('value' in data) {
+      showResults(data.value);
+    } else if ('keycode' in data) {
+      navigateResults(data.keycode);
 
-    var currentSelected = results.childNodes[_current];
-    Services.urlbar.method('navigate', {
-      url: currentSelected.url,
-      load: e.data.keycode === 13
-    });
-  }
-});
+      let validate = data.keycode === 13;
+      var currentSelected = results.childNodes[_current];
+      Services.urlbar.method('navigate', {
+        url: validate ? currentSelected.url : currentSelected.display,
+        load: validate
+      });
+    }
+  });
+}
+
+window.addEventListener('message', parseMessage);
+window.addEventListener('buffer', parseMessage);
 
 function navigateResults(keycode) {
   switch (keycode) {
@@ -68,7 +74,7 @@ function processValue(value) {
     }
     rv.url = rv.value;
     rv.useSearchEngine = false;
-  } else if (value.length > 1 && value[1] == ' ') {
+  } else if (value.length >= 3 && value[1] == ' ') {
     let values = value.split(' ');
     rv.shortcut = values.shift();
     rv.value = values.join(' ');
@@ -81,7 +87,6 @@ function processValue(value) {
 
 function showResults(value) {
   let results = document.getElementById('results');
-  results.innerHTML = '';
 
   let infos = processValue(value);
 
@@ -102,17 +107,16 @@ function showResults(value) {
   if (infos.value === '') {
     return;
   }
-
-
-  // XXX '' should be website or something like this
-  createElement(infos.value, infos.url, infos.description, infos.useSearchEngine ? 'suggestion' : '');
   
   let promises = [Services.history.method('getMatches', infos.value)];
-  if (infos.useSearchEngine) {
+  if (infos.useSearchEngine && infos.suggestions) {
     promises.push(Services.suggestions.method('get', infos.suggestions));
   }
 
   Promise.all(promises).then(([histories, suggestions]) => {
+    results.innerHTML = '';
+    createElement(infos.value, infos.url, infos.description, infos.useSearchEngine ? 'suggestion' : 'url');
+
     let historyCount = 5;
     for (let i = 0; i < Math.min(histories.length, historyCount); i++) {
       createElement(histories[i].url, histories[i].url, histories[i].title, 'history');
@@ -127,28 +131,15 @@ function showResults(value) {
       }
     }
 
-    for (let i = results.childElementCount; i < historyCount; i++) {
-      createBlankElement();
-    }
-
     _current = 0;
     results.childNodes[0].setAttribute('selected', 'true');
   });
 }
 
-function createBlankElement() {
-  var element = document.createElement('li');
-  element.className = 'result blank';
-
-  var results = document.getElementById('results');
-  results.appendChild(element);
-
-  return element;
-}
-
 function createElement(value, url, title, type) {
   var element = document.createElement('li');
   element.className = 'result ' + type;
+  element.display = value;
   element.url = url;
 
   var text = document.createElement('span');
@@ -169,8 +160,4 @@ function createElement(value, url, title, type) {
   return element;
 }
 
-
-addEventListener('load', function() {
-  window.frameElement.dispatchEvent(new CustomEvent('load'));
-});
 });

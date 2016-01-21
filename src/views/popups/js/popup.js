@@ -32,17 +32,12 @@ define(['geometry/rect'], function(Rect) {
         browser.removeEventListener(e.type, foo);
         resolve(browser.contentWindow);
       });
-
-      browser.addEventListener('load', function foo2(e) {
-        browser.removeEventListener(e.type, foo2);
-        resolve(browser.contentWindow);
-      });
     });
 
     this.rect = new Rect(0, 0, innerWidth, innerHeight);
   };
 
-  popupProto.attachTo = function(anchor, useArrow) {
+  popupProto.attachTo = function(anchor, useArrow, useConstraints) {
     if (!anchor) {
       throw new Error('AttachTo called without an anchor');
     }
@@ -53,7 +48,15 @@ define(['geometry/rect'], function(Rect) {
       this.appendChild(arrow);
     }
 
-    this.anchor = anchor;
+    if (anchor) {
+      this.anchor = anchor;
+
+      if (useConstraints) {
+        this.rect.width = this.anchor.width;
+        this.rect.height = this.anchor.height;
+      }
+    }
+
     this.move();
   };
 
@@ -64,6 +67,11 @@ define(['geometry/rect'], function(Rect) {
   };
 
   popupProto.move = function(point = null) {
+    dump('top: ' + this.rect.y + '\n');
+    dump('left: ' + this.rect.x + '\n');
+    dump('width: ' + this.rect.width + '\n');
+    dump('height: ' + this.rect.height + '\n');
+
     if (!point) {
       point = {};
 
@@ -82,21 +90,10 @@ define(['geometry/rect'], function(Rect) {
     this.rect.width = this.rect.width || (innerWidth - point.x);
     this.rect.height = this.rect.height || (innerHeight - point.y);
 
-    var navbar = {
-      height: 41 + 29
-    };
-    //require('navbar');
-    var viewport = new Rect(
-      0, navbar.height,
-      innerWidth, innerHeight - navbar.height
-    );
-    this.rect = this.rect.translateInside(viewport);
-
     var margins = new Rect(10, 10, innerWidth - 20, innerHeight - 20);
     if (this.hasAttribute('usemargins')) {
       this.rect = this.rect.translateInside(margins);
     }
-
 
     this.style.top = this.rect.y + 'px'
     this.style.left = this.rect.x + 'px';
@@ -126,6 +123,8 @@ define(['geometry/rect'], function(Rect) {
       case 'mozbrowserscrollareachanged':
           this.rect.width = this.maxWidth = e.detail.width;
           this.rect.height = this.maxHeight = e.detail.height;
+          dump('scrollareachanged width: ' + this.rect.width + '\n');
+          dump('scrollareachanged height: ' + this.rect.height + '\n');
           this.move();
         break;
 
@@ -133,6 +132,8 @@ define(['geometry/rect'], function(Rect) {
         this.browser.getContentDimensions().onsuccess = (e) => {
           this.rect.width = this.maxWidth = e.target.result.width;
           this.rect.height = this.maxHeight = e.target.result.height;
+          dump('loadend width: ' + this.rect.width + '\n');
+          dump('loadend height: ' + this.rect.height + '\n');
           this.move();
           this.removeAttribute('hidden');
         };
@@ -152,12 +153,10 @@ define(['geometry/rect'], function(Rect) {
 
   popupProto.setLocation = function(url) {
     var target = new URL(url, document.location);
-    if (target.host !== document.location.host) {
-      this.browser.setAttribute('mozbrowser', true);
-      this.setAttribute('hidden', 'true');
-      // XXX Should be remote for http i guess
-      //this.browser.setAttribute('remote', true);
-    }
+    this.browser.setAttribute('mozbrowser', true);
+    this.setAttribute('hidden', 'true');
+    // XXX Should be remote for http i guess
+    //this.browser.setAttribute('remote', true);
 
     this.browser.src = url;
     this.appendChild(this.browser);

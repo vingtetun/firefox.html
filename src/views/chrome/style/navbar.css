@@ -83,13 +83,17 @@
   margin: 4px 6px 3px;
   border-style: solid;
   border-color: #B0AEB0;
-  border-bottom-width: 1px;
+  border-width: 1px;
   min-width: 0;
 }
 
 .urlbar.focus {
-  border-color: white;
-  box-shadow: 0 0 0 3px #91B8E3;
+}
+
+.urlbar.opened {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: #dedede;
 }
 
 .urlinput {

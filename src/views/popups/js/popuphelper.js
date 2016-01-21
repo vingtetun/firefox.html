@@ -61,7 +61,8 @@ define(['popup'], function() {
     if (options.anchor) {
       let anchorRect = options.anchor;
       popup.attachTo(options.anchor,
-                     options.type === Types.Popup);
+                     options.type === Types.Popup,
+                     options.constraints);
     }
 
     if (options.data) {

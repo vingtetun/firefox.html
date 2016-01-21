@@ -24,7 +24,8 @@ define([], function() {
         id: this.id,
         name: this.id,
         url: '/src/views/places/index.html',
-        anchor: data.anchor
+        anchor: data.anchor,
+        constraints: true
       });
     },
 
@@ -94,26 +95,31 @@ define([], function() {
 
   p.blur = function() {
     Places.close();
+    this.container.classList.remove('opened');
     this.container.classList.remove('focus');
   };
 
   p.update = function() {
     if (this.value === '') {
       Places.close();
+      this.container.classList.remove('opened');
       return;
     }
 
+    let boundingRect = this.container.getBoundingClientRect();
     let rect = {
-      x: 0,
-      y: 0,
-      width: window.innerWidth,
-      height: 41
+      x: boundingRect.x,
+      y: boundingRect.y + 29,
+      width: boundingRect.width,
+      height: boundingRect.height
     };
     Places.update({anchor: rect, value: this.value });
+    this.container.classList.add('opened');
   };
 
   p.validate = function(url) {
     Places.close();
+    this.container.classList.remove('opened');
     Browsers.method('navigate', {url});
   };
 
