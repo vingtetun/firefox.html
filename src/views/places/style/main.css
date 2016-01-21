@@ -94,6 +94,11 @@ html, body {
   padding-left: 2.8rem;
 }
 
+.result * {
+  pointer-events: none;
+}
+
+.result:hover,
 .result[selected] {
   background-color: lightblue;
 }

@@ -52,6 +52,7 @@ define(['popup'], function() {
     if (!popup) {
       popup = document.createElement('popup-element');
       popup.setAttribute('id', options.id);
+      popup.setAttribute('autofocus', options.autofocus || false);
       popup.setAttribute('name', options.name);
       popup.classList.add('window');
       document.body.appendChild(popup);

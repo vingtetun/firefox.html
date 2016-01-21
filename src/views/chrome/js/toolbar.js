@@ -102,6 +102,7 @@ define([
     Services.popups.method('openPopup', {
       id: 'toolbar-popup',
       url: options.url,
+      autofocus: true,
       anchor: { x: rect.x, y: rect.y + 29, width: rect.width, height: rect.height }
     });
 

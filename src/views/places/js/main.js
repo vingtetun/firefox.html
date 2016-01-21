@@ -23,8 +23,18 @@ function parseMessage(e) {
   });
 }
 
+function handleClick(e) {
+  let target = e.target;
+  Services.urlbar.method('navigate', {
+    url: target.url,
+    load: true
+  });
+}
+
 window.addEventListener('message', parseMessage);
 window.addEventListener('buffer', parseMessage);
+window.addEventListener('click', handleClick);
+
 
 function navigateResults(keycode) {
   switch (keycode) {

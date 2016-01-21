@@ -13,19 +13,12 @@ define(['geometry/rect'], function(Rect) {
     // First, look for a window with the same name. Iff none, create a
     // new one.
     let browser = this.browser = document.createElement('iframe');
-    browser.setAttribute('mozpasspointerevents', 'true');
     browser.setAttribute('ignoreuserfocus', 'true');
-    browser.setAttribute('transparent', 'true');
-
-    window.addEventListener('resize', this);
-    let PopupHelper = require('popuphelper');
-    this.addEventListener('click', () => {
-      setTimeout(PopupHelper.close.bind(PopupHelper, this), 100);
-    });
-    window.addEventListener('click', this);
 
     browser.addEventListener('mozbrowserscrollareachanged', this);
     browser.addEventListener('mozbrowserloadend', this);
+    this.addEventListener('focus', this);
+    this.addEventListener('blur', this);
 
     this.ready = new Promise(function(resolve, reject) {
       browser.addEventListener('mozbrowserloadend', function foo(e) {
@@ -35,6 +28,16 @@ define(['geometry/rect'], function(Rect) {
     });
 
     this.rect = new Rect(0, 0, innerWidth, innerHeight);
+    window.addEventListener('resize', this);
+    window.addEventListener('click', this, true);
+  };
+
+  popupProto.attachedCallback = function() {
+    this.setAttribute('tabindex', 0);
+
+    if (this.getAttribute('autofocus') == 'true') {
+      this.focus();
+    }
   };
 
   popupProto.attachTo = function(anchor, useArrow, useConstraints) {
@@ -67,11 +70,6 @@ define(['geometry/rect'], function(Rect) {
   };
 
   popupProto.move = function(point = null) {
-    dump('top: ' + this.rect.y + '\n');
-    dump('left: ' + this.rect.x + '\n');
-    dump('width: ' + this.rect.width + '\n');
-    dump('height: ' + this.rect.height + '\n');
-
     if (!point) {
       point = {};
 
@@ -123,8 +121,6 @@ define(['geometry/rect'], function(Rect) {
       case 'mozbrowserscrollareachanged':
           this.rect.width = this.maxWidth = e.detail.width;
           this.rect.height = this.maxHeight = e.detail.height;
-          dump('scrollareachanged width: ' + this.rect.width + '\n');
-          dump('scrollareachanged height: ' + this.rect.height + '\n');
           this.move();
         break;
 
@@ -132,8 +128,6 @@ define(['geometry/rect'], function(Rect) {
         this.browser.getContentDimensions().onsuccess = (e) => {
           this.rect.width = this.maxWidth = e.target.result.width;
           this.rect.height = this.maxHeight = e.target.result.height;
-          dump('loadend width: ' + this.rect.width + '\n');
-          dump('loadend height: ' + this.rect.height + '\n');
           this.move();
           this.removeAttribute('hidden');
         };
@@ -143,12 +137,18 @@ define(['geometry/rect'], function(Rect) {
         this.move();
         break;
 
-      case 'click':
-        if (e.button === 0) {
-          setTimeout(() => require('popuphelper').close(this), 100);
-        }
+      case 'blur':
+        this.close(e);
         break;
     }
+  };
+
+  popupProto.close = function(e) {
+    window.removeEventListener('focus',this);
+    window.removeEventListener('blur', this);
+    window.addEventListener('resize', this);
+
+    require('popuphelper').close(this);
   };
 
   popupProto.setLocation = function(url) {
