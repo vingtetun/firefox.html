@@ -120,6 +120,7 @@ require([], function() {
         }
       }
       this.dom.querySelector('.title').textContent = title;
+      this.dom.setAttribute('title', title);
       this.dom.title = title;
 
       let faviconImg = this.dom.querySelector('.favicon');

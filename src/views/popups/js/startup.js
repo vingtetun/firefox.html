@@ -9,6 +9,7 @@ require([
   PopupHelper
     .service
     .method('openTooltip', PopupHelper.openTooltip.bind(PopupHelper))
+    .method('openOverLink', PopupHelper.openOverLink.bind(PopupHelper))
     .method('openContextMenu', PopupHelper.openContextMenu.bind(PopupHelper))
     .method('openPanel', PopupHelper.openPanel.bind(PopupHelper))
     .method('openPopup', PopupHelper.openPopup.bind(PopupHelper))

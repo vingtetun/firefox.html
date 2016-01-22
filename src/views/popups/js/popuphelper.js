@@ -80,9 +80,30 @@ define(['popup'], function() {
   }
 
   var PopupHelper = {
+    openOverLink: function(options) {
+      let target = document.getElementById(options.id);
+      if (!target) {
+        target = document.createElement('div');
+        target.id = options.id;
+        document.body.appendChild(target);
+      }
+
+      target.textContent = options.url;
+    },
+
     openTooltip: function(options) {
-      options.type = Types.Tooltip;
-      this.open(options);
+      let target = document.getElementById(options.id);
+      if (!target) {
+        target = document.createElement('div');
+        target.id = options.id;
+        document.body.appendChild(target);
+      }
+
+      // Add some offsets
+      target.style.top = options.y + 15 + 'px';
+      target.style.left = options.x + 15 + 'px';
+
+      target.textContent = options.tooltip;
     },
 
     openContextMenu: function(options) {
