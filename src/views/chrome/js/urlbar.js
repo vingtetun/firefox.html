@@ -8,6 +8,8 @@
 define([], function() {
   'use strict';
 
+  let _currentSelected = null;
+
   const Popups = Services.popups;
   const Browsers = Services.browsers;
   const Places = {
@@ -148,8 +150,29 @@ define([], function() {
         this.userInput = this.value;
         this.update();
         break;
-    }
+    };
   };
+
+  p.show = function() {
+    _currentSelected = this;
+  };
+
+  p.hide = function() {
+  };
+
+  Services.service('urlbar')
+    .method('focus', () => {
+      _currentSelected.focus();
+    })
+    .method('navigate', (options) => {
+      _currentSelected.value = options.url
+      _currentSelected.userInput = options.url;
+
+      if (options.load) {
+        _currentSelected.validate(options.url);
+      }
+    })
+    .listen(new BroadcastChannel('urlbar'));
 
   return document.registerElement('urlbar-element', { prototype: p });
 });

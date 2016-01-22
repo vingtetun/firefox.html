@@ -144,14 +144,24 @@ define([
 
     this._frameElement.src = url;
     this._frameElement.focus();
+    this.focus();
     this.maybeInjectScripts(url);
   };
 
   browserProto.show = function() {
-    this._frameElement && this._frameElement.setVisible(true);
-    this._frameElement && this._frameElement.focus();
+    if (this._frameElement) {
+      this._frameElement.setVisible(true);
+      this._frameElement.focus();
+
+      if (this._location) {
+        this._frameElement.focus();
+        this.focus();
+      }
+    } else {
+      Services.urlbar.method('focus');
+    }
+
     this.setAttribute('selected', 'true');
-    this.focus();
   };
 
   browserProto.hide = function() {

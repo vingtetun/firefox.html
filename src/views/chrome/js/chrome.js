@@ -52,7 +52,6 @@ define([
       this.ui.input.value = UrlHelper.trim(config.url);
     } else {
       this.ui.input.value = '';
-      this.ui.input.focus();
     }
 
     let ssl = config.securityState === 'secure';
@@ -72,11 +71,13 @@ define([
   chromeProto.show = function() {
     // XXX Ugly...
     this.style.display = '';
+    this.ui.input.show();
   };
 
   chromeProto.hide = function() {
     // XXX Ugly...
     this.style.display = 'none';
+    this.ui.input.hide();
   };
 
   Object.defineProperty(chromeProto, 'uuid', {
@@ -102,21 +103,6 @@ define([
     this.ui.forward.onclick = () => Browsers.method('goForward');
     this.ui.reload.onclick = () => Browsers.method('reload');
     this.ui.stop.onclick = () => Browsers.method('stop');
-
-    // XXX Not sure why this stuff lives here.
-    Services.service('urlbar')
-      .method('focus', () => {
-        this.ui.input.focus();
-      })
-      .method('navigate', (options) => {
-        this.ui.input.value = options.url
-        this.ui.input.userInput = options.url;
-
-        if (options.load) {
-          this.ui.input.validate(options.url);
-        }
-      })
-      .listen(new BroadcastChannel('urlbar'));
   };
 
   return document.registerElement('chrome-element', {prototype: chromeProto});
