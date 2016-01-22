@@ -149,8 +149,8 @@ define([
 
   browserProto.show = function() {
     this._frameElement && this._frameElement.setVisible(true);
+    this._frameElement && this._frameElement.focus();
     this.setAttribute('selected', 'true');
-    this._frameElement.focus();
     this.focus();
   };
 
