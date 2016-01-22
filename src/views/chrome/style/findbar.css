@@ -2,10 +2,10 @@
 .findbar {
   position: absolute;
   right: 15px;
-  top: 38px;
-  width: 20%;
+  top: 39px;
+  width: 25%;
   height: 28px;
-  background-color: #D3D3D3;
+  background-color: #ededed;
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
   border: 1px solid #a1a1a1;
@@ -52,7 +52,7 @@
 .findbar .button {
   background-position: center 6px;
   background-repeat: no-repeat;
-  background-color: #d3d3d3;
+  background-color: #ededed;
   background-size: 16px 16px;;
   margin: 0 3px 0 3px;
   height: 24px;
