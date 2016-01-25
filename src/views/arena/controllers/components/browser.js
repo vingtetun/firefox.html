@@ -24,6 +24,7 @@ define([
     'mozbrowserasyncscroll'
     , 'mozbrowserclose'
     , 'mozbrowsercontextmenu'
+    , 'mozbrowserselectmenu'
     , 'mozbrowsererror'
     , 'mozbrowsericonchange'
     , 'mozbrowserloadend'
@@ -329,6 +330,9 @@ define([
           data: JSON.parse(JSON.stringify(e.detail))
         });
 
+        e.preventDefault();
+        break;
+      case 'mozbrowserselectmenu':
         e.preventDefault();
         break;
       default:
