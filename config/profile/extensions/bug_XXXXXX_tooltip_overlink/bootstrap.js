@@ -4,7 +4,8 @@ const Cu = Components.utils;
 const Ci = Components.interfaces;
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
 Cu.import('resource://gre/modules/Services.jsm');
-Cu.import('resource://webextensions/glue.jsm');
+XPCOMUtils.defineLazyModuleGetter(this, 'WindowUtils',
+                                  'resource://webextensions/glue.jsm');
 
 function startup() {
   let XULBrowserWindow = {
