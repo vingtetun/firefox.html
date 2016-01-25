@@ -24,6 +24,7 @@ define(['popup'], function() {
 
   function ErrorMessage(str) {
     dump('Error: ' + (new Error()).stack + '\n');
+    dump('PopupHelper: ' + str + '\n');
     throw new Error('PopupHelper: ' + str);
   }
 
@@ -107,6 +108,9 @@ define(['popup'], function() {
     },
 
     openContextMenu: function(options) {
+      if (!options.id) {
+        options.id = 'contextmenu';
+      }
       options.type = Types.ContextMenu;
       options.url = 'contextmenu/';
       this.open(options);
@@ -163,7 +167,7 @@ define(['popup'], function() {
 
       let target = document.getElementById(options.id);
       if (!target) {
-        return ErrorMessage(Errors.NoTarget);
+        return ErrorMessage(Errors.NoTarget + ' for id:' + options.id);
       }
 
       this.service.broadcast('popuphidden', {id: target.id});
