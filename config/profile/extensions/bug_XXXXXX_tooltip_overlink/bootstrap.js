@@ -64,33 +64,8 @@ function startup() {
     XULBrowserWindow.trackMouseCursor(window);
   }
 
-  function checkWebProgressStatus(webProgress, flags) {
-    if (!webProgress.isTopLevel) {
-      return false;
-    }
-
-    if (!(flags & Ci.nsIWebProgressListener.STATE_STOP)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  function installProgressListener(aXULWindow) {
-    let progressListener = {
-      onStateChange: function (webProgress, req, flags, status) {
-        checkWebProgressStatus(webProgress, flags) && configureXULWindow(aXULWindow);
-      },
-
-      QueryInterface: XPCOMUtils.generateQI(['nsISupportsWeakReference'])
-    };
-
-    let wp = aXULWindow.docShell.QueryInterface(Ci.nsIWebProgress);
-    wp.addProgressListener(progressListener, wp.NOTIFY_STATE_WINDOW);
-  }
-
   Services.wm.addListener({
-    onOpenWindow: installProgressListener,
+    onOpenWindow: configureXULWindow,
     onCloseWindow: function(aXULWindow) {},
     onWindowTitleChange: function(aXULWindow, aNewTitle) {}
   });
