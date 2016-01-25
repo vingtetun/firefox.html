@@ -107,6 +107,15 @@ define(['popup'], function() {
       target.textContent = options.tooltip;
     },
 
+    openSelect: function(options) {
+      if (!options.id) {
+        options.id = 'select';
+      }
+      options.type = Types.ContextMenu;
+      options.url = 'select/';
+      this.open(options);
+    },
+
     openContextMenu: function(options) {
       if (!options.id) {
         options.id = 'contextmenu';

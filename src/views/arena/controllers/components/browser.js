@@ -326,6 +326,7 @@ define([
         this._securityExtendedValidation = e.detail.extendedValidation;
         break;
       case 'mozbrowsercontextmenu':
+        // XXX Needs a way to handle selection
         Services.popups.method('openContextMenu', {
           data: JSON.parse(JSON.stringify(e.detail))
         });
@@ -333,6 +334,10 @@ define([
         e.preventDefault();
         break;
       case 'mozbrowserselectmenu':
+        // XXX Needs a way to handle selection
+        Services.popups.method('openSelect', {
+          data: JSON.parse(JSON.stringify(e.detail))
+        });
         e.preventDefault();
         break;
       default:
