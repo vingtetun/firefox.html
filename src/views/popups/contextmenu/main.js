@@ -50,7 +50,3 @@ addEventListener('click', function(e) {
       break;
   }
 });
-
-addEventListener('load', function(e) {
-  window.frameElement.dispatchEvent(new CustomEvent('load'));
-});
