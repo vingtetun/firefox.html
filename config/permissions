@@ -9,5 +9,6 @@
 # Browser API access
 origin	browser	1	http://browserhtml.org
 origin	browser	1	http://browserhtml.org^inBrowser=1
+origin	embed-apps	1	http://browserhtml.org^inBrowser=1
 origin	systemXHR	1	http://browserhtml.org^inBrowser=1
 origin	browser:universalxss	1	http://browserhtml.org^inBrowser=1
