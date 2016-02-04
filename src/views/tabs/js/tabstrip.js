@@ -68,7 +68,7 @@ require([], function() {
     this.dom = tab;
 
     this.client =
-      bridge.client(config.uuid, new BroadcastChannel(config.uuid));
+      bridge.client(config.uuid, new BroadcastChannel(config.uuid), 60000);
 
     this.client.on('update', (config) => {
       this.config = config;

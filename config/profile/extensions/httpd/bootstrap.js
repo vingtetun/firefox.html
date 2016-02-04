@@ -16,8 +16,17 @@ function startup(data, reason) {
                        'nsILocalFile',
                        'initWithPath');
 
-  let baseDir = data.installPath;
-  baseDir = baseDir.parent.parent.parent.parent;
+  let baseDir = Cc['@mozilla.org/process/environment;1']
+                  .getService(Ci.nsIEnvironment)
+                  .get('MOZ_BASE_DIR');
+
+  if (!baseDir) {
+    dump('You must specify the directory where the UI comes from.\n');
+    dump('Use MOZ_BASE_DIR as an env variable.\n');
+    return;
+  }
+  baseDir = new LocalFile(baseDir);
+
   dump("baseDir > "+baseDir.path+"\n");
   const httpdURL = 'chrome://httpd.js/content/httpd.js';
   let httpd = {};

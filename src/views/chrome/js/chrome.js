@@ -37,7 +37,7 @@ define([
 
   chromeProto.configure = function(options) {
     this.client =
-      bridge.client(options.uuid, new BroadcastChannel(options.uuid));
+      bridge.client(options.uuid, new BroadcastChannel(options.uuid), 60000);
     this.client.on('update', (config) => {this.refresh(config);});
 
     this._uuid = options.uuid;

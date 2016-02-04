@@ -7,7 +7,7 @@
       get: function() {
         return Object.defineProperty(obj, name, {
           __proto__: null,
-          value: bridge.client(name, new BroadcastChannel(name), 10000),
+          value: bridge.client(name, new BroadcastChannel(name), 60000),
           writable: false,
           enumerable: false,
           configurable: false
