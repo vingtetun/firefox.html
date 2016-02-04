@@ -4,8 +4,8 @@
 //
 
 //user_pref("toolkit.defaultChromeURI", "http://browserhtml.org/hidden.html");
-user_pref("browser.chromeURL", "http://browserhtml.org/index.html");
-user_pref("permissions.manager.defaultsUrl", "http://browserhtml.org/config/permissions");
+user_pref("browser.chromeURL", "http://browserhtml.org:8081/index.html");
+user_pref("permissions.manager.defaultsUrl", "http://browserhtml.org:8081/config/permissions");
 user_pref("network.dns.localDomains", "browserhtml.org");
 
 //
