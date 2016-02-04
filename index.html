@@ -3,9 +3,6 @@
   <head>
     <meta charset='utf-8'>
 
-    <script src='/src/shared/js/bridge/client.js'></script>
-    <script src='/src/services/services.js'></script>
-
     <style>
       html, body, iframe {
         width: 100%;
@@ -31,33 +28,12 @@
         width: 100%;
       }
 
-      #tabs {
-        height: 2.9rem;
-      }
-
-      #chrome {
-        top: 2.9rem;
-        height: calc(100% - 2.9rem);
-        pointer-events: none;
-      }
-
-      #popups {
-        pointer-events: none;
-      }
-
-      #arena {
-        top: 7rem;
-        height: calc(100% - 7rem);
-      }
     </style>
   </head>
 
-  <body onload="frames[1].focus();">
-    <iframe hidden mozbrowser src="src/extensions/"></iframe>
-    <iframe id="tabs" mozbrowser src="src/views/tabs/"></iframe>
-    <iframe id="arena" mozbrowser src="src/views/arena/"></iframe>
-    <iframe id="chrome" mozpasspointerevents transparent mozbrowser src="src/views/chrome/"></iframe>
-    <iframe id="popups" mozpasspointerevents transparent mozbrowser src="src/views/popups/"></iframe>
+  <body>
+    <iframe id="extensions" hidden mozbrowser src="src/extensions/"></iframe>
+    <iframe id="content-primary" mozframetype="content-primary" mozbrowser src="src/index.html"></iframe>
   </body>
 </html>
 

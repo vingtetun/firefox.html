@@ -16,7 +16,6 @@ function(UUID) {
   'use strict';
 
   let service = null;
-  const HOMEPAGE = 'about:home';
   const kUseSessionRestore = false;
 
   let _tabsArray = [];
@@ -46,8 +45,6 @@ function(UUID) {
           config.select = index === 1;
           Tabs.add(config);
         });
-      } else {
-        Tabs.add({url: HOMEPAGE, loading: true, select: true});
       }
     },
 
