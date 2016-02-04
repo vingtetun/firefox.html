@@ -8,6 +8,7 @@
 
 # Browser API access
 origin	browser	1	http://browserhtml.org
+origin	popup	1	http://browserhtml.org^inBrowser=1
 origin	browser	1	http://browserhtml.org^inBrowser=1
 origin	embed-apps	1	http://browserhtml.org^inBrowser=1
 origin	systemXHR	1	http://browserhtml.org^inBrowser=1
