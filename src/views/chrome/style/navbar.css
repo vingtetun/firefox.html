@@ -19,7 +19,7 @@
 
 [os="osx"] .navbar {
   border-style: solid;
-  border-width: var(--hwd-pixel) 0;
+  border-width: 0 0;
   border-color: #AAA;
 }
 
@@ -28,7 +28,7 @@
   min-width: 18px;
   height: 18px;
   padding: 2px 4px;
-  border: var(--hwd-pixel) solid transparent;
+  border: 0 solid transparent;
   background-origin: content-box, border-box, border-box;
   background-clip: content-box, border-box, border-box;
   background-image: url(../resources/navbar/Toolbar.png);
@@ -147,7 +147,7 @@
   min-width: 18px;
   height: 18px;
   padding: 2px 4px;
-  border: var(--hwd-pixel) solid transparent;
+  border: 0 solid transparent;
   background-origin: content-box, border-box, border-box;
   background-clip: content-box, border-box, border-box;
   border-radius: 3px;

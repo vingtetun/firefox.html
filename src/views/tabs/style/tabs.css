@@ -4,7 +4,6 @@ body {
 
 .toolbar {
   padding: 0 1rem 0 1rem;
-  margin-bottom: calc(-1 * var(--hwd-pixel));
 }
 
 .button {
