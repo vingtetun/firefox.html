@@ -3,6 +3,14 @@
   <head>
     <meta charset='utf-8'>
 
+    <script>
+      navigator.serviceWorker.register('sw.js').then(function(registration) {
+        dump('ServiceWorker registration success for: ' + registration.scope + '\n');
+      }).catch(function(error) {
+        dump('ServiceWorker registration failed: ' + error + '\n');
+      });
+    </script>
+
     <style>
       html, body, iframe {
         width: 100%;

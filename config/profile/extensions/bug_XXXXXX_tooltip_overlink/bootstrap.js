@@ -50,6 +50,29 @@ function startup() {
     }
   };
 
+  const ProgressListener = {
+    onStateChange: function(webProgress, request, stateFlags, status) {
+      if (stateFlags & Ci.nsIWebProgressListener.STATE_START) {
+        let window = webProgress.DOMWindow;
+
+        XULBrowserWindow.trackMouseCursor(window);
+
+        let windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor)
+                                .getInterface(Ci.nsIDOMWindowUtils);
+        windowUtils.serviceWorkersTestingEnabled = true;
+      }
+    },
+
+    onLocationChange: function(webProgress, request, location, flags) {},
+    onSecurityChange: function(webProgress, request, state) {},
+    onStatusChange: function(webProgress, request, status, message) {},
+    onProgressChange: function(webProgress, request, curSelfProgress,
+                               maxSelfProgress, curTotalProgress, maxTotalProgress) {},
+
+    QueryInterface: XPCOMUtils.generateQI([Ci.nsIWebProgressListener,
+                                           Ci.nsISupportsWeakReference]),
+  };
+
   function configureXULWindow(aXULWindow) {
     let window = aXULWindow.QueryInterface(Ci.nsIInterfaceRequestor)
                            .getInterface(Ci.nsIDOMWindow);
@@ -60,8 +83,22 @@ function startup() {
           .QueryInterface(Ci.nsIInterfaceRequestor)
           .getInterface(Ci.nsIXULWindow)
           .XULBrowserWindow = XULBrowserWindow;
+
+    let useServiceWorkerOverHttp =
+      Services.prefs.getBoolPref('browser.cache.disk.enable') &&
+      Services.prefs.getBoolPref('devtools.serviceWorkers.testing.enabled');
+
+    if (useServiceWorkerOverHttp) {
+      window.QueryInterface(Ci.nsIInterfaceRequestor)
+            .getInterface(Ci.nsIWebNavigation)
+            .QueryInterface(Ci.nsIDocShell)
+            .QueryInterface(Ci.nsIWebProgress)
+            .addProgressListener(
+              ProgressListener,
+              Ci.nsIWebProgress.NOTIFY_STATE_WINDOW
+            );
+    }
     
-    XULBrowserWindow.trackMouseCursor(window);
   }
 
   Services.wm.addListener({

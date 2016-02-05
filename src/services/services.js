@@ -74,9 +74,7 @@
   });
 
   Services.ready = Promise.all([
-    pageIsLoaded,
     , Services.tabs.method('ping')
-    , Services.browsers.method('ping')
     , Services.toolbar.method('ping')
   ]);
 

@@ -44,8 +44,20 @@ pref("xpinstall.signatures.required", false);
 // Debugging Prefs
 //
 
+// Caching
+
 // Disable caching for html content
 pref("browser.cache.disk.enable", false);
+
+// Allow Service Worker over http.
+// This normaly works only when the devtool toolbox is opened.
+// But in our case, there is an addon that verify if this pref is turned on
+// and force ServiceWorker over http to be allowed, even if the toolbox
+// is not opened.
+//
+// If you want to use Service Worker you need to turn this pref on, and
+// you also need to turn 'browser.cache.disk.enable' to true.
+pref("devtools.serviceWorkers.testing.enabled", true);
 
 // Ctrl-C to kill the browser ends up triggering
 // the sage mode window. It's really annoying while
@@ -59,4 +71,3 @@ pref("browser.dom.window.dump.enabled", true);
 pref("devtools.debugger.remote-enabled", true);
 pref("devtools.chrome.enabled", true);
 pref("devtools.debugger.prompt-connection", false);
-
