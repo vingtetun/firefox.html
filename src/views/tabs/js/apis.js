@@ -9,7 +9,8 @@
  */
 
 require.config({
-  scriptType: 'text/javascript;version=1.8'
+  scriptType: 'text/javascript;version=1.8',
+  waitSeconds: 60
 });
 
 
