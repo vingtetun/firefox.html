@@ -73,7 +73,13 @@ define(function() {
     },
 
     isOutOfProcessURL: function urlHelper_isOutOfProcessURL(input) {
-      return INPROCESS_URLS.indexOf(input) === -1;
+      // Sometimes there are some parameters to about: pages.
+      // Ideally it will be better to use |new URL(input)| but sadly
+      // this kind of urls does not work in a way that would make that
+      // useful.
+      let url = input.split('?')[0];
+
+      return INPROCESS_URLS.indexOf(url) === -1;
     },
 
     isNotURL: function urlHelper_isNotURL(input) {

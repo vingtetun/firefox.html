@@ -7,6 +7,15 @@
     <script>
       var bc = new BroadcastChannel('SearchService');
       bc.postMessage({type: 'Yo'});
+
+      addEventListener('message', function(msg) {
+        let data = msg.data;
+        if (data.isTab) {
+          Services.tabs.method('add', {url: data.url, select: true});
+        } else {
+          Services.windows.method('open', {url: data.url});
+        }
+      });
     </script>
 
     <style>

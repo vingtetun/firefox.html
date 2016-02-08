@@ -21,6 +21,7 @@
   [
     'debug',
     'history',
+    'windows',
     'tabs',
     'browsers',
     'toolbar',
