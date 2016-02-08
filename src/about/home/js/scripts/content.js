@@ -27,9 +27,9 @@
     //  - serve it from the same-origin than core services.
     proxy.setAttribute('mozbrowser', 'true');
 
-    // XXX Needs to find a better way to make it invisible
     proxy.setAttribute('width', '0');
     proxy.setAttribute('height', '0');
+    proxy.setAttribute('style', 'border: 0');
     proxy.src = getProxyUrl();
 
     rootElement.appendChild(proxy);
