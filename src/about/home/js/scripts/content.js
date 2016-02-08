@@ -64,28 +64,16 @@
     let targetId = target.getAttribute("id");
 
     switch (targetId) {
-      // XXX Normally this link result into a call to openDialog
-      // with some arguments to configure the right panel. Sadly
-      // openDialog is chrome only and so it can not be done from
-      // our UI context.
-      // Fixing places so it accept entrypoint arguments, similarly to
-      // about:preferences will likely helps.
       case "bookmarks":
-        params.url = 'chrome://browser/content/places/places.xul';
+        params.url = 'chrome://browser/content/places/places.xul?entrypoint=UnfiledBookmarks';
         break;
 
-      // See previous comment.
       case "history":
-        params.url = 'chrome://browser/content/places/places.xul';
+        params.url = 'chrome://browser/content/places/places.xul?entrypoint=History';
         break;
 
-      // Because what is mentioned in the previous comments, this link should
-      // theorically shows a pane from places in non-private mode, and
-      // about:downloads in private mode. But because mapping things to the
-      // places UI does not work yet, let's always use about:downloads until
-      // it works.
       case "downloads":
-        params.url = 'about:downloads';
+        params.url = 'chrome://browser/content/places/places.xul?entrypoint=Downloads';
         break;
 
       case "addons":

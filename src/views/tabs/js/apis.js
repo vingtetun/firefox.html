@@ -56,7 +56,6 @@ function(Tabs) {
 
   Services.service('windows')
     .method('open', (data) => {
-      dump('Will open a window...\n');
       window.open(data.url, '_blank');
     })
     .listen(new BroadcastChannel('windows'));
