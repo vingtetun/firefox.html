@@ -6,31 +6,53 @@
  *
  */
 
-define([], function() {
+define([
+  '/src/shared/js/urlhelper.js',
+], function(UrlHelper) {
   'use strict';
 
   let scripts = {
-    'about:config':
+     // * is a special url for all in-process scripts.
+     '*':
+      {
+        parent: '',
+        child: '/src/about/in-process/js/scripts/content.js'
+      }
+    , 'about:home':
       {
         parent: '/src/about/home/js/scripts/parent.js',
         child: '/src/about/home/js/scripts/content.js'
       }
   };
 
+  // Scripts content cache
   let contents = {
+  };
+
+  function getScriptsForUrl(url) {
+    let rv = [];
+
+    let isOOP = UrlHelper.isOutOfProcessURL(url);
+    if (!isOOP) {
+      rv.push(scripts['*']);
+    }
+
+    if (scripts[url]) {
+      rv.push(scripts[url]);
+    }
+
+    return rv;
   };
   
   return {
     get: function(url) {
-      let script = scripts[url];
-      if (!script) {
-        return null;
-      }
+      let rv = [];
 
-      let content = contents[script.child];
-      if (!content) {
-        // Register the parent script
-        require([script.parent]);
+      let scripts = getScriptsForUrl(url);
+      scripts.forEach((script) => {
+
+        // Register the parent script if any
+        script.parent && require([script.parent]);
 
 
         // Get the content of the child script
@@ -38,9 +60,11 @@ define([], function() {
         xhr.open('GET', script.child, false);
         xhr.send();
         contents[url] = content = xhr.responseText;
-      }
 
-      return content;
+        rv.push(content);
+      });
+
+      return rv;
     }
   }
 })

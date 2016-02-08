@@ -119,22 +119,34 @@ define([
    * <browser-element> methods
    */
   browserProto.maybeInjectScripts = function(url) {
-    let script = ContentScripts.get(url);
-    if (!script) {
-      return;
-    }
-
     let frame = this._frameElement;
     frame.addEventListener('mozbrowserlocationchange', function f(e) {
-      frame.removeEventListener(e.type, f);
-      let req = frame.executeScript(script, {url: url});
-      req.onsuccess = function(rv) {
-        dump('ExecuteScript succes: ' + req.result + '\n');
-      };
+      function success(url, desc) {
+        dump('\nScript injection\n');
+        dump('\t' + url + '\n');
+        dump('\tsucces!\n');
+        dump('\n');
+      }
 
-      req.onerror = function(code) {
-        dump('ExecuteScript failure: ' + req.result + '\n');
-      };
+      function error(url, error) {
+        dump('\nScript injection\n');
+        dump('\t' + url + '\n');
+        dump('\terror!\n');
+        dump('\t' + error.name + '\n');
+        dump('\t' + error.message + '\n');
+        dump('\n');
+      }
+
+      let scripts = ContentScripts.get(e.detail);
+      scripts.forEach((script) => {
+        frame.executeScript(script, {url: e.detail})
+          .then((msg) => {
+            success(url);
+          })
+          .catch((error) => {
+            error(url, error);
+          });
+      });
     });
   };
 

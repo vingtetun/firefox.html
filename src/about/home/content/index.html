@@ -7,20 +7,6 @@
     <script>
       var bc = new BroadcastChannel('SearchService');
       bc.postMessage({type: 'Yo'});
-
-      addEventListener('message', function(msg) {
-        // generate a fake keypress event.
-        let data = msg.data;
-
-        Services.shortcuts.method('on', {
-          key: data.key,
-          keyCode: data.keyCode,
-          ctrlKey: data.ctrlKey,
-          shiftKey: data.shiftKey,
-          metaKey: data.metaKey,
-          altKey: data.altKey
-        });
-      });
     </script>
 
     <style>
