@@ -90,6 +90,9 @@
         params.url = 'about:preferences';
         params.isTab = true;
         break;
+
+      default:
+        return;
     }
 
     forwardToProxy(params);
