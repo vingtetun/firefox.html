@@ -28,6 +28,7 @@ pref("dom.ipc.processPrelaunch.delayMs", 5000);
 pref("dom.webcomponents.enabled", true);
 pref("dom.mozBrowserFramesEnabled", true);
 pref("dom.webextensions-uiglue.enabled", true);
+pref("extensions.webextensions.addon_implementation", true);
 
 //
 // GFX Prefs
