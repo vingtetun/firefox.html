@@ -71,3 +71,7 @@ pref("browser.dom.window.dump.enabled", true);
 pref("devtools.debugger.remote-enabled", true);
 pref("devtools.chrome.enabled", true);
 pref("devtools.debugger.prompt-connection", false);
+
+// Allow mozafterpaint event to be sent to content in order to print
+// the time it takes to paint into src/shared/js/frame_timing.js
+pref("dom.send_after_paint_to_content", true);
