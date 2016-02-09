@@ -11,6 +11,7 @@ function startup(data, reason) {
   const Cm = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
 
   Cu.import('resource://gre/modules/Services.jsm');
+  Cu.import("resource://gre/modules/NetUtil.jsm");
 
   const LocalFile = CC('@mozilla.org/file/local;1',
                        'nsILocalFile',
@@ -20,6 +21,14 @@ function startup(data, reason) {
                   .getService(Ci.nsIEnvironment)
                   .get('MOZ_BASE_DIR');
 
+  // Used when built from mozilla-central.
+  // The build system automagically copy it to "checkout" folder
+  let checkout = data.installPath.clone();
+  checkout.append('checkout');
+  if (checkout.exists()) {
+    baseDir = checkout.path;
+  }
+
   if (!baseDir) {
     dump('You must specify the directory where the UI comes from.\n');
     dump('Use MOZ_BASE_DIR as an env variable.\n');
@@ -28,7 +37,10 @@ function startup(data, reason) {
   baseDir = new LocalFile(baseDir);
 
   dump("baseDir > "+baseDir.path+"\n");
-  const httpdURL = 'chrome://httpd.js/content/httpd.js';
+  let module = data.installPath.clone();
+  module.append("httpd.js");
+  let httpdURL = NetUtil.ioService.newFileURI(module).QueryInterface(Ci.nsIURL).spec;
+  dump("httpds.js > "+httpdURL+"\n");
   let httpd = {};
   Services.scriptloader.loadSubScript(httpdURL, httpd);
   let server = new httpd.nsHttpServer();
