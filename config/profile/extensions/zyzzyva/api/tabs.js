@@ -45,17 +45,30 @@ extensions.on("page-load", (type, page, params, sender, delegate) => {
   delegate.getSender = getSender;
 });
 
+let tabListeners = new Set();
+function onTabSelect({uuid, url, title}) {
+  let tab = {
+    id: TabManager.getIdForUUID(uuid),
+    url: url,
+    title: title
+    // TODO: support other properties
+  };
+  tabListeners.forEach(f => {
+    f(tab);
+  });
+}
+WindowUtils.on("tabs", "select", onTabSelect);
+
 extensions.registerSchemaAPI("tabs", null, (extension, context) => {
   return {
     tabs: {
-      onClicked: new EventManager(context, "browserAction.onClicked", fire => {
-          let listener = () => {
-            let tab;
-            fire(tab);
+      onActivated: new EventManager(context, "tabs.onActivated", fire => {
+          let listener = (tab) => {
+            fire({tabId: tab.id, windowId: "TODO"});
           };
-          //add listener
+          tabListeners.add(listener);
           return () => {
-            //remove listener
+            tabListeners.remote(listener);
           };
         }).api(),
 

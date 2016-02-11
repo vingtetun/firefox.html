@@ -89,6 +89,35 @@ global.TabManager = {
   _tabs: new WeakMap(),
   _nextId: 1,
 
+  getIdForUUID(uuid) {
+    let list = [];
+    let frames = window => {
+      let list = [...window.document.querySelectorAll("iframe")];
+      for(let frame of list) {
+        // XXX: uuid attribute
+        // depends on the HTML layout, this is implemented by
+        // src/views/arena/controllers/components/browser.js
+        if (frame && frame.getAttribute("uuid") == uuid) {
+          return this.getId(frame);
+        }
+        if (frame.contentWindow) {
+          let tab = frames(frame.contentWindow);
+          if (tab) {
+            return tab;
+          }
+        }
+      }
+      return null;
+    };
+    for (let window of WindowListManager.browserWindows()) {
+      let tab = frames(window);
+      if (tab) {
+        return tab
+      }
+    }
+    return null;
+  },
+
   getId(tab) {
     if (this._tabs.has(tab)) {
       return this._tabs.get(tab);

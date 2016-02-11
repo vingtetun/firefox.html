@@ -29,14 +29,16 @@ var WindowUtils = {
   getWindow: function() {
     let topWindow = Services.wm
                             .getMostRecentWindow('navigator:browser');
-    let window = topWindow.frames[0];
-    if (window && window.document.readyState === 'complete') {
-      return Promise.resolve(window);
+    if (topWindow) {
+      let window = topWindow.frames[0];
+      if (window && window.document.readyState === 'complete') {
+        return Promise.resolve(window);
+      }
     }
     return new Promise(done => {
-      topWindow.setTimeout(() => {
+      Services.tm.mainThread.dispatch(function() {
         done(WindowUtils.getWindow());
-      }, 50);
+      }, Components.interfaces.nsIThread.DISPATCH_NORMAL);
     });
   },
 
