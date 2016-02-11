@@ -1,4 +1,5 @@
 .gitconfig
+.patches
 node_modules/
 *.swp
 *.swo
