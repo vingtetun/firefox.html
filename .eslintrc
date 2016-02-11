@@ -1,12 +1,12 @@
 {
   "ecmaFeatures": {
-    blockBindings: true,
-    arrowFunctions: true,
-    destructuring: true,
-    forOf: true,
-    restParams: true,
-    defaultParams: true,
-    templateStrings: true
+    "blockBindings": true,
+    "arrowFunctions": true,
+    "destructuring": true,
+    "forOf": true,
+    "restParams": true,
+    "defaultParams": true,
+    "templateStrings": true
   },
 
   "rules": {
