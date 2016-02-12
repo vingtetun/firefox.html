@@ -189,6 +189,7 @@ define([
     frameElement.setAttribute('mozbrowser', 'true');
     frameElement.setAttribute('remote', remote);
     frameElement.setAttribute('mozallowfullscreen', 'true');
+    frameElement.setAttribute('uuid', this.uuid);
     this.appendChild(frameElement);
 
     for (let eventName of IFRAME_EVENTS) {
