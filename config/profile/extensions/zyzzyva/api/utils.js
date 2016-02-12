@@ -60,9 +60,15 @@ ExtensionTabManager.prototype = {
       height: tab.clientHeight,
     };
 
-    /*
     if (this.hasTabPermission(tab)) {
-      result.url = tab.linkedBrowser.currentURI.spec;
+      dump("has tab permission\n");
+      dump("tab="+tab+" parent:"+tab.parentNode+"\n");
+      dump("location="+tab.parentNode._location+"\n");
+      // XXX: horrible hack
+      // Use the internals of the web component defined here
+      // src/views/arena/controllers/components/browser.js
+      result.url = tab.parentNode._location;
+      /*
       if (tab.linkedBrowser.contentTitle) {
         result.title = tab.linkedBrowser.contentTitle;
       }
@@ -70,8 +76,8 @@ ExtensionTabManager.prototype = {
       if (icon) {
         result.favIconUrl = icon;
       }
+      */
     }
-    */
 
     return result;
   },
