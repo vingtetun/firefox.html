@@ -72,6 +72,11 @@ extensions.registerSchemaAPI("tabs", null, (extension, context) => {
           };
         }).api(),
 
+      get(tabId) {
+        let tab = TabManager.getTab(tabId);
+        return Promise.resolve(TabManager.convert(extension, tab));
+      },
+
       create(createProperties) {
         WindowUtils.emit('tabs', 'add', {
           select: true,
